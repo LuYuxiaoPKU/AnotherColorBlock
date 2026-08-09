@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.noone.particleex.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+  ],
+  "client": [
+    "IParticleMixin",
+    "ParticleManagerMixin",
+    "ParticleMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
