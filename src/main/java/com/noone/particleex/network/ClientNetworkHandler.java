@@ -1,5 +1,6 @@
 package com.noone.particleex.network;
 
+import com.noone.particleex.mixin.IBillboardParticleMixin;
 import com.noone.particleex.mixin.IParticleMixin;
 import com.noone.particleex.network.payload.*;
 import com.noone.particleex.util.ExpressionUtil;
@@ -13,22 +14,22 @@ import java.util.Iterator;
 import java.util.Random;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Vector4f;
 
 public class ClientNetworkHandler {
    private static final Random RANDOM = new Random();
 
    public static void clearParticle(ClientPlayNetworking.Context context) {
-      MinecraftClient client = context.client();
+      Minecraft client = context.client();
       client.execute(() -> {
          GroupUtil.clear();
-         client.particleManager.setWorld(client.world);
+         client.particleEngine.setLevel(client.level);
       });
    }
 
@@ -55,7 +56,7 @@ public class ClientNetworkHandler {
       String speedExpression = payload.speedExpression();
       double speedStep = payload.speedStep();
       String group = payload.group();
-      ParticleEffect effect = payload.effect();
+      ParticleOptions effect = payload.effect();
       context.client().execute(() -> {
          for(int i = 0; i < count; ++i) {
             double rx = RANDOM.nextGaussian() * dx;
@@ -87,7 +88,7 @@ public class ClientNetworkHandler {
       String speedExpression = payload.speedExpression();
       double speedStep = payload.speedStep();
       String group = payload.group();
-      ParticleEffect effect = payload.effect();
+      ParticleOptions effect = payload.effect();
       context.client().execute(() -> {
          IExecutable exe = ExpressionUtil.parse(expression);
          for(double cx = -dx; cx <= dx; cx += step) {
@@ -133,7 +134,7 @@ public class ClientNetworkHandler {
       String speedExpression = payload.speedExpression();
       double speedStep = payload.speedStep();
       String group = payload.group();
-      ParticleEffect effect = payload.effect();
+      ParticleOptions effect = payload.effect();
       context.client().execute(() -> {
          IExecutable exe = ExpressionUtil.parse(expression);
          if (exe == null) {
@@ -174,28 +175,28 @@ public class ClientNetworkHandler {
    }
 
    public static void image(ImagePayload payload, ClientPlayNetworking.Context context) {
-      Vec3d speed = payload.speed();
+      Vec3 speed = payload.speed();
       context.client().execute(() -> ParticleUtil.spawnImageParticle(payload.effect(), payload.x(), payload.y(), payload.z(), payload.path(), payload.scaling(), payload.xRotate(), payload.yRotate(), payload.zRotate(), payload.flip() != 0, payload.dpb(), speed.x, speed.y, speed.z, payload.age(), payload.speedExpression(), payload.speedStep(), payload.group()));
    }
 
    public static void imageMatrix(ImageMatrixPayload payload, ClientPlayNetworking.Context context) {
-      Vec3d speed = payload.speed();
+      Vec3 speed = payload.speed();
       context.client().execute(() -> ParticleUtil.spawnImageParticle(payload.effect(), payload.x(), payload.y(), payload.z(), payload.path(), payload.scaling(), payload.matrix(), payload.dpb(), speed.x, speed.y, speed.z, payload.age(), payload.speedExpression(), payload.speedStep(), payload.group()));
    }
 
    public static void video(VideoPayload payload, ClientPlayNetworking.Context context) {
-      Vec3d speed = payload.speed();
+      Vec3 speed = payload.speed();
       context.client().execute(() -> ParticleUtil.spawnVideoParticle(payload.effect(), payload.x(), payload.y(), payload.z(), payload.path(), payload.scaling(), payload.xRotate(), payload.yRotate(), payload.zRotate(), payload.flip() != 0, payload.dpb(), speed.x, speed.y, speed.z, payload.age(), payload.speedExpression(), payload.speedStep(), payload.group()));
    }
 
    public static void videoMatrix(VideoMatrixPayload payload, ClientPlayNetworking.Context context) {
-      Vec3d speed = payload.speed();
+      Vec3 speed = payload.speed();
       context.client().execute(() -> ParticleUtil.spawnVideoParticle(payload.effect(), payload.x(), payload.y(), payload.z(), payload.path(), payload.scaling(), payload.matrix(), payload.dpb(), speed.x, speed.y, speed.z, payload.age(), payload.speedExpression(), payload.speedStep(), payload.group()));
    }
 
    public static void groupRemove(GroupRemovePayload payload, ClientPlayNetworking.Context context) {
-      ClientPlayerEntity player = context.player();
-      Vec3d pos = payload.pos();
+      LocalPlayer player = context.player();
+      Vec3 pos = payload.pos();
       double x,y,z;
       if(pos == null){
          x = player.getX();
@@ -210,12 +211,12 @@ public class ClientNetworkHandler {
    }
 
    public static void groupChange(GroupChangePayload payload, ClientPlayNetworking.Context context) {
-      int type = payload.type();
+      int type = payload.changeType();
       String group = payload.group();
       String expression = payload.expression();
       String conditionalExpression = payload.conditionalExpression();
-      ClientPlayerEntity player = context.player();
-      Vec3d pos = payload.pos();
+      LocalPlayer player = context.player();
+      Vec3 pos = payload.pos();
       double x,y,z;
       if(pos == null){
          x = player.getX();
@@ -270,29 +271,32 @@ public class ClientNetworkHandler {
                   data.x = ((IParticleMixin)particle).getX() - x;
                   data.y = ((IParticleMixin)particle).getY() - y;
                   data.z = ((IParticleMixin)particle).getZ() - z;
-                  prevx = data.vx = ((IParticleMixin)particle).getVelocityX();
-                  prevy = data.vy = ((IParticleMixin)particle).getVelocityY();
-                  prevz = data.vz = ((IParticleMixin)particle).getVelocityZ();
-                  data.cx = ((IParticle)particle).getCenterX();
-                  data.cy = ((IParticle)particle).getCenterY();
-                  data.cz = ((IParticle)particle).getCenterZ();
-                  data.cr = ((IParticleMixin)particle).getRed();
-                  data.cg = ((IParticleMixin)particle).getGreen();
-                  data.cb = ((IParticleMixin)particle).getBlue();
-                  data.alpha = ((IParticleMixin)particle).getAlpha();
-                  exe.invoke();
-                  particle.move(data.x - ((IParticleMixin)particle).getX() + x, data.y - ((IParticleMixin)particle).getY() + y, data.z - ((IParticleMixin)particle).getZ() + z);
-                  ((IParticle)particle).setCenterX(data.cx);
-                  ((IParticle)particle).setCenterY(data.cy);
-                  ((IParticle)particle).setCenterZ(data.cz);
-                  particle.setColor((float)data.cr, (float)data.cg, (float)data.cb);
-                  ((IParticleMixin)particle).setAlpha((float)data.alpha);
+                  prevx = data.vx = ((IParticleMixin)particle).getXd();
+                  prevy = data.vy = ((IParticleMixin)particle).getYd();
+                  prevz = data.vz = ((IParticleMixin)particle).getZd();
+                   data.cx = ((IParticle)particle).getCenterX();
+                   data.cy = ((IParticle)particle).getCenterY();
+                   data.cz = ((IParticle)particle).getCenterZ();
+                   if (particle instanceof IBillboardParticleMixin billboardParticle) {
+                      data.cr = billboardParticle.getRCol();
+                      data.cg = billboardParticle.getGCol();
+                      data.cb = billboardParticle.getBCol();
+                      data.alpha = billboardParticle.getAlpha();
+                   } else {
+                      data.cr = data.cg = data.cb = data.alpha = 1.0D;
+                   }
+                   exe.invoke();
+                   particle.move(data.x - ((IParticleMixin)particle).getX() + x, data.y - ((IParticleMixin)particle).getY() + y, data.z - ((IParticleMixin)particle).getZ() + z);
+                   ((IParticle)particle).setCenterX(data.cx);
+                   ((IParticle)particle).setCenterY(data.cy);
+                   ((IParticle)particle).setCenterZ(data.cz);
+                   ((IParticle)particle).setRenderColor((float)data.cr, (float)data.cg, (float)data.cb, (float)data.alpha);
                   if (data.vx != prevx || data.vy != prevy || data.vz != prevz) {
                      ((IParticle)particle).setStop(data.vx == 0.0D && data.vy == 0.0D && data.vz == 0.0D);
                   }
-                  ((IParticleMixin)particle).setVelocityX(data.vx);
-                  ((IParticleMixin)particle).setVelocityY(data.vy);
-                  ((IParticleMixin)particle).setVelocityZ(data.vz);
+                  ((IParticleMixin)particle).setXd(data.vx);
+                  ((IParticleMixin)particle).setYd(data.vy);
+                  ((IParticleMixin)particle).setZd(data.vz);
                   break;
                case 1:
                   ((IParticle)particle).setCustomMove(exe != null);
@@ -302,15 +306,15 @@ public class ClientNetworkHandler {
       });
    }
 
-   public static int readInt(PacketByteBuf buf, boolean read) {
+   public static int readInt(FriendlyByteBuf buf, boolean read) {
        return read ? buf.readInt() : 0;
    }
 
-   public static double readDouble(PacketByteBuf buf, boolean read, double defValue) {
+   public static double readDouble(FriendlyByteBuf buf, boolean read, double defValue) {
        return read ? buf.readDouble() : defValue;
    }
 
-   public static String readString(PacketByteBuf buf, boolean read) {
-       return read ? buf.readString() : null;
+   public static String readString(FriendlyByteBuf buf, boolean read) {
+       return read ? buf.readUtf() : null;
    }
 }

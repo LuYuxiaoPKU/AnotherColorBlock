@@ -21,5 +21,7 @@ public interface IParticle {
 
    void setStop(boolean var1);
 
+   void setRenderColor(float red, float green, float blue, float alpha);
+
    void customTick();
 }

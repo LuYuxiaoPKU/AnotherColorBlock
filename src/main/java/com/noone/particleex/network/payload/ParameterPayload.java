@@ -3,18 +3,18 @@ package com.noone.particleex.network.payload;
 import com.google.common.base.Strings;
 import com.noone.particleex.ParticleEx;
 import com.noone.particleex.network.NetworkIdentifiers;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.ParticleTypes;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import org.joml.Vector4f;
 
 import static com.noone.particleex.network.ClientNetworkHandler.*;
 
-public record ParameterPayload(boolean polar, boolean tick, boolean rgba, double x, double y, double z, Vector4f color, double vx, double vy, double vz, double begin, double end, String expression, double step, int cpt, int age, String speedExpression, double speedStep, String group, ParticleEffect effect) implements CustomPayload {
-  public static final Id<ParameterPayload> ID = new Id<>(NetworkIdentifiers.PARAMETER_PACKET_ID);
-  public static final PacketCodec<RegistryByteBuf, ParameterPayload> CODEC = PacketCodec.of(
+public record ParameterPayload(boolean polar, boolean tick, boolean rgba, double x, double y, double z, Vector4f color, double vx, double vy, double vz, double begin, double end, String expression, double step, int cpt, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements CustomPacketPayload {
+  public static final Type<ParameterPayload> ID = new Type<>(NetworkIdentifiers.PARAMETER_PACKET_ID);
+  public static final StreamCodec<RegistryFriendlyByteBuf, ParameterPayload> CODEC = StreamCodec.ofMember(
           (value, buf) -> {
               buf.writeBoolean(value.polar);
               buf.writeBoolean(value.tick);
@@ -34,7 +34,7 @@ public record ParameterPayload(boolean polar, boolean tick, boolean rgba, double
               buf.writeDouble(value.vz);
               buf.writeDouble(value.begin);
               buf.writeDouble(value.end);
-              buf.writeString(value.expression);
+              buf.writeUtf(value.expression);
               buf.writeDouble(value.step);
               if (value.tick) {
                   buf.writeInt(value.cpt);
@@ -43,15 +43,15 @@ public record ParameterPayload(boolean polar, boolean tick, boolean rgba, double
               buf.writeInt(value.age);
               buf.writeBoolean(!Strings.isNullOrEmpty(value.speedExpression) && !value.speedExpression.equals("null"));
               if (!Strings.isNullOrEmpty(value.speedExpression) && !value.speedExpression.equals("null")) {
-                  buf.writeString(value.speedExpression);
+                  buf.writeUtf(value.speedExpression);
                   buf.writeDouble(value.speedStep);
               }
 
               buf.writeBoolean(!Strings.isNullOrEmpty(value.group) && !value.group.equals("null"));
               if (!Strings.isNullOrEmpty(value.group) && !value.group.equals("null")) {
-                  buf.writeString(value.group);
+                  buf.writeUtf(value.group);
               }
-              ParticleTypes.PACKET_CODEC.encode(buf, value.effect);
+              ParticleTypes.STREAM_CODEC.encode(buf, value.effect);
           },
           buf -> {
               boolean polar = buf.readBoolean();
@@ -73,7 +73,7 @@ public record ParameterPayload(boolean polar, boolean tick, boolean rgba, double
               double vz = buf.readDouble();
               double begin = buf.readDouble();
               double end = buf.readDouble();
-              String expression = buf.readString();
+              String expression = buf.readUtf();
               double step = buf.readDouble();
               int cpt = readInt(buf, tick);
               int age = buf.readInt();
@@ -81,12 +81,12 @@ public record ParameterPayload(boolean polar, boolean tick, boolean rgba, double
               String speedExpression = readString(buf, hasSpeedExpression);
               double speedStep = readDouble(buf, hasSpeedExpression, 1.0D);
               String group = readString(buf, buf.readBoolean());
-              ParticleEffect effect = ParticleTypes.PACKET_CODEC.decode(buf);
+              ParticleOptions effect = ParticleTypes.STREAM_CODEC.decode(buf);
               return new ParameterPayload(polar,tick,rgba,x,y,z,color,vx,vy,vz,begin,end,expression,step,cpt,age,speedExpression,speedStep,group,effect);
           }
   );
   @Override
-   public Id<? extends CustomPayload> getId() {
+   public Type<? extends CustomPacketPayload> type() {
       return ID;
    }
 }

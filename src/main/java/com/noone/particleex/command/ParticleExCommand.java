@@ -3,13 +3,15 @@ package com.noone.particleex.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.noone.particleex.command.particlep.*;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.server.permissions.Permission;
+import net.minecraft.server.permissions.PermissionLevel;
 
 public class ParticleExCommand {
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
-        LiteralArgumentBuilder<ServerCommandSource> rootCommand = CommandManager.literal("particleex").requires(source -> source.hasPermissionLevel(2));
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext registryAccess) {
+        LiteralArgumentBuilder<CommandSourceStack> rootCommand = Commands.literal("particleex").requires(source -> source.permissions().hasPermission(new Permission.HasCommandLevel(PermissionLevel.GAMEMASTERS)));
         FunctionListCommand.register(rootCommand);
         ClearParticleCommand.register(rootCommand);
         ClearCacheCommand.register(rootCommand);

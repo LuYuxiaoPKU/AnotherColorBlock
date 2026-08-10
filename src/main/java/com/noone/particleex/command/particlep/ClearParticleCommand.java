@@ -5,18 +5,18 @@ import com.mojang.brigadier.context.CommandContext;
 import com.noone.particleex.network.payload.ClearParticlePayload;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.server.level.ServerPlayer;
 
 public class ClearParticleCommand {
-   public static void register(LiteralArgumentBuilder<ServerCommandSource> rootCommand) {
-      rootCommand.then(CommandManager.literal("clearparticle").executes(ClearParticleCommand::execute));
+   public static void register(LiteralArgumentBuilder<CommandSourceStack> rootCommand) {
+      rootCommand.then(Commands.literal("clearparticle").executes(ClearParticleCommand::execute));
    }
 
-   public static int execute(CommandContext<ServerCommandSource> context) {
+   public static int execute(CommandContext<CommandSourceStack> context) {
 
-       for (ServerPlayerEntity player : PlayerLookup.world(context.getSource().getWorld())) {
+       for (ServerPlayer player : PlayerLookup.level(context.getSource().getLevel())) {
            ServerPlayNetworking.send(player, new ClearParticlePayload());
        }
 

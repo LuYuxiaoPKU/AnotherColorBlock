@@ -3,25 +3,24 @@ package com.noone.particleex.network.payload;
 import com.google.common.base.Strings;
 import com.noone.particleex.network.ClientNetworkHandler;
 import com.noone.particleex.network.NetworkIdentifiers;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.ParticleType;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.world.phys.Vec3;
 
 import static com.noone.particleex.network.ClientNetworkHandler.readDouble;
 import static com.noone.particleex.network.ClientNetworkHandler.readString;
 
-public record ImagePayload(double x, double y, double z, String path, double scaling, int xRotate, int yRotate, int zRotate, int flip, double dpb, Vec3d speed, int age, String speedExpression, double speedStep, String group, ParticleEffect effect) implements CustomPayload {
-  public static final Id<ImagePayload> ID = new Id<>(NetworkIdentifiers.IMAGE_PACKET_ID);
-  public static final PacketCodec<RegistryByteBuf, ImagePayload> CODEC = PacketCodec.of(
+public record ImagePayload(double x, double y, double z, String path, double scaling, int xRotate, int yRotate, int zRotate, int flip, double dpb, Vec3 speed, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements CustomPacketPayload {
+  public static final Type<ImagePayload> ID = new Type<>(NetworkIdentifiers.IMAGE_PACKET_ID);
+  public static final StreamCodec<RegistryFriendlyByteBuf, ImagePayload> CODEC = StreamCodec.ofMember(
           (value, buf) -> {
               buf.writeDouble(value.x);
               buf.writeDouble(value.y);
               buf.writeDouble(value.z);
-              buf.writeString(value.path);
+              buf.writeUtf(value.path);
               buf.writeDouble(value.scaling);
               buf.writeInt(value.xRotate);
               buf.writeInt(value.yRotate);
@@ -40,22 +39,22 @@ public record ImagePayload(double x, double y, double z, String path, double sca
               buf.writeInt(value.age);
               buf.writeBoolean(!Strings.isNullOrEmpty(value.speedExpression) && !value.speedExpression.equals("null"));
               if (!Strings.isNullOrEmpty(value.speedExpression) && !value.speedExpression.equals("null")) {
-                  buf.writeString(value.speedExpression);
+                  buf.writeUtf(value.speedExpression);
                   buf.writeDouble(value.speedStep);
               }
 
               buf.writeBoolean(!Strings.isNullOrEmpty(value.group) && !value.group.equals("null"));
               if (!Strings.isNullOrEmpty(value.group) && !value.group.equals("null")) {
-                  buf.writeString(value.group);
+                  buf.writeUtf(value.group);
               }
 
-              ParticleTypes.PACKET_CODEC.encode(buf, value.effect);
+              ParticleTypes.STREAM_CODEC.encode(buf, value.effect);
           },
           buf -> {
               double x = buf.readDouble();
               double y = buf.readDouble();
               double z = buf.readDouble();
-              String path = buf.readString();
+              String path = buf.readUtf();
               double scaling = buf.readDouble();
               int xRotate = buf.readInt();
               int yRotate = buf.readInt();
@@ -70,12 +69,12 @@ public record ImagePayload(double x, double y, double z, String path, double sca
               String speedExpression = readString(buf, hasSpeedExpression);
               double speedStep = readDouble(buf, hasSpeedExpression, 1.0D);
               String group = readString(buf, buf.readBoolean());
-              ParticleEffect effect = ParticleTypes.PACKET_CODEC.decode(buf);
-              return new ImagePayload(x,y,z,path,scaling,xRotate,yRotate,zRotate,flip,dpb,new Vec3d(vx,vy,vz),age,speedExpression,speedStep,group,effect);
+              ParticleOptions effect = ParticleTypes.STREAM_CODEC.decode(buf);
+              return new ImagePayload(x,y,z,path,scaling,xRotate,yRotate,zRotate,flip,dpb,new Vec3(vx,vy,vz),age,speedExpression,speedStep,group,effect);
           }
   );
   @Override
-   public Id<? extends CustomPayload> getId() {
+   public Type<? extends CustomPacketPayload> type() {
       return ID;
    }
 }

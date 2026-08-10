@@ -3,15 +3,15 @@ package com.noone.particleex.network.payload;
 import com.google.common.base.Strings;
 import com.noone.particleex.network.ClientNetworkHandler;
 import com.noone.particleex.network.NetworkIdentifiers;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.ParticleTypes;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
-public record NormalPayload(double x, double y, double z, float red, float green, float blue, float alpha, double vx, double vy, double vz, double dx, double dy, double dz, int count, int age, String speedExpression, double speedStep, String group, ParticleEffect effect) implements CustomPayload {
-  public static final Id<NormalPayload> ID = new Id<>(NetworkIdentifiers.NORMAL_PACKET_ID);
-  public static final PacketCodec<RegistryByteBuf, NormalPayload> CODEC = PacketCodec.of(
+public record NormalPayload(double x, double y, double z, float red, float green, float blue, float alpha, double vx, double vy, double vz, double dx, double dy, double dz, int count, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements CustomPacketPayload {
+  public static final Type<NormalPayload> ID = new Type<>(NetworkIdentifiers.NORMAL_PACKET_ID);
+  public static final StreamCodec<RegistryFriendlyByteBuf, NormalPayload> CODEC = StreamCodec.ofMember(
           (value, buf) -> {
               buf.writeDouble(value.x);
               buf.writeDouble(value.y);
@@ -30,14 +30,14 @@ public record NormalPayload(double x, double y, double z, float red, float green
               buf.writeInt(value.age);
               buf.writeBoolean(!Strings.isNullOrEmpty(value.speedExpression) && !value.speedExpression.equals("null"));
               if (!Strings.isNullOrEmpty(value.speedExpression) && !value.speedExpression.equals("null")) {
-                  buf.writeString(value.speedExpression);
+                  buf.writeUtf(value.speedExpression);
                   buf.writeDouble(value.speedStep);
               }
               buf.writeBoolean(!Strings.isNullOrEmpty(value.group) && !value.group.equals("null"));
               if (!Strings.isNullOrEmpty(value.group) && !value.group.equals("null")) {
-                  buf.writeString(value.group);
+                  buf.writeUtf(value.group);
               }
-              ParticleTypes.PACKET_CODEC.encode(buf, value.effect);
+              ParticleTypes.STREAM_CODEC.encode(buf, value.effect);
           },
           buf -> {
              double x = buf.readDouble();
@@ -59,12 +59,12 @@ public record NormalPayload(double x, double y, double z, float red, float green
              String speedExpression = ClientNetworkHandler.readString(buf, hasSpeedExpression);
              double speedStep = ClientNetworkHandler.readDouble(buf, hasSpeedExpression, 1.0D);
              String group = ClientNetworkHandler.readString(buf, buf.readBoolean());
-             ParticleEffect effect = ParticleTypes.PACKET_CODEC.decode(buf);
+             ParticleOptions effect = ParticleTypes.STREAM_CODEC.decode(buf);
              return new NormalPayload(x,y,z,red,green,blue,alpha,vx,vy,vz,dx,dy,dz,count,age,speedExpression,speedStep,group,effect);
           }
   );
   @Override
-   public Id<? extends CustomPayload> getId() {
+   public Type<? extends CustomPacketPayload> type() {
       return ID;
    }
 }

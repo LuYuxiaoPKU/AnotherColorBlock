@@ -13,14 +13,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
-import net.minecraft.command.CommandSource;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.Component;
 import org.joml.Vector4f;
 
 public class Color4ArgumentType implements ArgumentType<Vector4f> {
-   public static final SimpleCommandExceptionType INCOMPLETE_EXCEPTION = new SimpleCommandExceptionType(Text.translatable("argument.color4f.incomplete"));
+   public static final SimpleCommandExceptionType INCOMPLETE_EXCEPTION = new SimpleCommandExceptionType(Component.translatable("argument.color4f.incomplete"));
    private static final FloatArgumentType PARSER = FloatArgumentType.floatArg(0.0F, 1.0F);
    private static final Collection<String> EXAMPLES = Arrays.asList("0 0 0 1", "1 1 1 1", "0.5 0.5 0.5 1", "1 0 0 1", "0 1 0 1", "0 0 1 1", "1 1 1 0.5");
 
@@ -28,7 +28,7 @@ public class Color4ArgumentType implements ArgumentType<Vector4f> {
       return new Color4ArgumentType();
    }
 
-   public static Vector4f getColor4(CommandContext<ServerCommandSource> context, String name) {
+   public static Vector4f getColor4(CommandContext<CommandSourceStack> context, String name) {
       return context.getArgument(name, Vector4f.class);
    }
 
@@ -60,7 +60,7 @@ public class Color4ArgumentType implements ArgumentType<Vector4f> {
    }
 
    public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-      if (context.getSource() instanceof CommandSource) {
+      if (context.getSource() instanceof SharedSuggestionProvider) {
          String remaining = builder.getRemaining();
          if (Strings.isNullOrEmpty(remaining)) {
             builder.suggest("1");
@@ -68,7 +68,7 @@ public class Color4ArgumentType implements ArgumentType<Vector4f> {
             builder.suggest("1 1 1");
             builder.suggest("1 1 1 1");
          } else {
-            Predicate<String> predicate = CommandManager.getCommandValidator(this::parse);
+            Predicate<String> predicate = Commands.createValidator(this::parse);
             String[] args = remaining.split(" ");
             if (args.length == 1) {
                if (predicate.test(args[0] + " 1 1 1")) {

@@ -5,18 +5,18 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.server.level.ServerPlayer;
 
 public class ClearCacheCommand {
-   public static void register(LiteralArgumentBuilder<ServerCommandSource> rootCommand) {
-      rootCommand.then(CommandManager.literal("clearcache").executes(ClearCacheCommand::execute));
+   public static void register(LiteralArgumentBuilder<CommandSourceStack> rootCommand) {
+      rootCommand.then(Commands.literal("clearcache").executes(ClearCacheCommand::execute));
    }
 
-   public static int execute(CommandContext<ServerCommandSource> context) {
+   public static int execute(CommandContext<CommandSourceStack> context) {
 
-       for (ServerPlayerEntity player : PlayerLookup.world(context.getSource().getWorld())) {
+       for (ServerPlayer player : PlayerLookup.level(context.getSource().getLevel())) {
            ServerPlayNetworking.send(player, new ClearCachePayload());
        }
 

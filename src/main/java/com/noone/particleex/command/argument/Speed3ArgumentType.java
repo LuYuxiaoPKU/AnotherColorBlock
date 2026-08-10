@@ -13,14 +13,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
-import net.minecraft.command.CommandSource;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.phys.Vec3;
 
-public class Speed3ArgumentType implements ArgumentType<Vec3d> {
-   public static final SimpleCommandExceptionType INCOMPLETE_EXCEPTION = new SimpleCommandExceptionType(Text.translatable("argument.speed3d.incomplete"));
+public class Speed3ArgumentType implements ArgumentType<Vec3> {
+   public static final SimpleCommandExceptionType INCOMPLETE_EXCEPTION = new SimpleCommandExceptionType(Component.translatable("argument.speed3d.incomplete"));
    private static final DoubleArgumentType PARSER = DoubleArgumentType.doubleArg();
    private static final Collection<String> EXAMPLES = Arrays.asList("0 0 0", "0 0.1 0");
 
@@ -28,11 +28,11 @@ public class Speed3ArgumentType implements ArgumentType<Vec3d> {
       return new Speed3ArgumentType();
    }
 
-   public static Vec3d getSpeed3(CommandContext<ServerCommandSource> context, String name) {
-      return context.getArgument(name, Vec3d.class);
+   public static Vec3 getSpeed3(CommandContext<CommandSourceStack> context, String name) {
+      return context.getArgument(name, Vec3.class);
    }
 
-   public Vec3d parse(StringReader reader) throws CommandSyntaxException {
+   public Vec3 parse(StringReader reader) throws CommandSyntaxException {
       int start = reader.getCursor();
       double vx = PARSER.parse(reader);
       if (reader.canRead() && reader.peek() == ' ') {
@@ -41,7 +41,7 @@ public class Speed3ArgumentType implements ArgumentType<Vec3d> {
          if (reader.canRead() && reader.peek() == ' ') {
             reader.skip();
             double vz = PARSER.parse(reader);
-            return new Vec3d(vx, vy, vz);
+            return new Vec3(vx, vy, vz);
          } else {
             reader.setCursor(start);
             throw INCOMPLETE_EXCEPTION.createWithContext(reader);
@@ -53,14 +53,14 @@ public class Speed3ArgumentType implements ArgumentType<Vec3d> {
    }
 
    public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-      if (context.getSource() instanceof CommandSource) {
+      if (context.getSource() instanceof SharedSuggestionProvider) {
          String remaining = builder.getRemaining();
          if (Strings.isNullOrEmpty(remaining)) {
             builder.suggest("0");
             builder.suggest("0 0");
             builder.suggest("0 0 0");
          } else {
-            Predicate<String> predicate = CommandManager.getCommandValidator(this::parse);
+            Predicate<String> predicate = Commands.createValidator(this::parse);
             String[] args = remaining.split(" ");
             if (args.length == 1) {
                if (predicate.test(args[0] + " 0 0")) {

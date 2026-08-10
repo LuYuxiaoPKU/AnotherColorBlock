@@ -3,24 +3,22 @@ package com.noone.particleex.network.payload;
 import com.google.common.base.Strings;
 import com.noone.particleex.network.ClientNetworkHandler;
 import com.noone.particleex.network.NetworkIdentifiers;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.world.phys.Vec3;
 
 import static com.noone.particleex.network.ClientNetworkHandler.readDouble;
 import static com.noone.particleex.network.ClientNetworkHandler.readString;
 
-public record GroupRemovePayload(String group, String expression, Vec3d pos) implements CustomPayload {
-  public static final Id<GroupRemovePayload> ID = new Id<>(NetworkIdentifiers.GROUP_REMOVE_PACKET_ID);
-  public static final PacketCodec<RegistryByteBuf, GroupRemovePayload> CODEC = PacketCodec.of(
+public record GroupRemovePayload(String group, String expression, Vec3 pos) implements CustomPacketPayload {
+  public static final Type<GroupRemovePayload> ID = new Type<>(NetworkIdentifiers.GROUP_REMOVE_PACKET_ID);
+  public static final StreamCodec<RegistryFriendlyByteBuf, GroupRemovePayload> CODEC = StreamCodec.ofMember(
           (value, buf) -> {
-              buf.writeString(value.group);
+              buf.writeUtf(value.group);
               buf.writeBoolean(!Strings.isNullOrEmpty(value.expression) && !value.expression.equals("null"));
               if (!Strings.isNullOrEmpty(value.expression) && !value.expression.equals("null")) {
-                  buf.writeString(value.expression);
+                  buf.writeUtf(value.expression);
               }
 
               buf.writeBoolean(value.pos != null);
@@ -31,21 +29,21 @@ public record GroupRemovePayload(String group, String expression, Vec3d pos) imp
               }
           },
           buf -> {
-              String group = buf.readString();
+              String group = buf.readUtf();
               String expression = readString(buf, buf.readBoolean());
               boolean hasPos = buf.readBoolean();
-              Vec3d pos = null;
+              Vec3 pos = null;
               if(hasPos){
                   Double x = buf.readDouble();
                   Double y = buf.readDouble();
                   Double z = buf.readDouble();
-                  pos = new Vec3d(x, y, z);
+                  pos = new Vec3(x, y, z);
               }
               return new GroupRemovePayload(group,expression,pos);
           }
   );
   @Override
-   public Id<? extends CustomPayload> getId() {
+   public Type<? extends CustomPacketPayload> type() {
       return ID;
    }
 }

@@ -20,8 +20,8 @@
     "particleex.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=${loader_version}",
-    "fabric": "*",
-    "minecraft": ">=1.21.6 <=1.21.8"
+    "fabricloader": ">=0.17.0",
+    "fabric-api": "*",
+    "minecraft": "=26.2"
   }
 }

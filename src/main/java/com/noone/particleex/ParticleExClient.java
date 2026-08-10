@@ -12,17 +12,17 @@ public class ParticleExClient implements ClientModInitializer {
    public void onInitializeClient() {
       ClientTickEvents.START_CLIENT_TICK.register(client -> ParticleUtil.onStartClientTick());
       ClientTickEvents.END_CLIENT_TICK.register(client -> ParticleUtil.onEndClientTick());
-      PayloadTypeRegistry.playS2C().register(ClearParticlePayload.ID, ClearParticlePayload.CODEC);
-      PayloadTypeRegistry.playS2C().register(ClearCachePayload.ID, ClearCachePayload.CODEC);
-      PayloadTypeRegistry.playS2C().register(NormalPayload.ID, NormalPayload.CODEC);
-      PayloadTypeRegistry.playS2C().register(ConditionalPayload.ID, ConditionalPayload.CODEC);
-      PayloadTypeRegistry.playS2C().register(ParameterPayload.ID, ParameterPayload.CODEC);
-      PayloadTypeRegistry.playS2C().register(ImagePayload.ID, ImagePayload.CODEC);
-      PayloadTypeRegistry.playS2C().register(ImageMatrixPayload.ID, ImageMatrixPayload.CODEC);
-      PayloadTypeRegistry.playS2C().register(VideoPayload.ID, VideoPayload.CODEC);
-      PayloadTypeRegistry.playS2C().register(VideoMatrixPayload.ID, VideoMatrixPayload.CODEC);
-      PayloadTypeRegistry.playS2C().register(GroupRemovePayload.ID,GroupRemovePayload.CODEC);
-      PayloadTypeRegistry.playS2C().register(GroupChangePayload.ID,GroupChangePayload.CODEC);
+      PayloadTypeRegistry.clientboundPlay().register(ClearParticlePayload.ID, ClearParticlePayload.CODEC);
+      PayloadTypeRegistry.clientboundPlay().register(ClearCachePayload.ID, ClearCachePayload.CODEC);
+      PayloadTypeRegistry.clientboundPlay().register(NormalPayload.ID, NormalPayload.CODEC);
+      PayloadTypeRegistry.clientboundPlay().register(ConditionalPayload.ID, ConditionalPayload.CODEC);
+      PayloadTypeRegistry.clientboundPlay().register(ParameterPayload.ID, ParameterPayload.CODEC);
+      PayloadTypeRegistry.clientboundPlay().register(ImagePayload.ID, ImagePayload.CODEC);
+      PayloadTypeRegistry.clientboundPlay().register(ImageMatrixPayload.ID, ImageMatrixPayload.CODEC);
+      PayloadTypeRegistry.clientboundPlay().register(VideoPayload.ID, VideoPayload.CODEC);
+      PayloadTypeRegistry.clientboundPlay().register(VideoMatrixPayload.ID, VideoMatrixPayload.CODEC);
+      PayloadTypeRegistry.clientboundPlay().register(GroupRemovePayload.ID,GroupRemovePayload.CODEC);
+      PayloadTypeRegistry.clientboundPlay().register(GroupChangePayload.ID,GroupChangePayload.CODEC);
       ClientPlayNetworking.registerGlobalReceiver(ClearParticlePayload.ID, (payload, context) -> ClientNetworkHandler.clearParticle(context));
       ClientPlayNetworking.registerGlobalReceiver(ClearCachePayload.ID, (payload, context) -> ClientNetworkHandler.clearCache(context));
       ClientPlayNetworking.registerGlobalReceiver(NormalPayload.ID, ClientNetworkHandler::normal);

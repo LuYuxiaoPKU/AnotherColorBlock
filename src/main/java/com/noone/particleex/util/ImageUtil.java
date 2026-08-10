@@ -13,9 +13,12 @@ public class ImageUtil {
    private static final Map<File, Map<Double, BufferedImage>> IMAGEBUF = Maps.newHashMap();
    private static final File IMAGEDIR = new File("./particleImages");
 
-   public static BufferedImage readImage(String path, double scaling) throws IOException {
-      File imageFile = new File(IMAGEDIR, path);
-      BufferedImage resultImage;
+    public static BufferedImage readImage(String path, double scaling) throws IOException {
+       File imageFile = new File(IMAGEDIR, path).getCanonicalFile();
+       if (!imageFile.getPath().startsWith(IMAGEDIR.getCanonicalPath() + File.separator)) {
+          throw new IOException("invalid image path: " + path);
+       }
+       BufferedImage resultImage;
       int width;
       int height;
       int dw;

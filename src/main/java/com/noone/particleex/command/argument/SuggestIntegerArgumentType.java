@@ -10,13 +10,12 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.synchronization.ArgumentTypeInfo;
+import net.minecraft.network.FriendlyByteBuf;
 
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.argument.serialize.ArgumentSerializer;
-import net.minecraft.network.PacketByteBuf;
-
-public class SuggestIntegerArgumentType implements ArgumentType<Integer>, ArgumentSerializer.ArgumentTypeProperties<SuggestIntegerArgumentType> {
+public class SuggestIntegerArgumentType implements ArgumentType<Integer>, ArgumentTypeInfo.Template<SuggestIntegerArgumentType> {
    private final IntegerArgumentType parser;
    private final int suggest;
 
@@ -58,7 +57,7 @@ public class SuggestIntegerArgumentType implements ArgumentType<Integer>, Argume
    }
 
    public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-      if (context.getSource() instanceof CommandSource) {
+      if (context.getSource() instanceof SharedSuggestionProvider) {
          return String.valueOf(this.suggest).startsWith(builder.getRemaining()) ? builder.suggest(String.valueOf(this.suggest)).buildFuture() : Suggestions.empty();
       } else {
          return Suggestions.empty();
@@ -101,28 +100,28 @@ public class SuggestIntegerArgumentType implements ArgumentType<Integer>, Argume
    }
 
    @Override
-   public SuggestIntegerArgumentType createType(CommandRegistryAccess commandRegistryAccess) {
+   public SuggestIntegerArgumentType instantiate(CommandBuildContext commandRegistryAccess) {
       return this;
    }
 
    @Override
-   public ArgumentSerializer<SuggestIntegerArgumentType, ?> getSerializer() {
+   public ArgumentTypeInfo<SuggestIntegerArgumentType, ?> type() {
       return Serializer.INSTANCE;
    }
 
-   public static class Serializer implements ArgumentSerializer<SuggestIntegerArgumentType, SuggestIntegerArgumentType> {
+   public static class Serializer implements ArgumentTypeInfo<SuggestIntegerArgumentType, SuggestIntegerArgumentType> {
       public static final SuggestIntegerArgumentType.Serializer INSTANCE = new SuggestIntegerArgumentType.Serializer();
       private Serializer() {}
 
       @Override
-      public void writePacket(SuggestIntegerArgumentType properties, PacketByteBuf buf) {
+      public void serializeToNetwork(SuggestIntegerArgumentType properties, FriendlyByteBuf buf) {
          buf.writeInt(properties.getMinimum());
          buf.writeInt(properties.getMaximum());
          buf.writeInt(properties.getSuggest());
       }
 
       @Override
-      public SuggestIntegerArgumentType fromPacket(PacketByteBuf buf) {
+      public SuggestIntegerArgumentType deserializeFromNetwork(FriendlyByteBuf buf) {
          int min = buf.readInt();
          int max = buf.readInt();
          int suggest = buf.readInt();
@@ -130,14 +129,14 @@ public class SuggestIntegerArgumentType implements ArgumentType<Integer>, Argume
       }
 
       @Override
-      public void writeJson(SuggestIntegerArgumentType properties, JsonObject json) {
+      public void serializeToJson(SuggestIntegerArgumentType properties, JsonObject json) {
          json.addProperty("min", properties.getMinimum());
          json.addProperty("max", properties.getMaximum());
          json.addProperty("suggest", properties.getSuggest());
       }
 
       @Override
-      public SuggestIntegerArgumentType getArgumentTypeProperties(SuggestIntegerArgumentType argumentType) {
+      public SuggestIntegerArgumentType unpack(SuggestIntegerArgumentType argumentType) {
          return argumentType;
       }
    }

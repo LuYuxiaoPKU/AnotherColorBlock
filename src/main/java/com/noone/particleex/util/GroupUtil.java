@@ -53,9 +53,10 @@ public class GroupUtil {
                                  data.s2 = Math.atan2(dy, Math.hypot(dx, dz));
                                  data.dis = Math.sqrt(dx * dx + dy * dy + dz * dz);
                                  data.age = ((IParticleMixin) o).getAge();
+                                 data.t = data.age;
                               }
                               if (exe != null && exe.invoke() != 0) {
-                                  o.markDead();
+                                  o.remove();
                               }
                           }
                       }
@@ -63,7 +64,7 @@ public class GroupUtil {
                       particles.removeIf((particle) -> !particle.isAlive());
                   } else {
                       for (Particle o : particles) {
-                          o.markDead();
+                          o.remove();
                       }
                       particles.clear();
                   }

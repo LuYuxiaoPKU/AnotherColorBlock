@@ -15,3 +15,5 @@
 
 # Compiled classes
 *.class
+
+/libs/

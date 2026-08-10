@@ -2,18 +2,18 @@ package com.noone.particleex.network.payload;
 
 import com.google.common.base.Strings;
 import com.noone.particleex.network.NetworkIdentifiers;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.ParticleTypes;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
 import static com.noone.particleex.network.ClientNetworkHandler.readDouble;
 import static com.noone.particleex.network.ClientNetworkHandler.readString;
 
-public record ConditionalPayload(double x, double y, double z, float red, float green, float blue, float alpha, double vx, double vy, double vz, double dx, double dy, double dz,String expression,double step, int age, String speedExpression, double speedStep, String group, ParticleEffect effect) implements CustomPayload {
-  public static final Id<ConditionalPayload> ID = new Id<>(NetworkIdentifiers.CONDITIONAL_PACKET_ID);
-  public static final PacketCodec<RegistryByteBuf, ConditionalPayload> CODEC = PacketCodec.of(
+public record ConditionalPayload(double x, double y, double z, float red, float green, float blue, float alpha, double vx, double vy, double vz, double dx, double dy, double dz,String expression,double step, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements CustomPacketPayload {
+  public static final Type<ConditionalPayload> ID = new Type<>(NetworkIdentifiers.CONDITIONAL_PACKET_ID);
+  public static final StreamCodec<RegistryFriendlyByteBuf, ConditionalPayload> CODEC = StreamCodec.ofMember(
           (value, buf) -> {
               buf.writeDouble(value.x);
               buf.writeDouble(value.y);
@@ -30,22 +30,22 @@ public record ConditionalPayload(double x, double y, double z, float red, float 
               buf.writeDouble(value.dz);
               buf.writeBoolean(!Strings.isNullOrEmpty(value.expression) && !value.expression.equals("null"));
               if (!Strings.isNullOrEmpty(value.expression) && !value.expression.equals("null")) {
-                  buf.writeString(value.expression);
+                  buf.writeUtf(value.expression);
                   buf.writeDouble(value.step);
               }
 
               buf.writeInt(value.age);
               buf.writeBoolean(!Strings.isNullOrEmpty(value.speedExpression) && !value.speedExpression.equals("null"));
               if (!Strings.isNullOrEmpty(value.speedExpression) && !value.speedExpression.equals("null")) {
-                  buf.writeString(value.speedExpression);
+                  buf.writeUtf(value.speedExpression);
                   buf.writeDouble(value.speedStep);
               }
 
               buf.writeBoolean(!Strings.isNullOrEmpty(value.group) && !value.group.equals("null"));
               if (!Strings.isNullOrEmpty(value.group) && !value.group.equals("null")) {
-                  buf.writeString(value.group);
+                  buf.writeUtf(value.group);
               }
-              ParticleTypes.PACKET_CODEC.encode(buf,value.effect);
+              ParticleTypes.STREAM_CODEC.encode(buf,value.effect);
           },
           buf -> {
               double x = buf.readDouble();
@@ -69,12 +69,12 @@ public record ConditionalPayload(double x, double y, double z, float red, float 
               String speedExpression = readString(buf, hasSpeedExpression);
               double speedStep = readDouble(buf, hasSpeedExpression, 1.0D);
               String group = readString(buf, buf.readBoolean());
-              ParticleEffect effect = ParticleTypes.PACKET_CODEC.decode(buf);
+              ParticleOptions effect = ParticleTypes.STREAM_CODEC.decode(buf);
              return new ConditionalPayload(x,y,z,red,green,blue,alpha,vx,vy,vz,dx,dy,dz,expression,step,age,speedExpression,speedStep,group,effect);
           }
   );
   @Override
-   public Id<? extends CustomPayload> getId() {
+   public Type<? extends CustomPacketPayload> type() {
       return ID;
    }
 }

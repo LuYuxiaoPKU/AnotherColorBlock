@@ -10,24 +10,24 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
-import net.minecraft.command.CommandSource;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.Component;
 
 public class FlipArgumentType implements ArgumentType<Integer> {
-   public static final SimpleCommandExceptionType INVALID_EXCEPTION = new SimpleCommandExceptionType(Text.translatable("argument.flip.invalid"));
+   public static final SimpleCommandExceptionType INVALID_EXCEPTION = new SimpleCommandExceptionType(Component.translatable("argument.flip.invalid"));
    private static final Collection<String> EXAMPLES = Arrays.asList("not", "horizontally", "vertical");
 
    public static FlipArgumentType flip() {
       return new FlipArgumentType();
    }
 
-   public static int getFlip(CommandContext<ServerCommandSource> context, String name) {
+   public static int getFlip(CommandContext<CommandSourceStack> context, String name) {
       return context.getArgument(name, Integer.class);
    }
 
    public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-      if (context.getSource() instanceof CommandSource) {
+      if (context.getSource() instanceof SharedSuggestionProvider) {
          String remaining = builder.getRemaining();
 
           for (String example : EXAMPLES) {

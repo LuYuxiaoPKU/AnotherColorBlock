@@ -10,13 +10,12 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.synchronization.ArgumentTypeInfo;
+import net.minecraft.network.FriendlyByteBuf;
 
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.argument.serialize.ArgumentSerializer;
-import net.minecraft.network.PacketByteBuf;
-
-public class SuggestDoubleArgumentType implements ArgumentType<Double>, ArgumentSerializer.ArgumentTypeProperties<SuggestDoubleArgumentType>{
+public class SuggestDoubleArgumentType implements ArgumentType<Double>, ArgumentTypeInfo.Template<SuggestDoubleArgumentType>{
    private final DoubleArgumentType parser;
    private final double suggest;
 
@@ -58,7 +57,7 @@ public class SuggestDoubleArgumentType implements ArgumentType<Double>, Argument
    }
 
    public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-      if (context.getSource() instanceof CommandSource) {
+      if (context.getSource() instanceof SharedSuggestionProvider) {
          return String.valueOf(this.suggest).startsWith(builder.getRemaining()) ? builder.suggest(String.valueOf(this.suggest)).buildFuture() : Suggestions.empty();
       } else {
          return Suggestions.empty();
@@ -102,28 +101,28 @@ public class SuggestDoubleArgumentType implements ArgumentType<Double>, Argument
 
 
    @Override
-   public SuggestDoubleArgumentType createType(CommandRegistryAccess commandRegistryAccess) {
+   public SuggestDoubleArgumentType instantiate(CommandBuildContext commandRegistryAccess) {
       return this;
    }
 
    @Override
-   public ArgumentSerializer<SuggestDoubleArgumentType, ?> getSerializer() {
+   public ArgumentTypeInfo<SuggestDoubleArgumentType, ?> type() {
       return Serializer.INSTANCE;
    }
 
-   public static class Serializer implements ArgumentSerializer<SuggestDoubleArgumentType, SuggestDoubleArgumentType> {
+   public static class Serializer implements ArgumentTypeInfo<SuggestDoubleArgumentType, SuggestDoubleArgumentType> {
       public static final Serializer INSTANCE = new Serializer();
       private Serializer() {}
 
       @Override
-      public void writePacket(SuggestDoubleArgumentType properties, PacketByteBuf buf) {
+      public void serializeToNetwork(SuggestDoubleArgumentType properties, FriendlyByteBuf buf) {
          buf.writeDouble(properties.getMinimum());
          buf.writeDouble(properties.getMaximum());
          buf.writeDouble(properties.getSuggest());
       }
 
       @Override
-      public SuggestDoubleArgumentType fromPacket(PacketByteBuf buf) {
+      public SuggestDoubleArgumentType deserializeFromNetwork(FriendlyByteBuf buf) {
          double min = buf.readDouble();
          double max = buf.readDouble();
          double suggest = buf.readDouble();
@@ -131,14 +130,14 @@ public class SuggestDoubleArgumentType implements ArgumentType<Double>, Argument
       }
 
       @Override
-      public void writeJson(SuggestDoubleArgumentType properties, JsonObject json) {
+      public void serializeToJson(SuggestDoubleArgumentType properties, JsonObject json) {
          json.addProperty("min", properties.getMinimum());
          json.addProperty("max", properties.getMaximum());
          json.addProperty("suggest", properties.getSuggest());
       }
 
       @Override
-      public SuggestDoubleArgumentType getArgumentTypeProperties(SuggestDoubleArgumentType argumentType) {
+      public SuggestDoubleArgumentType unpack(SuggestDoubleArgumentType argumentType) {
          return argumentType;
       }
    }

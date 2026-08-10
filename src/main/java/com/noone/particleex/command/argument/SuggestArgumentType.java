@@ -10,13 +10,12 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.synchronization.ArgumentTypeInfo;
+import net.minecraft.network.FriendlyByteBuf;
 
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.argument.serialize.ArgumentSerializer;
-import net.minecraft.network.PacketByteBuf;
-
-public class SuggestArgumentType implements ArgumentType<String>, ArgumentSerializer.ArgumentTypeProperties<SuggestArgumentType>{
+public class SuggestArgumentType implements ArgumentType<String>, ArgumentTypeInfo.Template<SuggestArgumentType>{
    private final StringArgumentType parser;
    private final String[] suggests;
 
@@ -34,7 +33,7 @@ public class SuggestArgumentType implements ArgumentType<String>, ArgumentSerial
    }
 
    public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-      if (context.getSource() instanceof CommandSource) {
+      if (context.getSource() instanceof SharedSuggestionProvider) {
          String remaining = builder.getRemaining();
           for (String suggest : this.suggests) {
               if (suggest.startsWith(remaining)) {
@@ -52,39 +51,39 @@ public class SuggestArgumentType implements ArgumentType<String>, ArgumentSerial
    }
 
     @Override
-    public SuggestArgumentType createType(CommandRegistryAccess commandRegistryAccess) {
+    public SuggestArgumentType instantiate(CommandBuildContext commandRegistryAccess) {
         return this;
     }
 
     @Override
-    public ArgumentSerializer<SuggestArgumentType, ?> getSerializer() {
+    public ArgumentTypeInfo<SuggestArgumentType, ?> type() {
         return Serializer.INSTANCE;
     }
 
-    public static class Serializer implements ArgumentSerializer<SuggestArgumentType, SuggestArgumentType> {
+    public static class Serializer implements ArgumentTypeInfo<SuggestArgumentType, SuggestArgumentType> {
         public static final SuggestArgumentType.Serializer INSTANCE = new SuggestArgumentType.Serializer();
         private Serializer() {}
 
         @Override
-        public void writePacket(SuggestArgumentType properties, PacketByteBuf buf) {
+        public void serializeToNetwork(SuggestArgumentType properties, FriendlyByteBuf buf) {
             buf.writeInt(properties.suggests.length);
             for (String suggest : properties.suggests) {
-                buf.writeString(suggest);
+                buf.writeUtf(suggest);
             }
         }
 
         @Override
-        public SuggestArgumentType fromPacket(PacketByteBuf buf) {
+        public SuggestArgumentType deserializeFromNetwork(FriendlyByteBuf buf) {
             int length = buf.readInt();
             String[] suggests = new String[length];
             for (int i = 0; i < length; i++) {
-                suggests[i] = buf.readString(32767);
+                suggests[i] = buf.readUtf(32767);
             }
             return new SuggestArgumentType(StringArgumentType.string(), suggests);
         }
 
         @Override
-        public void writeJson(SuggestArgumentType properties, JsonObject json) {
+        public void serializeToJson(SuggestArgumentType properties, JsonObject json) {
             JsonObject suggestsJson = new JsonObject();
             for (String suggest : properties.suggests) {
                 suggestsJson.addProperty(suggest, suggest);
@@ -93,7 +92,7 @@ public class SuggestArgumentType implements ArgumentType<String>, ArgumentSerial
         }
 
         @Override
-        public SuggestArgumentType getArgumentTypeProperties(SuggestArgumentType argumentType) {
+        public SuggestArgumentType unpack(SuggestArgumentType argumentType) {
             return argumentType;
         }
     }

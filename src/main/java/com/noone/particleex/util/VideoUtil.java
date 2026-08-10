@@ -6,6 +6,7 @@ import net.fabricmc.loader.api.FabricLoader;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -83,6 +84,10 @@ public class VideoUtil {
    }
 
    private static void decode(URLClassLoader loader, String path, Predicate<BufferedImage> consumer) throws Exception {
+      File videoFile = new File(VIDEODIR, path).getCanonicalFile();
+      if (!videoFile.getPath().startsWith(VIDEODIR.getCanonicalPath() + File.separator)) {
+         throw new IOException("invalid video path: " + path);
+      }
       Class<?> grabberClass = Class.forName("org.bytedeco.javacv.FFmpegFrameGrabber", true, loader);
       Class<?> converterClass = Class.forName("org.bytedeco.javacv.Java2DFrameConverter", true, loader);
       Class<?> frameClass = Class.forName("org.bytedeco.javacv.Frame", true, loader);
@@ -98,7 +103,7 @@ public class VideoUtil {
       Method converterClose = converterClass.getMethod("close");
       Field imageField = frameClass.getField("image");
 
-      Object grabber = grabberConstructor.newInstance(new File(VIDEODIR, path));
+      Object grabber = grabberConstructor.newInstance(videoFile);
       try {
          Object converter = converterConstructor.newInstance();
          try {

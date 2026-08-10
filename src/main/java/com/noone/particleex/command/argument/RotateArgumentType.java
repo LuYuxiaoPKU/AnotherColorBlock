@@ -10,24 +10,24 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
-import net.minecraft.command.CommandSource;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.Component;
 
 public class RotateArgumentType implements ArgumentType<Integer> {
-   public static final SimpleCommandExceptionType INVALID_EXCEPTION = new SimpleCommandExceptionType(Text.translatable("argument.rotate.invalid"));
+   public static final SimpleCommandExceptionType INVALID_EXCEPTION = new SimpleCommandExceptionType(Component.translatable("argument.rotate.invalid"));
    private static final Collection<String> EXAMPLES = Arrays.asList("0", "90", "180", "270");
 
    public static RotateArgumentType rotate() {
       return new RotateArgumentType();
    }
 
-   public static int getRotate(CommandContext<ServerCommandSource> context, String name) {
+   public static int getRotate(CommandContext<CommandSourceStack> context, String name) {
       return context.getArgument(name, Integer.class);
    }
 
    public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-      if (context.getSource() instanceof CommandSource) {
+      if (context.getSource() instanceof SharedSuggestionProvider) {
          String remaining = builder.getRemaining();
 
           for (String example : EXAMPLES) {
