@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "particleex",
+  "version": "${version}",
+  "name": "AnotherColorBlock",
+  "description": "社区维护版粒子工具模组：支持数学表达式、图片、视频生成粒子。源自 CC0 协议模组 AnotherColorBlock，与原作者及 Mojang 无关。Community-maintained particle tool mod derived from the CC0 mod AnotherColorBlock. Not affiliated with the original author or Mojang.",
+  "authors": ["noone89"],
+  "contact": {},
+  "license": "GPL-3.0",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "com.noone.particleex.ParticleExClient"
+    ],
+    "main": [
+      "com.noone.particleex.ParticleEx"
+    ]
+  },
+  "mixins": [
+    "particleex.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.17.0",
+    "fabric": "*",
+    "minecraft": "=1.21.11"
+  }
+}

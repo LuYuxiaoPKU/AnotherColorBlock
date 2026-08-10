@@ -1,0 +1,17 @@
+# IDE
+/.idea/
+*.iml
+
+# Gradle
+/.gradle/
+/build/
+/remappedSrc/
+
+# Game run directory
+/run/
+
+# IDE build output
+/out/
+
+# Compiled classes
+*.class
