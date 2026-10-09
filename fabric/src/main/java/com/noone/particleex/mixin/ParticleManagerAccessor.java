@@ -1,12 +1,12 @@
 package com.noone.particleex.mixin;
 
-import net.minecraft.client.particle.ParticleManager;
-import net.minecraft.particle.ParticleGroup;
+import net.minecraft.client.particle.ParticleEngine;
+import net.minecraft.core.particles.ParticleLimit;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-@Mixin({ParticleManager.class})
+@Mixin({ParticleEngine.class})
 public interface ParticleManagerAccessor {
-   @Invoker("addTo")
-   void invokeAddTo(ParticleGroup group, int count);
+   @Invoker("updateCount")
+   void invokeAddTo(ParticleLimit group, int num);
 }

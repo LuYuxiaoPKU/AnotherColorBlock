@@ -1,7 +1,7 @@
 package com.noone.particleex;
 
-import com.noone.particleex.network.payload.*;
 import com.noone.particleex.network.ClientNetworkHandler;
+import com.noone.particleex.network.payload.*;
 import com.noone.particleex.util.ParticleUtil;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -11,16 +11,16 @@ public class ParticleExClient implements ClientModInitializer {
    public void onInitializeClient() {
       ClientTickEvents.START_CLIENT_TICK.register(client -> ParticleUtil.onStartClientTick());
       ClientTickEvents.END_CLIENT_TICK.register(client -> ParticleUtil.onEndClientTick());
-      ClientPlayNetworking.registerGlobalReceiver(ClearParticlePayload.ID, (payload, context) -> ClientNetworkHandler.clearParticle(context));
-      ClientPlayNetworking.registerGlobalReceiver(ClearCachePayload.ID, (payload, context) -> ClientNetworkHandler.clearCache(context));
-      ClientPlayNetworking.registerGlobalReceiver(NormalPayload.ID, ClientNetworkHandler::normal);
-      ClientPlayNetworking.registerGlobalReceiver(ConditionalPayload.ID, ClientNetworkHandler::conditional);
-      ClientPlayNetworking.registerGlobalReceiver(ParameterPayload.ID, ClientNetworkHandler::parameter);
-      ClientPlayNetworking.registerGlobalReceiver(ImagePayload.ID,ClientNetworkHandler::image);
-      ClientPlayNetworking.registerGlobalReceiver(ImageMatrixPayload.ID, ClientNetworkHandler::imageMatrix);
-      ClientPlayNetworking.registerGlobalReceiver(VideoPayload.ID, ClientNetworkHandler::video);
-      ClientPlayNetworking.registerGlobalReceiver(VideoMatrixPayload.ID, ClientNetworkHandler::videoMatrix);
-      ClientPlayNetworking.registerGlobalReceiver(GroupRemovePayload.ID, ClientNetworkHandler::groupRemove);
-      ClientPlayNetworking.registerGlobalReceiver(GroupChangePayload.ID, ClientNetworkHandler::groupChange);
+      ClientPlayNetworking.registerGlobalReceiver(ClearParticlePayload.TYPE, (payload, context) -> ClientNetworkHandler.clearParticle(context));
+      ClientPlayNetworking.registerGlobalReceiver(ClearCachePayload.TYPE, (payload, context) -> ClientNetworkHandler.clearCache(context));
+      ClientPlayNetworking.registerGlobalReceiver(NormalPayload.TYPE, ClientNetworkHandler::normal);
+      ClientPlayNetworking.registerGlobalReceiver(ConditionalPayload.TYPE, ClientNetworkHandler::conditional);
+      ClientPlayNetworking.registerGlobalReceiver(ParameterPayload.TYPE, ClientNetworkHandler::parameter);
+      ClientPlayNetworking.registerGlobalReceiver(ImagePayload.TYPE, ClientNetworkHandler::image);
+      ClientPlayNetworking.registerGlobalReceiver(ImageMatrixPayload.TYPE, ClientNetworkHandler::imageMatrix);
+      ClientPlayNetworking.registerGlobalReceiver(VideoPayload.TYPE, ClientNetworkHandler::video);
+      ClientPlayNetworking.registerGlobalReceiver(VideoMatrixPayload.TYPE, ClientNetworkHandler::videoMatrix);
+      ClientPlayNetworking.registerGlobalReceiver(GroupRemovePayload.TYPE, ClientNetworkHandler::groupRemove);
+      ClientPlayNetworking.registerGlobalReceiver(GroupChangePayload.TYPE, ClientNetworkHandler::groupChange);
    }
 }

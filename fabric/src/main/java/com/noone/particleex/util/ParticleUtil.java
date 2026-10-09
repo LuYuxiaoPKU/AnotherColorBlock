@@ -2,7 +2,9 @@ package com.noone.particleex.util;
 
 import com.google.common.collect.Queues;
 import com.noone.particleex.ParticleEx;
+import com.noone.particleex.util.MessageBridge;
 import com.noone.particleex.mixin.IParticleMixin;
+import com.noone.particleex.util.IParticle;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -11,36 +13,36 @@ import java.util.Queue;
 import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Predicate;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.particle.ParticleEffect;
+import net.minecraft.core.particles.ParticleOptions;
 
 public class ParticleUtil {
    private static final Queue<TimerTask> TICKSTARTTASKS = Queues.newArrayDeque();
    private static final Queue<TimerTask> TICKENDTASKS = Queues.newArrayDeque();
-   private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
+   private static final Minecraft CLIENT = Minecraft.getInstance();
 
-   public static Particle spawnParticle(ParticleEffect effect, double x, double y, double z, double cx, double cy, double cz, float red, float green, float blue, float alpha, double vx, double vy, double vz, int age, String expression, double step, String group) {
+   public static Particle spawnParticle(ParticleOptions effect, double x, double y, double z, double cx, double cy, double cz, float red, float green, float blue, float alpha, double vx, double vy, double vz, int age, String expression, double step, String group) {
       try {
-         Particle particle = CLIENT.particleManager.addParticle(effect, x, y, z, vx, vy, vz);
+         Particle particle = CLIENT.particleEngine.createParticle(effect, x, y, z, vx, vy, vz);
          if (particle != null) {
             ((IParticle)particle).setRenderColor(red, green, blue, alpha);
             if (vx == 0.0D && vy == 0.0D && vz == 0.0D) {
                ((IParticle)particle).setStop(true);
             } else {
                ((IParticle)particle).setStop(false);
-               ((IParticleMixin)particle).setVelocityX(vx);
-               ((IParticleMixin)particle).setVelocityY(vy);
-               ((IParticleMixin)particle).setVelocityZ(vz);
+               ((IParticleMixin)particle).setXd(vx);
+               ((IParticleMixin)particle).setYd(vy);
+               ((IParticleMixin)particle).setZd(vz);
             }
 
             ((IParticle)particle).setCenterX(cx);
             ((IParticle)particle).setCenterY(cy);
             ((IParticle)particle).setCenterZ(cz);
             if (age > 0) {
-               particle.setMaxAge(age);
+               particle.setLifetime(age);
             } else if (age == -1) {
-               particle.setMaxAge(Integer.MAX_VALUE);
+               particle.setLifetime(Integer.MAX_VALUE);
             }
 
             if (expression != null && !expression.equals("null")) {
@@ -54,28 +56,28 @@ public class ParticleUtil {
 
          return particle;
       } catch (RuntimeException var29) {
-         ClientMessageUtil.addChatMessage(var29);
+         MessageBridge.report(var29);
          return null;
       }
    }
 
-   public static void spawnTickParticle(ParticleEffect effect, double x, double y, double z, float red, float green, float blue, float alpha, double vx, double vy, double vz, double begin, double end, String expression, double step, int cpt, int age, String speedExpression, double speedStep, String group, boolean polar) {
+   public static void spawnTickParticle(ParticleOptions effect, double x, double y, double z, float red, float green, float blue, float alpha, double vx, double vy, double vz, double begin, double end, String expression, double step, int cpt, int age, String speedExpression, double speedStep, String group, boolean polar) {
       (new ParticleUtil.TickParticleTask(effect, x, y, z, red, green, blue, alpha, vx, vy, vz, begin, end, expression, step, cpt, age, speedExpression, speedStep, group, polar, false)).run();
    }
 
-   public static void spawnTickParticle(ParticleEffect effect, double x, double y, double z, double vx, double vy, double vz, double begin, double end, String expression, double step, int cpt, int age, String speedExpression, double speedStep, String group, boolean polar) {
+   public static void spawnTickParticle(ParticleOptions effect, double x, double y, double z, double vx, double vy, double vz, double begin, double end, String expression, double step, int cpt, int age, String speedExpression, double speedStep, String group, boolean polar) {
       (new ParticleUtil.TickParticleTask(effect, x, y, z, 1.0F, 1.0F, 1.0F, 1.0F, vx, vy, vz, begin, end, expression, step, cpt, age, speedExpression, speedStep, group, polar, true)).run();
    }
 
-   public static void spawnImageParticle(ParticleEffect effect, double x, double y, double z, String path, double scaling, int xRotate, int yRotate, int zRotate, boolean flip, double dpb, double vx, double vy, double vz, int age, String speedExpression, double speedStep, String group) {
+   public static void spawnImageParticle(ParticleOptions effect, double x, double y, double z, String path, double scaling, int xRotate, int yRotate, int zRotate, boolean flip, double dpb, double vx, double vy, double vz, int age, String speedExpression, double speedStep, String group) {
       spawnImageParticle(effect, x, y, z, path, scaling, xRotate, yRotate, zRotate, flip, null, dpb, vx, vy, vz, age, speedExpression, speedStep, group);
    }
 
-   public static void spawnImageParticle(ParticleEffect effect, double x, double y, double z, String path, double scaling, double[][] matrix, double dpb, double vx, double vy, double vz, int age, String speedExpression, double speedStep, String group) {
+   public static void spawnImageParticle(ParticleOptions effect, double x, double y, double z, String path, double scaling, double[][] matrix, double dpb, double vx, double vy, double vz, int age, String speedExpression, double speedStep, String group) {
       spawnImageParticle(effect, x, y, z, path, scaling, 0, 0, 0, false, matrix, dpb, vx, vy, vz, age, speedExpression, speedStep, group);
    }
 
-   public static void spawnImageParticle(ParticleEffect effect, double x, double y, double z, String path, double scaling, int xRotate, int yRotate, int zRotate, boolean flip, double[][] matrix, double dpb, double vx, double vy, double vz, int age, String speedExpression, double speedStep, String group) {
+   public static void spawnImageParticle(ParticleOptions effect, double x, double y, double z, String path, double scaling, int xRotate, int yRotate, int zRotate, boolean flip, double[][] matrix, double dpb, double vx, double vy, double vz, int age, String speedExpression, double speedStep, String group) {
       try {
          BufferedImage image = ImageUtil.readImage(path, scaling);
          int rows = image.getHeight();
@@ -108,15 +110,15 @@ public class ParticleUtil {
 
    }
 
-   public static void spawnVideoParticle(ParticleEffect effect, double x, double y, double z, String path, double scaling, int xRotate, int yRotate, int zRotate, boolean flip, double dpb, double vx, double vy, double vz, int age, String speedExpression, double speedStep, String group) {
+   public static void spawnVideoParticle(ParticleOptions effect, double x, double y, double z, String path, double scaling, int xRotate, int yRotate, int zRotate, boolean flip, double dpb, double vx, double vy, double vz, int age, String speedExpression, double speedStep, String group) {
       spawnVideoParticle(effect, x, y, z, path, scaling, xRotate, yRotate, zRotate, flip, null, dpb, vx, vy, vz, age, speedExpression, speedStep, group);
    }
 
-   public static void spawnVideoParticle(ParticleEffect effect, double x, double y, double z, String path, double scaling, double[][] matrix, double dpb, double vx, double vy, double vz, int age, String speedExpression, double speedStep, String group) {
+   public static void spawnVideoParticle(ParticleOptions effect, double x, double y, double z, String path, double scaling, double[][] matrix, double dpb, double vx, double vy, double vz, int age, String speedExpression, double speedStep, String group) {
       spawnVideoParticle(effect, x, y, z, path, scaling, 0, 0, 0, false, matrix, dpb, vx, vy, vz, age, speedExpression, speedStep, group);
    }
 
-   public static void spawnVideoParticle(ParticleEffect effect, double x, double y, double z, String path, double scaling, int xRotate, int yRotate, int zRotate, boolean flip, double[][] matrix, double dpb, double vx, double vy, double vz, int age, String speedExpression, double speedStep, String group) {
+   public static void spawnVideoParticle(ParticleOptions effect, double x, double y, double z, String path, double scaling, int xRotate, int yRotate, int zRotate, boolean flip, double[][] matrix, double dpb, double vx, double vy, double vz, int age, String speedExpression, double speedStep, String group) {
       VideoUtil.decoder(path, new ParticleUtil.VideoConsumer(effect, x, y, z, scaling, xRotate, yRotate, zRotate, flip, matrix, dpb, vx, vy, vz, age, speedExpression, speedStep, group));
    }
 
@@ -196,7 +198,7 @@ public class ParticleUtil {
    }
 
    private static class TickParticleTask extends TimerTask {
-      private final ParticleEffect particleType;
+      private final ParticleOptions particleType;
       private final double x;
       private final double y;
       private final double z;
@@ -219,7 +221,7 @@ public class ParticleUtil {
       private final boolean polar;
       private final boolean rgba;
 
-      public TickParticleTask(ParticleEffect particleType, double x, double y, double z, float red, float green, float blue, float alpha, double vx, double vy, double vz, double begin, double end, String expression, double step, int cpt, int age, String speedExpression, double speedStep, String group, boolean polar, boolean rgba) {
+      public TickParticleTask(ParticleOptions particleType, double x, double y, double z, float red, float green, float blue, float alpha, double vx, double vy, double vz, double begin, double end, String expression, double step, int cpt, int age, String speedExpression, double speedStep, String group, boolean polar, boolean rgba) {
          this.polar = polar;
          this.rgba = rgba;
          this.particleType = particleType;
@@ -284,7 +286,7 @@ public class ParticleUtil {
    }
 
    private static class VideoConsumer implements Predicate<BufferedImage> {
-      private final ParticleEffect effect;
+      private final ParticleOptions effect;
       private final double x;
       private final double y;
       private final double z;
@@ -306,7 +308,7 @@ public class ParticleUtil {
       private Particle[][] particles;
       private final CountDownLatch initLatch = new CountDownLatch(1);
 
-      private VideoConsumer(ParticleEffect effect, double x, double y, double z, double scaling, int xRotate, int yRotate, int zRotate, boolean flip, double[][] matrix, double dpb, double vx, double vy, double vz, int age, String speedExpression, double speedStep, String group) {
+      private VideoConsumer(ParticleOptions effect, double x, double y, double z, double scaling, int xRotate, int yRotate, int zRotate, boolean flip, double[][] matrix, double dpb, double vx, double vy, double vz, int age, String speedExpression, double speedStep, String group) {
          this.effect = effect;
          this.x = x;
          this.y = y;

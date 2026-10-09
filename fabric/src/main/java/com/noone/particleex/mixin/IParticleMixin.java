@@ -16,22 +16,22 @@ public interface IParticleMixin {
    double getZ();
 
    @Accessor
-   double getVelocityX();
+   double getXd();
 
    @Accessor
-   void setVelocityX(double var1);
+   void setXd(double var1);
 
    @Accessor
-   double getVelocityY();
+   double getYd();
 
    @Accessor
-   void setVelocityY(double var1);
+   void setYd(double var1);
 
    @Accessor
-   double getVelocityZ();
+   double getZd();
 
    @Accessor
-   void setVelocityZ(double var1);
+   void setZd(double var1);
 
    @Accessor
    int getAge();

@@ -110,7 +110,7 @@ public abstract class ParticleMixin implements IParticleMixin, IParticle {
    public abstract void move(double var1, double var3, double var5);
 
    @Shadow
-   public abstract void markDead();
+   public abstract void remove();
 
    @Shadow
    public abstract void setPos(double var1, double var3, double var5);
@@ -163,12 +163,12 @@ public abstract class ParticleMixin implements IParticleMixin, IParticle {
             this.exe.invoke();
          } catch (RuntimeException var3) {
             MessageBridge.report(var3);
-            this.markDead();
+            this.remove();
             return;
          }
 
          if (data.destroy != 0.0D) {
-            this.markDead();
+            this.remove();
             return;
          }
 

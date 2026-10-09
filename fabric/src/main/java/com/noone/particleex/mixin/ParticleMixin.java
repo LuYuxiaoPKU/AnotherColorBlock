@@ -1,11 +1,11 @@
 package com.noone.particleex.mixin;
 
-import com.noone.particleex.util.ClientMessageUtil;
 import com.noone.particleex.util.IExecutable;
 import com.noone.particleex.util.IParticle;
+import com.noone.particleex.util.MessageBridge;
 import com.noone.particleex.util.ParticleStruct;
-import net.minecraft.client.particle.BillboardParticle;
 import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.SingleQuadParticle;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -40,20 +40,20 @@ public abstract class ParticleMixin implements IParticleMixin, IParticle {
    protected double y;
    @Shadow
    protected double z;
-    @Shadow
-    protected double velocityX;
-    @Shadow
-    protected double velocityY;
-    @Shadow
-    protected double velocityZ;
-    @Unique
-    private float red = 1.0F;
-    @Unique
-    private float green = 1.0F;
-    @Unique
-    private float blue = 1.0F;
-    @Unique
-    private float alpha = 1.0F;
+   @Shadow
+   protected double xd;
+   @Shadow
+   protected double yd;
+   @Shadow
+   protected double zd;
+   @Unique
+   private float red = 1.0F;
+   @Unique
+   private float green = 1.0F;
+   @Unique
+   private float blue = 1.0F;
+   @Unique
+   private float alpha = 1.0F;
 
    public void setExe(IExecutable exe) {
       this.exe = exe;
@@ -110,7 +110,7 @@ public abstract class ParticleMixin implements IParticleMixin, IParticle {
    public abstract void move(double var1, double var3, double var5);
 
    @Shadow
-   public abstract void markDead();
+   public abstract void remove();
 
    @Shadow
    public abstract void setPos(double var1, double var3, double var5);
@@ -162,13 +162,13 @@ public abstract class ParticleMixin implements IParticleMixin, IParticle {
          try {
             this.exe.invoke();
          } catch (RuntimeException var3) {
-            ClientMessageUtil.addChatMessage(var3);
-            this.markDead();
+            MessageBridge.report(var3);
+            this.remove();
             return;
          }
 
-          if (data.destroy != 0.0D) {
-            this.markDead();
+         if (data.destroy != 0.0D) {
+            this.remove();
             return;
          }
 
@@ -186,14 +186,13 @@ public abstract class ParticleMixin implements IParticleMixin, IParticle {
          this.alpha = (float)data.alpha;
          this.syncRenderColor();
       }
-
    }
 
    @Unique
    private void syncRenderColor() {
-      if ((Object) this instanceof BillboardParticle billboardParticle) {
-         billboardParticle.setColor(this.red, this.green, this.blue);
-         ((IBillboardParticleMixin) billboardParticle).setAlpha(this.alpha);
+      if ((Object) this instanceof SingleQuadParticle quad) {
+         quad.setColor(this.red, this.green, this.blue);
+         ((IBillboardParticleMixin) quad).setAlpha(this.alpha);
       }
    }
 

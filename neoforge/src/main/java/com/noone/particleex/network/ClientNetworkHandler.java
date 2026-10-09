@@ -1,6 +1,6 @@
 package com.noone.particleex.network;
 
-import com.noone.particleex.mixin.ISingleQuadParticleMixin;
+import com.noone.particleex.mixin.IBillboardParticleMixin;
 import com.noone.particleex.mixin.IParticleMixin;
 import com.noone.particleex.network.payload.*;
 import com.noone.particleex.util.ExpressionUtil;
@@ -29,7 +29,7 @@ public class ClientNetworkHandler {
       Minecraft client = Minecraft.getInstance();
       client.execute(() -> {
          GroupUtil.clear();
-         client.particleEngine.setWorld(client.world);
+         client.particleEngine.setLevel(client.level);
       });
    }
 
@@ -277,7 +277,7 @@ public class ClientNetworkHandler {
                    data.cx = ((IParticle)particle).getCenterX();
                    data.cy = ((IParticle)particle).getCenterY();
                    data.cz = ((IParticle)particle).getCenterZ();
-                   if (particle instanceof ISingleQuadParticleMixin billboardParticle) {
+                   if (particle instanceof IBillboardParticleMixin billboardParticle) {
                       data.cr = billboardParticle.getRCol();
                       data.cg = billboardParticle.getGCol();
                       data.cb = billboardParticle.getBCol();
