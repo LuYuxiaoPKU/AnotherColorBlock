@@ -37,3 +37,11 @@
 | constant 参数注册 | `SingletonArgumentInfo.contextFree` | 1.21 前为 `ConstantArgumentTypes` |
 | 权限 API | `PermissionLevel`（枚举） | 1.21.6 前为 `requires(2)` 整数等级 |
 | Minecraft 世界字段 | `level` | yarn 名 `world`（映射转换时） |
+| 运行时 JDK | Java 21 | **26.x 起要求 Java 25**（Gradle ≥ 9.x；CI 动态 JDK 已就绪） |
+| loom 版本 | 1.13.6 | **26.x 用 1.18-SNAPSHOT**（1.17 线不支持 26.x 映射获取） |
+| 官方映射 | `loom.officialMojangMappings()` 可用 | **26.x 下需 loom 1.18 线**才能获取（否则报 Failed to find official mojang mappings） |
+
+## 26.x 特有（2026-10-10 实证）
+
+- 26.3：fabric loader 0.19.5、fabric-api 0.162.0+26.3、neoform 26.3-1、neoforge 26.3.0.43-beta（beta 期，后续可能升）
+- 26.3 的 NeoForge 仍 beta：`neoforge_version=26.3.0.43-beta`（AE2 引用）
