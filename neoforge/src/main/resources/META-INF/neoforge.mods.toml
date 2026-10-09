@@ -23,6 +23,6 @@ side = "BOTH"
 [[dependencies.particleex]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21.11,1.22)"
+versionRange = "[26.3,26.4)"
 ordering = "NONE"
 side = "BOTH"
