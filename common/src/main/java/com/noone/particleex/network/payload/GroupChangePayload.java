@@ -12,7 +12,7 @@ import static com.noone.particleex.network.PayloadCodecUtil.readString;
 public record GroupChangePayload(int type,String group, String expression,String conditionalExpression, Vec3 pos) implements CustomPacketPayload {
   public static final Type<GroupChangePayload> TYPE = new Type<>(NetworkIdentifiers.GROUP_CHANGE_PACKET_ID);
   public static final StreamCodec<RegistryFriendlyByteBuf, GroupChangePayload> CODEC = StreamCodec.of(
-          (value, buf) -> {
+          (buf, value) -> {
               buf.writeInt(value.type);
               buf.writeString(value.group);
               buf.writeString(value.expression);

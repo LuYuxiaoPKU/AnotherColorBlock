@@ -1,7 +1,6 @@
 package com.noone.particleex.network.payload;
 
 import com.google.common.base.Strings;
-import com.noone.particleex.ParticleEx;
 import com.noone.particleex.network.NetworkIdentifiers;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -15,7 +14,7 @@ import static com.noone.particleex.network.PayloadCodecUtil.*;
 public record ParameterPayload(boolean polar, boolean tick, boolean rgba, double x, double y, double z, Vector4f color, double vx, double vy, double vz, double begin, double end, String expression, double step, int cpt, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements CustomPacketPayload {
   public static final Type<ParameterPayload> TYPE = new Type<>(NetworkIdentifiers.PARAMETER_PACKET_ID);
   public static final StreamCodec<RegistryFriendlyByteBuf, ParameterPayload> CODEC = StreamCodec.of(
-          (value, buf) -> {
+          (buf, value) -> {
               buf.writeBoolean(value.polar);
               buf.writeBoolean(value.tick);
               buf.writeBoolean(value.rgba);

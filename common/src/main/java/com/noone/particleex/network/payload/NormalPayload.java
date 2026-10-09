@@ -12,7 +12,7 @@ import net.minecraft.core.particles.ParticleTypes;
 public record NormalPayload(double x, double y, double z, float red, float green, float blue, float alpha, double vx, double vy, double vz, double dx, double dy, double dz, int count, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements CustomPacketPayload {
   public static final Type<NormalPayload> TYPE = new Type<>(NetworkIdentifiers.NORMAL_PACKET_ID);
   public static final StreamCodec<RegistryFriendlyByteBuf, NormalPayload> CODEC = StreamCodec.of(
-          (value, buf) -> {
+          (buf, value) -> {
               buf.writeDouble(value.x);
               buf.writeDouble(value.y);
               buf.writeDouble(value.z);

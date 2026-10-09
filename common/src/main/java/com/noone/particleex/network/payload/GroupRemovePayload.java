@@ -16,7 +16,7 @@ import static com.noone.particleex.network.PayloadCodecUtil.readString;
 public record GroupRemovePayload(String group, String expression, Vec3 pos) implements CustomPacketPayload {
   public static final Type<GroupRemovePayload> TYPE = new Type<>(NetworkIdentifiers.GROUP_REMOVE_PACKET_ID);
   public static final StreamCodec<RegistryFriendlyByteBuf, GroupRemovePayload> CODEC = StreamCodec.of(
-          (value, buf) -> {
+          (buf, value) -> {
               buf.writeString(value.group);
               buf.writeBoolean(!Strings.isNullOrEmpty(value.expression) && !value.expression.equals("null"));
               if (!Strings.isNullOrEmpty(value.expression) && !value.expression.equals("null")) {
