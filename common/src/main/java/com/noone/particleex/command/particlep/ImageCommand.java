@@ -24,7 +24,7 @@ import net.minecraft.world.phys.Vec3;
 public class ImageCommand {
    public static void register(LiteralArgumentBuilder<CommandSourceStack> rootCommand, CommandBuildContext registryAccess) {
       rootCommand.then(Commands.literal("image")
-          .then(Commands.argument("name", ParticleArgument.particleEffect(registryAccess))
+          .then(Commands.argument("name", ParticleArgument.particle(registryAccess))
               .then(Commands.argument("pos", Vec3Argument.vec3())
                   .then(Commands.argument("path", StringArgumentType.string())
                       .executes(context -> execute(context, ParticleArgument.getParticle(context, "name"), Vec3Argument.getVec3(context, "pos"), StringArgumentType.getString(context, "path"), 0.1D, 0, 0, 0, 0, 10.0D, null, 0, null, 1.0D, null))

@@ -187,7 +187,7 @@ public class ParameterCommand {
    }
 
    private static ArgumentBuilder<CommandSourceStack, ?> getStart(CommandBuildContext registryAccess,ArgumentBuilder<CommandSourceStack, ?> then) {
-      return Commands.argument("name", ParticleArgument.particleEffect(registryAccess))
+      return Commands.argument("name", ParticleArgument.particle(registryAccess))
               .then(Commands.argument("pos", Vec3Argument.vec3())
                   .then(then)
               );
