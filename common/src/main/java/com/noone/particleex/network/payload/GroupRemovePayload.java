@@ -17,10 +17,10 @@ public record GroupRemovePayload(String group, String expression, Vec3 pos) impl
   public static final Type<GroupRemovePayload> TYPE = new Type<>(NetworkIdentifiers.GROUP_REMOVE_PACKET_ID);
   public static final StreamCodec<RegistryFriendlyByteBuf, GroupRemovePayload> CODEC = StreamCodec.of(
           (buf, value) -> {
-              buf.writeString(value.group);
+              buf.writeUtf(value.group);
               buf.writeBoolean(!Strings.isNullOrEmpty(value.expression) && !value.expression.equals("null"));
               if (!Strings.isNullOrEmpty(value.expression) && !value.expression.equals("null")) {
-                  buf.writeString(value.expression);
+                  buf.writeUtf(value.expression);
               }
 
               buf.writeBoolean(value.pos != null);

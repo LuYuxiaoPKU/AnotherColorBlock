@@ -19,7 +19,7 @@ public record VideoPayload(double x, double y, double z, String path, double sca
               buf.writeDouble(value.x);
               buf.writeDouble(value.y);
               buf.writeDouble(value.z);
-              buf.writeString(value.path);
+              buf.writeUtf(value.path);
               buf.writeDouble(value.scaling);
               buf.writeInt(value.xRotate);
               buf.writeInt(value.yRotate);
@@ -38,13 +38,13 @@ public record VideoPayload(double x, double y, double z, String path, double sca
               buf.writeInt(value.age);
               buf.writeBoolean(!Strings.isNullOrEmpty(value.speedExpression) && !value.speedExpression.equals("null"));
               if (!Strings.isNullOrEmpty(value.speedExpression) && !value.speedExpression.equals("null")) {
-                  buf.writeString(value.speedExpression);
+                  buf.writeUtf(value.speedExpression);
                   buf.writeDouble(value.speedStep);
               }
 
               buf.writeBoolean(!Strings.isNullOrEmpty(value.group) && !value.group.equals("null"));
               if (!Strings.isNullOrEmpty(value.group) && !value.group.equals("null")) {
-                  buf.writeString(value.group);
+                  buf.writeUtf(value.group);
               }
 
               ParticleTypes.STREAM_CODEC.encode(buf, value.effect);
