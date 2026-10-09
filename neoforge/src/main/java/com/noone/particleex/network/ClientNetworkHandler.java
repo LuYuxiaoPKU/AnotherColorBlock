@@ -15,7 +15,7 @@ import java.util.Random;
 
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.particles.ParticleOptions;
@@ -195,7 +195,7 @@ public class ClientNetworkHandler {
    }
 
    public static void groupRemove(GroupRemovePayload payload, IPayloadContext context) {
-      LocalPlayer player = context.player();
+      Player player = context.player();
       Vec3 pos = payload.pos();
       double x,y,z;
       if(pos == null){
@@ -215,7 +215,7 @@ public class ClientNetworkHandler {
       String group = payload.group();
       String expression = payload.expression();
       String conditionalExpression = payload.conditionalExpression();
-      LocalPlayer player = context.player();
+      Player player = context.player();
       Vec3 pos = payload.pos();
       double x,y,z;
       if(pos == null){
