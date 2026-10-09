@@ -20,5 +20,5 @@ rootProject.name = 'AnotherColorBlock'
 
 include 'common'
 include 'fabric'
-// include 'neoforge'  — 待 maven.neoforged.net 可达后启用
+include 'neoforge'
 
