@@ -45,3 +45,9 @@
 
 - 26.3：fabric loader 0.19.5、fabric-api 0.162.0+26.3、neoform 26.3-1、neoforge 26.3.0.43-beta（beta 期，后续可能升）
 - 26.3 的 NeoForge 仍 beta：`neoforge_version=26.3.0.43-beta`（AE2 引用）
+## 26.x 映射生态（2026-10-10 实证）
+
+- **官方 ProGuard 映射（client_mappings/server_mappings）自 26.x 起停止发布**：loom 报 "Failed to find official mojang mappings"（piston-meta manifest 无此键）
+- yarn 26.x 迁移：`org.relativitymc:modern-yarn:<ver>:v2`（C2ME 引用），发布在 GitHub Packages（maven.pkg.github.com，需 GPR 认证）；maven.fabricmc.net 无 26.3 的 yarn
+- loom 26.x：官方映射获取路径在 loom 1.18-SNAPSHOT 更新（待验证）；稳定版 1.17.21 不支持 26.3
+- NeoForge 26.x 无碍（NeoForm 26.3-1 正常）
