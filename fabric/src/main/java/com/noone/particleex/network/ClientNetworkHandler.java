@@ -13,6 +13,7 @@ import com.noone.particleex.util.ParticleUtil;
 import java.util.Iterator;
 import java.util.Random;
 
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.Context;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -315,6 +316,6 @@ public class ClientNetworkHandler {
    }
 
    public static String readString(FriendlyByteBuf buf, boolean read) {
-       return read ? buf.readString() : null;
+       return read ? buf.readUtf() : null;
    }
 }

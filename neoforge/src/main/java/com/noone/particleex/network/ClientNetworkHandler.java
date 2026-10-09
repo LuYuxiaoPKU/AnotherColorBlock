@@ -315,6 +315,6 @@ public class ClientNetworkHandler {
    }
 
    public static String readString(FriendlyByteBuf buf, boolean read) {
-       return read ? buf.readString() : null;
+       return read ? buf.readUtf() : null;
    }
 }
