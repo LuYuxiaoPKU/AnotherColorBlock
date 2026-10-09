@@ -15,7 +15,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.noone.particleex.network.payload.ImagePayload;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.arguments.ParticleArgument;
-import net.minecraft.commands.arguments.Vec3Argument;
+import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.CommandSourceStack;

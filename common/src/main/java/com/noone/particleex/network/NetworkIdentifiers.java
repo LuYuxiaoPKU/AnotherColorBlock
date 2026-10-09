@@ -1,6 +1,6 @@
 package com.noone.particleex.network;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /** 全部 S2C payload 的协议 ID（Mojang 映射，common 与两端共用）。 */
 public class NetworkIdentifiers {
