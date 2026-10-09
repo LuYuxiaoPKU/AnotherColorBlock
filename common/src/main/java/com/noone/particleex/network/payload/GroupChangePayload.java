@@ -13,7 +13,7 @@ public record GroupChangePayload(int changeType,String group, String expression,
   public static final Type<GroupChangePayload> TYPE = new Type<>(NetworkIdentifiers.GROUP_CHANGE_PACKET_ID);
   public static final StreamCodec<RegistryFriendlyByteBuf, GroupChangePayload> CODEC = StreamCodec.of(
           (buf, value) -> {
-              buf.writeInt(value.type);
+              buf.writeInt(value.changeType);
               buf.writeUtf(value.group);
               buf.writeUtf(value.expression);
               buf.writeBoolean(!Strings.isNullOrEmpty(value.conditionalExpression) && !value.conditionalExpression.equals("null"));

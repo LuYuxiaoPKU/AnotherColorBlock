@@ -14,7 +14,7 @@ public class FunctionListCommand {
    }
 
    public static int execute(CommandContext<CommandSourceStack> context) {
-      context.getSource().sendFeedback(() -> Component.literal(FUNCTIONLIST), false);
+      context.getSource().sendSuccess(() -> Component.literal(FUNCTIONLIST), false);
       return 1;
    }
 }

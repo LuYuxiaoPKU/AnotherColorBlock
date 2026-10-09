@@ -25,7 +25,7 @@ import org.joml.Vector4f;
 public class ConditionalCommand {
    public static void register(LiteralArgumentBuilder<CommandSourceStack> rootCommand, CommandBuildContext registryAccess) {
       rootCommand.then(Commands.literal("conditional")
-          .then(Commands.argument("name", ParticleArgument.particleEffect(registryAccess))
+          .then(Commands.argument("name", ParticleArgument.particle(registryAccess))
               .then(Commands.argument("pos", Vec3Argument.vec3())
                   .then(Commands.argument("color", Color4ArgumentType.color4())
                       .then(Commands.argument("speed", Speed3ArgumentType.speed3())
