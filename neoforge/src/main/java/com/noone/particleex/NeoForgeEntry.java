@@ -72,7 +72,7 @@ public class NeoForgeEntry {
     private static <T extends CustomPacketPayload> void reg(
             PayloadRegistrar registrar,
             CustomPacketPayload.Type<T> type,
-            StreamCodec<RegistryFriendlyByteBuf, T> codec,
+            StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
             BiConsumer<T, IPayloadContext> handler) {
         registrar.playToClient(type, codec, (payload, ctx) -> ctx.enqueueWork(() -> handler.accept(payload, ctx)));
     }
