@@ -56,7 +56,7 @@ public class GroupUtil {
                                  data.t = data.age;
                               }
                               if (exe != null && exe.invoke() != 0) {
-                                  o.markDead();
+                                  o.remove();
                               }
                           }
                       }
@@ -64,7 +64,7 @@ public class GroupUtil {
                       particles.removeIf((particle) -> !particle.isAlive());
                   } else {
                       for (Particle o : particles) {
-                          o.markDead();
+                          o.remove();
                       }
                       particles.clear();
                   }
