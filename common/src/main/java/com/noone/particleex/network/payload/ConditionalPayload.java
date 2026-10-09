@@ -11,7 +11,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import static com.noone.particleex.network.PayloadCodecUtil.readDouble;
 import static com.noone.particleex.network.PayloadCodecUtil.readString;
 
-public record ConditionalPayload(double x, double y, double z, float red, float green, float blue, float alpha, double vx, double vy, double vz, double dx, double dy, double dz,String expression,double step, int age, String speedExpression, double speedStep, String group, ParticleEffect effect) implements CustomPacketPayload {
+public record ConditionalPayload(double x, double y, double z, float red, float green, float blue, float alpha, double vx, double vy, double vz, double dx, double dy, double dz,String expression,double step, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements CustomPacketPayload {
   public static final Type<ConditionalPayload> TYPE = new Type<>(NetworkIdentifiers.CONDITIONAL_PACKET_ID);
   public static final StreamCodec<RegistryFriendlyByteBuf, ConditionalPayload> CODEC = StreamCodec.of(
           (value, buf) -> {
@@ -69,7 +69,7 @@ public record ConditionalPayload(double x, double y, double z, float red, float 
               String speedExpression = readString(buf, hasSpeedExpression);
               double speedStep = readDouble(buf, hasSpeedExpression, 1.0D);
               String group = readString(buf, buf.readBoolean());
-              ParticleEffect effect = ParticleTypes.STREAM_CODEC.decode(buf);
+              ParticleOptions effect = ParticleTypes.STREAM_CODEC.decode(buf);
              return new ConditionalPayload(x,y,z,red,green,blue,alpha,vx,vy,vz,dx,dy,dz,expression,step,age,speedExpression,speedStep,group,effect);
           }
   );

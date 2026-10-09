@@ -9,7 +9,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 
-public record NormalPayload(double x, double y, double z, float red, float green, float blue, float alpha, double vx, double vy, double vz, double dx, double dy, double dz, int count, int age, String speedExpression, double speedStep, String group, ParticleEffect effect) implements CustomPacketPayload {
+public record NormalPayload(double x, double y, double z, float red, float green, float blue, float alpha, double vx, double vy, double vz, double dx, double dy, double dz, int count, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements CustomPacketPayload {
   public static final Type<NormalPayload> TYPE = new Type<>(NetworkIdentifiers.NORMAL_PACKET_ID);
   public static final StreamCodec<RegistryFriendlyByteBuf, NormalPayload> CODEC = StreamCodec.of(
           (value, buf) -> {
@@ -59,7 +59,7 @@ public record NormalPayload(double x, double y, double z, float red, float green
              String speedExpression = PayloadCodecUtil.readString(buf, hasSpeedExpression);
              double speedStep = PayloadCodecUtil.readDouble(buf, hasSpeedExpression, 1.0D);
              String group = PayloadCodecUtil.readString(buf, buf.readBoolean());
-             ParticleEffect effect = ParticleTypes.STREAM_CODEC.decode(buf);
+             ParticleOptions effect = ParticleTypes.STREAM_CODEC.decode(buf);
              return new NormalPayload(x,y,z,red,green,blue,alpha,vx,vy,vz,dx,dy,dz,count,age,speedExpression,speedStep,group,effect);
           }
   );
