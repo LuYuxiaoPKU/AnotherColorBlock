@@ -58,6 +58,11 @@ javap -c /tmp/x.class          # 字节码（<init> 内容、字段初始化）
 1. **映射表改名 ≠ 全部**：类/方法级改名（yarn→mojang）用 tiny 能查；**签名级变革（方法移除、注入点实现变化）只能靠字节码核验**。每次做新版本时对全部 mixin 注入点和 @Accessor/@Invoker/@Shadow 目标执行一遍本表流程。
 2. **借用 yarn 旧版实现时**：yarn 版能工作不代表迁移后目标存在——本次 1.21.11 的 `ArrayDeque.<init>` ModifyArg 与 `markDead()` 即为 yarn 旧分支残留（可见的实现差异说明目标版本经历了重构）。
 3. 核验时优先用**本项目锁定的 MC 版本的 named jar**，不要凭记忆或别的版本结论。
+4. **loom 的 named jar 是 NeoForge 分支（NeoForm）反编译产物，不是纯 vanilla mojang 名**：NeoForge 21.x 在 NeoForm 中做了改名（2026-10-09 实测）：
+   - `net.minecraft.resources.ResourceLocation` → **`net.minecraft.resources.Identifier`**（方法集含 `fromNamespaceAndPath`/`parse`/`withDefaultNamespace` 等）
+   - `net.minecraft.commands.arguments.Vec3Argument` → `net.minecraft.commands.arguments.coordinates.Vec3Argument`（yarn 亦为 coordinates 子包）
+   - 编译期必须按**本项目锁定的 named jar** 写名；fabric 侧 remapJar 会把 named→intermediary（vanilla 结构），NeoForge 侧运行时 jar 同为 NeoForm 产物，**两侧运行时均无影响**
+   - 批量校验方法：提取源码全部 `import net.minecraft.*`，逐一在 named jar（common+clientonly）中检查类文件存在性——见 commit 95b2935 前的 2 处缺失排查
 
 ## 待核验项（下一个版本分支时执行）
 - 新版本 ParticleGroup `<init>` 是否仍用 EvictingQueue（或恢复 ArrayDeque）
