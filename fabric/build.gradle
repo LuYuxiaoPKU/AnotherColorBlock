@@ -21,7 +21,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    mappings loom.officialMojangMappings()
+    mappings "org.relativitymc:modern-yarn:26.3-pre-3+build.1:v2"
     // common 源码直接并入本模块编译（loom 统一映射到 Yarn）
     compileOnly(project(':common'))
     commonJava(project(path: ':common', configuration: 'commonJava'))
@@ -62,4 +62,14 @@ tasks.named('compileJava', JavaCompile) {
 processResources {
     dependsOn(configurations.commonResources)
     from(configurations.commonResources)
+}
+
+repositories {
+    // modern-yarn（26.x 映射）的公开镜像：CodeMC 托管 RelativityMC 制品
+    exclusiveContent {
+        forRepository {
+            maven { url = 'https://repo.codemc.io/repository/relativitymc/' }
+        }
+        filter { includeGroup 'org.relativitymc' }
+    }
 }
