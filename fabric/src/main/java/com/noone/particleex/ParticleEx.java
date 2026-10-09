@@ -31,7 +31,7 @@ public class ParticleEx implements ModInitializer {
             throw new RuntimeException(e);
         }
         // 平台桥：命令层发送 → Fabric 网络发送；错误上报 → 客户端聊天框
-        Bridge.setSender((world, payload) -> PlayerLookup.world(world).forEach(player -> ServerPlayNetworking.send(player, payload)));
+        Bridge.setSender((world, payload) -> PlayerLookup.level(world).forEach(player -> ServerPlayNetworking.send(player, payload)));
         MessageBridge.setSink(new ClientMessageUtil());
         registerPayloads();
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, dedicated) -> ParticleExCommand.register(dispatcher, registryAccess));
@@ -47,16 +47,16 @@ public class ParticleEx implements ModInitializer {
     }
 
     private static void registerPayloads() {
-        PayloadTypeRegistry.playS2C().register(ClearParticlePayload.TYPE, ClearParticlePayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(ClearCachePayload.TYPE, ClearCachePayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(NormalPayload.TYPE, NormalPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(ConditionalPayload.TYPE, ConditionalPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(ParameterPayload.TYPE, ParameterPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(ImagePayload.TYPE, ImagePayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(ImageMatrixPayload.TYPE, ImageMatrixPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(VideoPayload.TYPE, VideoPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(VideoMatrixPayload.TYPE, VideoMatrixPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(GroupRemovePayload.TYPE, GroupRemovePayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(GroupChangePayload.TYPE, GroupChangePayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(ClearParticlePayload.TYPE, ClearParticlePayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(ClearCachePayload.TYPE, ClearCachePayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(NormalPayload.TYPE, NormalPayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(ConditionalPayload.TYPE, ConditionalPayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(ParameterPayload.TYPE, ParameterPayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(ImagePayload.TYPE, ImagePayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(ImageMatrixPayload.TYPE, ImageMatrixPayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(VideoPayload.TYPE, VideoPayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(VideoMatrixPayload.TYPE, VideoMatrixPayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(GroupRemovePayload.TYPE, GroupRemovePayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(GroupChangePayload.TYPE, GroupChangePayload.CODEC);
     }
 }
