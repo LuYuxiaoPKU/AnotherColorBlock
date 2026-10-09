@@ -22,3 +22,8 @@ subprojects {
         it.setFilteringCharset('UTF-8')
     }
 }
+
+// SNAPSHOT 依赖（loom 1.18-SNAPSHOT 等）不缓存：每次构建拉最新
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor(0, 'seconds')
+}
