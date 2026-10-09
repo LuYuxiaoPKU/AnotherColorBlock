@@ -1,18 +1,21 @@
 plugins {
-    id 'fabric-loom' version '1.13.6' apply false
+    id 'fabric-loom' version '1.18' apply false
     // net.neoforged.moddev 在 neoforge 模块内声明（依赖 maven.neoforged.net，网络恢复后启用）
 }
+
+// MC 26.x 起要求 Java 25，其余版本用 Java 21
+def requiredJava = providers.gradleProperty('minecraft_version').get().startsWith('26') ? 25 : 21
 
 subprojects {
     apply plugin: 'java'
 
     java {
-        toolchain.languageVersion = JavaLanguageVersion.of(21)
+        toolchain.languageVersion = JavaLanguageVersion.of(requiredJava)
     }
 
     tasks.withType(JavaCompile).configureEach {
         it.options.encoding = 'UTF-8'
-        it.options.release.set(21)
+        it.options.release.set(requiredJava)
     }
 
     tasks.withType(ProcessResources).configureEach {
