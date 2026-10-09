@@ -45,6 +45,15 @@ neoForge {
     }
 }
 
+configurations {
+    commonJava {
+        canBeResolved = true
+    }
+    commonResources {
+        canBeResolved = true
+    }
+}
+
 dependencies {
     compileOnly "org.bytedeco:javacv:1.5.11"
 
@@ -56,15 +65,6 @@ dependencies {
 
 sourceSets.main.resources {
     srcDir 'src/generated/resources'
-}
-
-configurations {
-    commonJava {
-        canBeResolved = true
-    }
-    commonResources {
-        canBeResolved = true
-    }
 }
 
 tasks.named('compileJava', JavaCompile) {
