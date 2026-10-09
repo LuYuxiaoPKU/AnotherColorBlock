@@ -2,7 +2,9 @@ package com.noone.particleex.util;
 
 import com.google.common.collect.Queues;
 import com.noone.particleex.ParticleEx;
+import com.noone.particleex.util.MessageBridge;
 import com.noone.particleex.mixin.IParticleMixin;
+import com.noone.particleex.util.IParticle;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -54,7 +56,7 @@ public class ParticleUtil {
 
          return particle;
       } catch (RuntimeException var29) {
-         ClientMessageUtil.addChatMessage(var29);
+         MessageBridge.report(var29);
          return null;
       }
    }

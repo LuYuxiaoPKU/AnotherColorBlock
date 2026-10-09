@@ -1,16 +1,18 @@
 package com.noone.particleex.util;
 
 import java.io.PrintStream;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 
-public class ClientMessageUtil {
-   private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
+/** NeoForge 端错误上报：打印到客户端聊天框。 */
+public class ClientMessageUtil implements IMessageSink {
+   private static final Minecraft CLIENT = Minecraft.getInstance();
 
-   public static void addChatMessage(Throwable e) {
+   @Override
+   public void addChatMessage(Throwable e) {
       e.printStackTrace(new PrintStream(System.out) {
          public void println(Object x) {
-            ClientMessageUtil.CLIENT.inGameHud.getChatHud().addMessage(Text.literal(x.toString()));
+            ClientMessageUtil.CLIENT.gui.getChat().addMessage(Component.literal(x.toString()));
          }
       });
    }

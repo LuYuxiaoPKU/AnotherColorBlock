@@ -2,6 +2,7 @@ package com.noone.particleex.util;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.noone.particleex.ParticleEx;
+import com.noone.particleex.util.MessageBridge;
 import java.nio.file.Paths;
 
 import java.awt.image.BufferedImage;
@@ -23,7 +24,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class VideoUtil {
-   private static final ThreadPoolExecutor VIDEO_DECODER_THREAD_POOL = new ScheduledThreadPoolExecutor(5, (new ThreadFactoryBuilder()).setNameFormat("Video Decoder #%d").setDaemon(true).setUncaughtExceptionHandler((thread, throwable) -> ClientMessageUtil.addChatMessage(throwable)).build());
+   private static final ThreadPoolExecutor VIDEO_DECODER_THREAD_POOL = new ScheduledThreadPoolExecutor(5, (new ThreadFactoryBuilder()).setNameFormat("Video Decoder #%d").setDaemon(true).setUncaughtExceptionHandler((thread, throwable) -> MessageBridge.report(throwable)).build());
    private static final File VIDEODIR = new File("./particleVideos");
    private static volatile URLClassLoader javacvLoader;
 
