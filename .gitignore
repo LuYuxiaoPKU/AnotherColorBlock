@@ -4,7 +4,7 @@
 
 # Gradle
 /.gradle/
-/build/
+build/
 /remappedSrc/
 
 # Game run directory
@@ -15,3 +15,7 @@
 
 # Compiled classes
 *.class
+
+# 构建产物
+*.jar
+!gradle/wrapper/gradle-wrapper.jar

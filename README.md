@@ -191,7 +191,7 @@ tick 系列的语法（`<cpt>` 在 `[step]` 之后）：
 本项目是模组 **AnotherColorBlock** 的社区维护版本。
 
 - 原模组作者以 **CC0 1.0 Universal**（公共领域贡献）协议发布原作品。
-- 原模组已停止维护。本项目在原作品基础上进行重写、修复与适配，并更名为 **ParticleEx**。
+- 原模组已停止维护。本项目在原作品基础上进行重写、修复与适配，**名称沿用 AnotherColorBlock**（开发代号 ParticleEx，Mod ID 为 `particleex`）。
 - 原作品发布在 **MCBBS（Minecraft 中文论坛）**，该论坛现已关闭，原发布页已不可访问；如需查阅原模组历史信息，可尝试通过互联网档案馆（Wayback Machine）检索快照。
 - CC0 协议全文：<https://creativecommons.org/publicdomain/zero/1.0/legalcode>
 
@@ -254,6 +254,13 @@ ffmpeg-platform-1.5.10-1.5.10.jar
 
 ---
 
+## 粒子案例库
+
+更多现成粒子案例（螺旋、渐变、球壳、甜甜圈、涡旋、图片文字、分组玩法等），
+整理自社区同类模组（EffectLib / ParticleAnimationLib / Particle Storm / MoreParticle 等）并改写为本模组语法，见 [docs/particle-cases.md](docs/particle-cases.md)。
+
+---
+
 ## 构建
 
 ```bash
@@ -268,3 +275,14 @@ ffmpeg-platform-1.5.10-1.5.10.jar
 - 原作品：CC0 1.0 Universal
 - 本项目代码：GNU General Public License v3.0（GPL-3.0）
 - 许可全文见 `LICENSE` 文件
+
+## 开发统计
+
+| 指标 | 数值 |
+|---|---|
+| 累计会话数 | 1 |
+| 累计输入 tokens（含缓存） | 1423 |
+| 累计输出 tokens | 567 |
+| 累计缓存 tokens | 189 |
+| 累计估算成本 | $0.0123 |
+| 最近更新 | 2026-10-09 19:55 |
