@@ -19,11 +19,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK 21
+      - name: 解析 MC 版本（决定 JDK）
+        id: mcver
+        run: echo "version=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: ${{ startsWith(steps.mcver.outputs.version, '26') && '25' || '21' }}
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
