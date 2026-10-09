@@ -20,7 +20,7 @@ import net.minecraft.network.chat.Component;
 import org.joml.Vector4f;
 
 public class Color4ArgumentType implements ArgumentType<Vector4f> {
-   public static final SimpleCommandExceptionType INCOMPLETE_EXCEPTION = new SimpleCommandExceptionType(Text.translatable("argument.color4f.incomplete"));
+   public static final SimpleCommandExceptionType INCOMPLETE_EXCEPTION = new SimpleCommandExceptionType(Component.translatable("argument.color4f.incomplete"));
    private static final FloatArgumentType PARSER = FloatArgumentType.floatArg(0.0F, 1.0F);
    private static final Collection<String> EXAMPLES = Arrays.asList("0 0 0 1", "1 1 1 1", "0.5 0.5 0.5 1", "1 0 0 1", "0 1 0 1", "0 0 1 1", "1 1 1 0.5");
 
@@ -68,7 +68,7 @@ public class Color4ArgumentType implements ArgumentType<Vector4f> {
             builder.suggest("1 1 1");
             builder.suggest("1 1 1 1");
          } else {
-            Predicate<String> predicate = Commands.getCommandValidator(this::parse);
+            Predicate<String> predicate = Commands.createValidator(this::parse);
             String[] args = remaining.split(" ");
             if (args.length == 1) {
                if (predicate.test(args[0] + " 1 1 1")) {

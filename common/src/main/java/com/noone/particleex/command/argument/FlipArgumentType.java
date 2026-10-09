@@ -15,7 +15,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 
 public class FlipArgumentType implements ArgumentType<Integer> {
-   public static final SimpleCommandExceptionType INVALID_EXCEPTION = new SimpleCommandExceptionType(Text.translatable("argument.flip.invalid"));
+   public static final SimpleCommandExceptionType INVALID_EXCEPTION = new SimpleCommandExceptionType(Component.translatable("argument.flip.invalid"));
    private static final Collection<String> EXAMPLES = Arrays.asList("not", "horizontally", "vertical");
 
    public static FlipArgumentType flip() {

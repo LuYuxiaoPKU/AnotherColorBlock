@@ -57,7 +57,7 @@ public class SuggestArgumentType implements ArgumentType<String>, ArgumentTypeIn
     }
 
     @Override
-    public ArgumentTypeInfo<SuggestArgumentType, ?> typeInfo() {
+    public ArgumentTypeInfo<SuggestArgumentType, ?> type() {
         return Serializer.INSTANCE;
     }
 

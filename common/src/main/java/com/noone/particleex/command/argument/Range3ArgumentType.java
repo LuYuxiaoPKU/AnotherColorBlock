@@ -20,7 +20,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 
 public class Range3ArgumentType implements ArgumentType<Vec3> {
-   public static final SimpleCommandExceptionType INCOMPLETE_EXCEPTION = new SimpleCommandExceptionType(Text.translatable("argument.range3d.incomplete"));
+   public static final SimpleCommandExceptionType INCOMPLETE_EXCEPTION = new SimpleCommandExceptionType(Component.translatable("argument.range3d.incomplete"));
    private static final DoubleArgumentType PARSER = DoubleArgumentType.doubleArg(0.0D);
    private static final Collection<String> EXAMPLES = Arrays.asList("0 0 0", "1 1 1", "1 0 1");
 
@@ -60,7 +60,7 @@ public class Range3ArgumentType implements ArgumentType<Vec3> {
             builder.suggest("1 1");
             builder.suggest("1 1 1");
          } else {
-            Predicate<String> predicate = Commands.getCommandValidator(this::parse);
+            Predicate<String> predicate = Commands.createValidator(this::parse);
             String[] args = remaining.split(" ");
             if (args.length == 1) {
                if (predicate.test(args[0] + " 1 1")) {
