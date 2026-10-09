@@ -25,7 +25,6 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.handling.ClientPayloadContext;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -43,7 +42,7 @@ public class NeoForgeEntry {
         }
 
         // 平台桥注入（发送 + 错误上报）
-        Bridge.setSender((world, payload) -> PacketDistributor.sendToPlayers(world, payload));
+        Bridge.setSender((world, payload) -> PacketDistributor.sendToPlayersInDimension(world, payload));
         MessageBridge.setSink(new ClientMessageUtil());
 
         modBus.addListener(RegisterPayloadHandlersEvent.class, this::registerPayloads);
@@ -55,7 +54,7 @@ public class NeoForgeEntry {
     }
 
     private void registerPayloads(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar(NetworkIdentifiers.MOD_ID).versioned();
+        PayloadRegistrar registrar = event.registrar(NetworkIdentifiers.MOD_ID).versioned("1");
         reg(registrar, ClearParticlePayload.TYPE, ClearParticlePayload.CODEC, (p, ctx) -> ClientNetworkHandler.clearParticle(ctx));
         reg(registrar, ClearCachePayload.TYPE, ClearCachePayload.CODEC, (p, ctx) -> ClientNetworkHandler.clearCache(ctx));
         reg(registrar, NormalPayload.TYPE, NormalPayload.CODEC, ClientNetworkHandler::normal);

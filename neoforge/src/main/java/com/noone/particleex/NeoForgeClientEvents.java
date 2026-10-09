@@ -1,5 +1,6 @@
 package com.noone.particleex;
 
+import com.noone.particleex.network.NetworkIdentifiers;
 import com.noone.particleex.util.ParticleUtil;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
