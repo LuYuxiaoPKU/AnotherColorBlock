@@ -19,10 +19,15 @@ dependencies {
     // 单元测试：表达式引擎与参数解析（纯 Java，CI 自动运行）
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // 表达式引擎运行时依赖 Guava（编译类路径由 moddev 提供，测试运行需显式补全）
+    testImplementation 'com.google.guava:guava:33.2.1-jre'
 }
 
 tasks.named('test', Test) {
     useJUnitPlatform()
+    testLogging {
+        exceptionFormat = 'full'
+    }
 }
 
 java {
