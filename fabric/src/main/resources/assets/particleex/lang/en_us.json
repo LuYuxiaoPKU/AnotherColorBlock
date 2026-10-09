@@ -1,8 +1,0 @@
-{
-	"argument.color4f.incomplete": "Incomplete (expected RGBA)",
-	"argument.range3d.incomplete": "Incomplete (expected 3 range parameters)",
-	"argument.speed3d.incomplete": "Incomplete (expected 3 velocity components)",
-	"argument.rotate.invalid": "Invalid rotation angle (expected integer multiples of 90)",
-	"argument.flip.invalid": "Invalid flip parameter",
-	"argument.group.change.type.invalid": "Invalid group change options"
-}
