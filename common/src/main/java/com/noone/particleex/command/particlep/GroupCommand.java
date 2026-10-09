@@ -8,7 +8,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.noone.particleex.network.payload.GroupChangePayload;
 import com.noone.particleex.network.payload.GroupRemovePayload;
-import net.minecraft.commands.arguments.Vec3Argument;
+import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.world.phys.Vec3;
