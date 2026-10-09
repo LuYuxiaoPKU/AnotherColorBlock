@@ -69,7 +69,7 @@ class ExpressionTest {
         assertEval("age>100", 0);           // struct.age 默认 0
         ParticleStruct s = eval("1");
         s.age = 150;
-        assertEquals(1, invoke(s));
+        assertEquals(1, invoke(ExpressionUtil.parse("1"), s));
         assertEval("destroy=age>100", 0);       // 赋值表达式返回被赋值值
     }
 
@@ -91,7 +91,7 @@ class ExpressionTest {
     }
 
     private static void assertEval(String expr, int expected) {
-        assertEquals(expected, invoke(eval(expr)));
+        assertEquals(expected, invoke(ExpressionUtil.parse(expr), new ParticleStruct()));
     }
 
     private static void assertEvalWith(ParticleStruct s, String expr, int expected) {
