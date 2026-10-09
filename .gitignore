@@ -19,3 +19,4 @@ build/
 # 构建产物
 *.jar
 !gradle/wrapper/gradle-wrapper.jar
+.claude/usage.json

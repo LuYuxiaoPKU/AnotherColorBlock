@@ -1,9 +1,0 @@
-{
-    "ts":  "2026-10-09T19:55:36.7086939+08:00",
-    "session_id":  "test-session-1",
-    "input_tokens":  1234,
-    "output_tokens":  567,
-    "cache_creation_input_tokens":  89,
-    "cache_read_input_tokens":  100,
-    "total_cost_usd":  0.0123
-}
