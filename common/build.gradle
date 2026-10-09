@@ -1,0 +1,47 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev'
+}
+
+base {
+    archivesName = "${mod_id}-common-${minecraft_version}"
+}
+
+neoForge {
+    neoFormVersion = project.neo_form_version
+}
+
+dependencies {
+    implementation 'org.ow2.asm:asm:9.7.1'
+    // Mixin 注解（common 中可放接口注入/可选的通用 mixin 工具类）
+    compileOnly('net.fabricmc:sponge-mixin:0.17.3+mixin.0.8.7')
+
+    // 单元测试：表达式引擎与参数解析（纯 Java，CI 自动运行）
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test', Test) {
+    useJUnitPlatform()
+}
+
+java {
+    withSourcesJar()
+}
+
+// 源码目录以配置形式暴露给 fabric / neoforge 模块直接编译（规避跨映射 jar remap）
+configurations {
+    commonJava {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+    commonResources {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
+artifacts {
+    commonJava sourceSets.main.java.sourceDirectories.singleFile
+    commonResources sourceSets.main.resources.sourceDirectories.singleFile
+}

@@ -1,0 +1,85 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.144'
+}
+
+base {
+    archivesName = "${mod_id}-neoforge-${minecraft_version}"
+}
+
+neoForge {
+    version = project.neoforge_version
+
+    runs {
+        configureEach {
+            systemProperty('neoforge.enabledGameTestNamespaces', project.mod_id)
+            ideName = "NeoForge ${it.name.capitalize()} (${project.path})"
+        }
+        client {
+            client()
+            gameDirectory = this.mkdir(this.file('runs/client'))
+        }
+        server {
+            server()
+            programArgument '--nogui'
+            gameDirectory = this.mkdir(this.file('runs/server'))
+        }
+        gameTestServer {
+            type = 'gameTestServer'
+            systemProperty('neoforge.enabledGameTestNamespaces', project.mod_id)
+            gameDirectory = this.mkdir(this.file('runs/gametest'))
+        }
+        data {
+            data()
+            programArguments.addAll '--mod', project.mod_id, '--all',
+                    '--output', file('src/generated/resources/').getAbsolutePath(),
+                    '--existing', file('src/main/resources/').getAbsolutePath()
+            gameDirectory = this.mkdir(this.file('runs/data'))
+        }
+    }
+
+    mods {
+        "${project.mod_id}" {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+dependencies {
+    compileOnly "org.bytedeco:javacv:1.5.11"
+
+    // common 源码直接并入本模块编译（两端同为官方映射，无需转换）
+    compileOnly(project(':common'))
+    commonJava(project(path: ':common', configuration: 'commonJava'))
+    commonResources(project(path: ':common', configuration: 'commonResources'))
+}
+
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+}
+
+configurations {
+    commonJava {
+        canBeResolved = true
+    }
+    commonResources {
+        canBeResolved = true
+    }
+}
+
+tasks.named('compileJava', JavaCompile) {
+    dependsOn(configurations.commonJava)
+    source(configurations.commonJava)
+}
+
+processResources {
+    dependsOn(configurations.commonResources)
+    from(configurations.commonResources)
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand 'version': project.version
+    }
+}
+
+java {
+    withSourcesJar()
+}

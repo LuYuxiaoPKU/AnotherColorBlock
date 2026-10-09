@@ -1,9 +1,24 @@
 pluginManagement {
     repositories {
+        gradlePluginPortal()
         maven {
             name = 'Fabric'
             url = 'https://maven.fabricmc.net/'
         }
-        gradlePluginPortal()
+        maven {
+            name = 'NeoForge'
+            url = 'https://maven.neoforged.net/releases/'
+        }
     }
 }
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
+rootProject.name = 'AnotherColorBlock'
+
+include 'common'
+include 'fabric'
+// include 'neoforge'  — 待 maven.neoforged.net 可达后启用
+

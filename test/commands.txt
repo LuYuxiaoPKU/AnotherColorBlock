@@ -1,0 +1,165 @@
+# ============================================================
+# AnotherColorBlock (ParticleEx) 游戏内冒烟命令合集
+# 适用:MC 1.21.11 · Fabric / NeoForge · 需权限等级 2(单人开作弊/服务器 /op)
+# 用法:每条命令一行,连同引号一起复制进聊天框或服务器控制台。
+#       # 开头的是注释,不要复制。
+# 说明:命令语法已对照 common 源码核实;docs/particle-cases.md 的
+#       conditional 缺 range 参数、normal 分组缺 age 的两处案例已在此修正。
+# 详细预期与排查见 docs/testing/smoke-test.md。
+# ============================================================
+
+
+# -------- [0] 环境自检 --------
+/particleex functionlist
+# 预期:聊天栏输出完整函数列表(以 sin(a) 开头)。若报"未知命令"→ 模组没装或权限不足。
+
+/particleex clearparticle
+# 预期:清空所有已生成粒子(开始测试前先清场,观察基线)。
+
+
+# -------- [1] normal 普通粒子 --------
+/particleex normal minecraft:heart ~ ~2 ~ 1 0 1 1 0 0 0 0 5 200
+# 预期:5 颗粉色爱心停留约 10 秒。颜色非粉白或立即消失=Mixin 注入问题(见 smoke-test 5.1)。
+
+/particleex normal minecraft:end_rod ~ ~2 ~ 1 1 1 1 0 0 0 20 200 "vx,vz=-z*0.1,x*0.1" 1
+# 预期:20 颗 end_rod 绕中心旋转(速度表达式每 tick 执行)。不转=tick 注入失效。
+
+/particleex normal minecraft:dust ~ ~2 ~ 1 0 1 1 0 0 0 40 200 "cr,cg,cb=1,1-t/200,1-t/200" 1
+# 预期:40 颗粉色 dust 在 10 秒内渐变变红(颜色通道随时间衰减)。
+
+
+# -------- [2] parameter 参数方程 --------
+# 爱心(竖立,宽 1.6 高 1.8,停留 10 秒)
+/particleex parameter minecraft:heart ~ ~1.5 ~ 1 0 1 1 0 0 0 0 6.28318 "x,y,z=1.6*sin(t)^3,1.8*cos(t)-0.6*cos(2*t)-0.2*cos(3*t)-0.1*cos(4*t),0" 0.02 200
+# 预期:粉红爱心轮廓平滑成型。
+
+# 正弦波曲线
+/particleex parameter minecraft:end_rod ~ ~5 ~ 1 1 1 1 0 0 0 0 20 "x,y,z=t,sin(t),0" 0.05 300
+# 预期:一段正弦波。
+
+# 多条语句 + 幂运算
+/particleex parameter minecraft:flame ~ ~2 ~ 1 1 1 1 0 0 0 0 8 "x=t;y=t^2" 0.05 200
+# 预期:抛物线(火焰粒子)。
+
+# destroy 立即销毁(曲线只保留 t<=40 的前段)
+/particleex parameter minecraft:flame ~ ~2 ~ 1 1 1 1 0 0 0 0 60 "x,y,z=t,sin(t),0;destroy=t>40" 0.05 200
+# 预期:正弦波从 t>40 处开始逐段消失。
+
+
+# -------- [3] polarparameter 极坐标 --------
+# 球面螺旋
+/particleex polarparameter minecraft:end_rod ~ ~2 ~ 1 1 1 1 0 0 0 0 100 "s1,s2,dis=t/5,t/50,1" 0.1 200
+# 预期:缠绕球面的 3D 上升曲线。展开成平面圆=球坐标换算异常。
+
+# 球面螺旋(完整球面,半径 2)
+/particleex polarparameter minecraft:end_rod ~ ~2 ~ 1 1 1 1 0 0 0 0 314 "s1,s2,dis=t/10,sin(t/10)*0.5,2" 0.1 200
+# 预期:半径 2 的球面螺旋。
+
+
+# -------- [4] conditional 条件采样 --------
+# 球壳(半径 1、壳厚 0.1;range=1 1 1 是采样半范围,不能省)
+/particleex conditional minecraft:end_rod ~ ~3 ~ 1 1 1 1 0 0 0 1 1 1 "abs(x*x+y*y+z*z-1)<0.05" 0.08 200
+# 预期:空心球壳。实心=条件恒真;无粒子=payload 问题。
+
+# 甜甜圈(主半径 1.5、管半径 0.4;y 方向采样半范围 0.5 要盖住管道)
+/particleex conditional minecraft:end_rod ~ ~3 ~ 1 1 1 1 0 0 0 1.5 0.5 1.5 "abs(sqrt(x*x+z*z)-1.5)^2+y*y<0.16" 0.08 200
+# 预期:空心环面(甜甜圈)。
+
+# 上下两半(条件用 | 或逻辑)
+/particleex conditional minecraft:end_rod ~ ~3 ~ 1 1 1 1 0 0 0 1 1 1 "y>0.25|y<-0.25" 0.08 200
+# 预期:只生成上下两片,中间留空。
+
+
+# -------- [5] image / imagematrix 图片粒子 --------
+# 前置:自备图片放到【客户端】运行目录 particleImages/logo.png(png/jpg 均可)
+/particleex image minecraft:end_rod ~ ~2 ~ logo.png 0.5 0 0 0 not 10 0 0 0 200
+# 预期:以 end_rod 粒子还原图片,约 0.5 倍、正立。无粒子+日志 IOException=图片缺失或路径错。
+# 注意:dpb 之后要接速度(3 个数)才能写 age;只到 dpb 结束也是合法的(不带 age)。
+
+/particleex image minecraft:dust ~ ~2 ~ logo.png 0.1 0 0 0 not 8 0 0 0 200
+# 预期:同一图片 0.1 倍用 dust 渲染(颜色参数由图片自带,dpb=8 更稀疏)。
+
+# 旋转 + 翻转组合
+/particleex image minecraft:end_rod ~ ~2 ~ logo.png 0.3 90 0 0 horizontally 10 0 0 0 200
+# 预期:图片绕 x 轴转 90 度并水平翻转。
+
+# 矩阵版(恒等)
+/particleex imagematrix minecraft:end_rod ~ ~2 ~ logo.png 0.5 E3 10 0 0 0 200
+# 预期:与 image 相同图案(E3=恒等矩阵)。
+
+# 矩阵版(自定义 4x4,下移 100 格;行间用 ,, 分隔)
+/particleex imagematrix minecraft:end_rod ~ ~2 ~ logo.png 0.5 "(1,0,0,0,,0,1,0,0,,0,0,1,-100,,0,0,0,1)" 10 0 0 0 200
+# 预期:图片出现在原点下方 100 格(或参数错误提示,矩阵语法以报错为准)。
+
+# 换图后清缓存(重新显示新图前执行)
+/particleex clearcache
+# 预期:无可见变化;下一次 image 命令读取的是新图片。
+
+
+# -------- [6] video / videomatrix 视频粒子(可选,需 javacv) --------
+# 前置:mp4 放【客户端】运行目录 particleVideos/demo.mp4;javacv 四个 jar 放 javacv/ 目录
+/particleex video minecraft:end_rod ~ ~2 ~ demo.mp4 0.2 0 0 0 not 10 0 0 0 200
+# 预期:视频逐帧以粒子播放。无粒子+日志 NoClassDefFoundError=javacv 缺失。
+
+/particleex videomatrix minecraft:end_rod ~ ~2 ~ demo.mp4 0.2 E3 10 0 0 0 200
+# 预期:同 video 但走矩阵路径(E3 恒等)。
+
+
+# -------- [7] group 分组管理 --------
+# 7.1 创建分组(50 颗 end_rod,寿命 200 tick,组 heart)
+/particleex normal minecraft:end_rod ~ ~2 ~ 1 1 1 1 0 0 0 50 200 null 1 heart
+# 预期:50 颗粒子生成,组为 heart(客户端内部管理,无提示属正常)。
+
+# 7.2 条件删除(等 5 秒后执行:删除 heart 组中存活超过 100 tick 的粒子)
+/particleex group remove heart "age>100"
+# 预期:过龄粒子立即消失,新粒子保留。
+
+# 7.3 无条件删除
+/particleex group remove heart
+# 预期:heart 组全部消失。
+
+# 7.4 改属性(变色)
+/particleex group change parameter heart "cr,cg,cb=0,1,0"
+# 预期:heart 组剩余粒子变绿。表达式变量:相对中心 x,y,z / vx,vy,vz / cr,cg,cb,alpha。
+
+# 7.5 改速度表达式(旋转)
+/particleex group change speedexpression heart "vx,vz=-z*0.1,x*0.1"
+# 预期:heart 组粒子绕中心旋转。
+
+# 7.6 条件化修改(只对存活>50 tick 的粒子生效)
+/particleex group change speedexpression heart "vy=0.1" "age>50"
+# 预期:只有部分粒子获得上飘速度。
+
+# 7.7 位置基准(指定 pos 后,表达式中的 x,y,z 以该点为中心;~ 或缺省=玩家位置)
+/particleex group remove heart "age>100" ~ ~ ~
+# 预期:以玩家位置为基准执行条件删除。
+
+# 7.8 多组 a|b(创建时加入两个组)
+/particleex normal minecraft:end_rod ~ ~1 ~ 1 1 1 1 0 0 0 10 200 null 1 a|b
+/particleex group remove a
+# 预期:粒子同时属于 a、b;移除 a 后这些粒子全部消失(并集语义)。
+
+
+# -------- [8] 清理 --------
+/particleex clearparticle
+# 预期:所有模组粒子瞬间清空(含各分组)。
+/particleex clearcache
+# 预期:清图片缓存(换图后执行)。
+
+
+# -------- [9] 压力与稳定性(可选) --------
+/particleex normal minecraft:end_rod ~ ~2 ~ 1 1 1 1 0 0 0 70000 200
+# 预期:超过 maxParticleCount(默认 65536)时被截断,不崩溃、掉帧可恢复。
+
+
+# -------- [10] 双端联机验证(服务端控制台用,含 b904f4c 回归) --------
+# 注意:控制台没有玩家位置,~ 会退化,必须用绝对坐标。
+# 场景:独立服务端 + 独立客户端(两端同版本),客户端连入后,在服务端控制台执行:
+/particleex parameter minecraft:heart 0 8 0 1 0 1 1 0 0 0 0 6.28318 "x,y,z=1.6*sin(t)^3,1.8*cos(t)-0.6*cos(2*t)-0.2*cos(3*t)-0.1*cos(4*t),0" 0.02 200
+# 预期:客户端玩家不被踢、不断线,画面出现爱心;服务端日志无 ClassCastException。
+# (b904f4c 修复前的回归表现:ClassCastException + 玩家立刻断线,出现即失败)
+/particleex normal minecraft:heart 0 8 0 1 0 1 1 0 0 0 0 20 200
+/particleex conditional minecraft:end_rod 0 8 0 1 1 1 1 0 0 0 1 1 1 "abs(x*x+y*y+z*z-1)<0.05" 0.08 200
+/particleex group remove heart
+/particleex clearparticle
+# 预期:以上每条命令客户端均有对应效果且不崩溃(逐个观察后进入下一条)。
