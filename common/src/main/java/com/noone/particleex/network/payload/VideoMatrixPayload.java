@@ -15,7 +15,7 @@ import static com.noone.particleex.network.PayloadCodecUtil.readString;
 public record VideoMatrixPayload(double x, double y, double z, String path, double scaling, double[][] matrix, double dpb, Vec3 speed, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements CustomPacketPayload {
    public static final Type<VideoMatrixPayload> TYPE = new Type<>(NetworkIdentifiers.VIDEO_MATRIX_PACKET_ID);
    public static final StreamCodec<RegistryFriendlyByteBuf, VideoMatrixPayload> CODEC = StreamCodec.of(
-          (value, buf) -> {
+          (buf, value) -> {
               buf.writeDouble(value.x);
               buf.writeDouble(value.y);
               buf.writeDouble(value.z);
