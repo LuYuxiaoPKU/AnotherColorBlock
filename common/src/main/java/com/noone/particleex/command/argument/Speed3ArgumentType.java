@@ -20,7 +20,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 
 public class Speed3ArgumentType implements ArgumentType<Vec3> {
-   public static final SimpleCommandExceptionType INCOMPLETE_EXCEPTION = new SimpleCommandExceptionType(Text.translatable("argument.speed3d.incomplete"));
+   public static final SimpleCommandExceptionType INCOMPLETE_EXCEPTION = new SimpleCommandExceptionType(Component.translatable("argument.speed3d.incomplete"));
    private static final DoubleArgumentType PARSER = DoubleArgumentType.doubleArg();
    private static final Collection<String> EXAMPLES = Arrays.asList("0 0 0", "0 0.1 0");
 
@@ -60,7 +60,7 @@ public class Speed3ArgumentType implements ArgumentType<Vec3> {
             builder.suggest("0 0");
             builder.suggest("0 0 0");
          } else {
-            Predicate<String> predicate = Commands.getCommandValidator(this::parse);
+            Predicate<String> predicate = Commands.createValidator(this::parse);
             String[] args = remaining.split(" ");
             if (args.length == 1) {
                if (predicate.test(args[0] + " 0 0")) {

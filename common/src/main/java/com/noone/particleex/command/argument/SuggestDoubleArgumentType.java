@@ -107,7 +107,7 @@ public class SuggestDoubleArgumentType implements ArgumentType<Double>, Argument
    }
 
    @Override
-   public ArgumentTypeInfo<SuggestDoubleArgumentType, ?> typeInfo() {
+   public ArgumentTypeInfo<SuggestDoubleArgumentType, ?> type() {
       return Serializer.INSTANCE;
    }
 

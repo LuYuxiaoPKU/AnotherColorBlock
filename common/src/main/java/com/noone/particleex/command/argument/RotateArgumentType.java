@@ -15,7 +15,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 
 public class RotateArgumentType implements ArgumentType<Integer> {
-   public static final SimpleCommandExceptionType INVALID_EXCEPTION = new SimpleCommandExceptionType(Text.translatable("argument.rotate.invalid"));
+   public static final SimpleCommandExceptionType INVALID_EXCEPTION = new SimpleCommandExceptionType(Component.translatable("argument.rotate.invalid"));
    private static final Collection<String> EXAMPLES = Arrays.asList("0", "90", "180", "270");
 
    public static RotateArgumentType rotate() {

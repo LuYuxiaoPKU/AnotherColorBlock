@@ -106,7 +106,7 @@ public class SuggestIntegerArgumentType implements ArgumentType<Integer>, Argume
    }
 
    @Override
-   public ArgumentTypeInfo<SuggestIntegerArgumentType, ?> typeInfo() {
+   public ArgumentTypeInfo<SuggestIntegerArgumentType, ?> type() {
       return Serializer.INSTANCE;
    }
 

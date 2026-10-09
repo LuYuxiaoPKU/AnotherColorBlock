@@ -15,7 +15,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 
 public class GroupChangeTypeArgumentType implements ArgumentType<Integer> {
-   public static final SimpleCommandExceptionType INVALID_EXCEPTION = new SimpleCommandExceptionType(Text.translatable("argument.group.change.type.invalid"));
+   public static final SimpleCommandExceptionType INVALID_EXCEPTION = new SimpleCommandExceptionType(Component.translatable("argument.group.change.type.invalid"));
    private static final Collection<String> EXAMPLES = Arrays.asList("parameter", "speedexpression");
 
    public static GroupChangeTypeArgumentType type() {

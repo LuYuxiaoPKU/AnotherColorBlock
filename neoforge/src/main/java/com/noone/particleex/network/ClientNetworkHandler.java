@@ -211,7 +211,7 @@ public class ClientNetworkHandler {
    }
 
    public static void groupChange(GroupChangePayload payload, IPayloadContext context) {
-      int type = payload.type();
+      int type = payload.changeType();
       String group = payload.group();
       String expression = payload.expression();
       String conditionalExpression = payload.conditionalExpression();
