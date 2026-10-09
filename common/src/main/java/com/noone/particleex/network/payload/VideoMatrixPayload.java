@@ -12,7 +12,7 @@ import net.minecraft.world.phys.Vec3;
 import static com.noone.particleex.network.PayloadCodecUtil.readDouble;
 import static com.noone.particleex.network.PayloadCodecUtil.readString;
 
-public record VideoMatrixPayload(double x, double y, double z, String path, double scaling, double[][] matrix, double dpb, Vec3d speed, int age, String speedExpression, double speedStep, String group, ParticleEffect effect) implements CustomPacketPayload {
+public record VideoMatrixPayload(double x, double y, double z, String path, double scaling, double[][] matrix, double dpb, Vec3 speed, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements CustomPacketPayload {
    public static final Type<VideoMatrixPayload> TYPE = new Type<>(NetworkIdentifiers.VIDEO_MATRIX_PACKET_ID);
    public static final StreamCodec<RegistryFriendlyByteBuf, VideoMatrixPayload> CODEC = StreamCodec.of(
           (value, buf) -> {
@@ -55,7 +55,7 @@ public record VideoMatrixPayload(double x, double y, double z, String path, doub
               double x = buf.readDouble();
               double y = buf.readDouble();
               double z = buf.readDouble();
-              String path = buf.readString();
+              String path = buf.readUtf();
               double scaling = buf.readDouble();
               int rows = buf.readInt();
               int cols = buf.readInt();
@@ -74,8 +74,8 @@ public record VideoMatrixPayload(double x, double y, double z, String path, doub
               String speedExpression = readString(buf, hasSpeedExpression);
               double speedStep = readDouble(buf, hasSpeedExpression, 1.0D);
               String group = readString(buf, buf.readBoolean());
-              ParticleEffect effect = ParticleTypes.STREAM_CODEC.decode(buf);
-              return new VideoMatrixPayload(x,y,z,path,scaling,matrix,dpb,new Vec3d(vx,vy,vz),age,speedExpression,speedStep,group,effect);
+              ParticleOptions effect = ParticleTypes.STREAM_CODEC.decode(buf);
+              return new VideoMatrixPayload(x,y,z,path,scaling,matrix,dpb,new Vec3(vx,vy,vz),age,speedExpression,speedStep,group,effect);
           }
    );
    @Override

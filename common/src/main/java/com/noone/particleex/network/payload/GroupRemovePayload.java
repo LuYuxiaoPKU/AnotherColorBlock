@@ -13,7 +13,7 @@ import net.minecraft.world.phys.Vec3;
 import static com.noone.particleex.network.PayloadCodecUtil.readDouble;
 import static com.noone.particleex.network.PayloadCodecUtil.readString;
 
-public record GroupRemovePayload(String group, String expression, Vec3d pos) implements CustomPacketPayload {
+public record GroupRemovePayload(String group, String expression, Vec3 pos) implements CustomPacketPayload {
   public static final Type<GroupRemovePayload> TYPE = new Type<>(NetworkIdentifiers.GROUP_REMOVE_PACKET_ID);
   public static final StreamCodec<RegistryFriendlyByteBuf, GroupRemovePayload> CODEC = StreamCodec.of(
           (value, buf) -> {
@@ -31,15 +31,15 @@ public record GroupRemovePayload(String group, String expression, Vec3d pos) imp
               }
           },
           buf -> {
-              String group = buf.readString();
+              String group = buf.readUtf();
               String expression = readString(buf, buf.readBoolean());
               boolean hasPos = buf.readBoolean();
-              Vec3d pos = null;
+              Vec3 pos = null;
               if(hasPos){
                   Double x = buf.readDouble();
                   Double y = buf.readDouble();
                   Double z = buf.readDouble();
-                  pos = new Vec3d(x, y, z);
+                  pos = new Vec3(x, y, z);
               }
               return new GroupRemovePayload(group,expression,pos);
           }

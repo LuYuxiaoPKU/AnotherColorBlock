@@ -12,7 +12,7 @@ import org.joml.Vector4f;
 
 import static com.noone.particleex.network.PayloadCodecUtil.*;
 
-public record ParameterPayload(boolean polar, boolean tick, boolean rgba, double x, double y, double z, Vector4f color, double vx, double vy, double vz, double begin, double end, String expression, double step, int cpt, int age, String speedExpression, double speedStep, String group, ParticleEffect effect) implements CustomPacketPayload {
+public record ParameterPayload(boolean polar, boolean tick, boolean rgba, double x, double y, double z, Vector4f color, double vx, double vy, double vz, double begin, double end, String expression, double step, int cpt, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements CustomPacketPayload {
   public static final Type<ParameterPayload> TYPE = new Type<>(NetworkIdentifiers.PARAMETER_PACKET_ID);
   public static final StreamCodec<RegistryFriendlyByteBuf, ParameterPayload> CODEC = StreamCodec.of(
           (value, buf) -> {
@@ -73,7 +73,7 @@ public record ParameterPayload(boolean polar, boolean tick, boolean rgba, double
               double vz = buf.readDouble();
               double begin = buf.readDouble();
               double end = buf.readDouble();
-              String expression = buf.readString();
+              String expression = buf.readUtf();
               double step = buf.readDouble();
               int cpt = readInt(buf, tick);
               int age = buf.readInt();
@@ -81,7 +81,7 @@ public record ParameterPayload(boolean polar, boolean tick, boolean rgba, double
               String speedExpression = readString(buf, hasSpeedExpression);
               double speedStep = readDouble(buf, hasSpeedExpression, 1.0D);
               String group = readString(buf, buf.readBoolean());
-              ParticleEffect effect = ParticleTypes.STREAM_CODEC.decode(buf);
+              ParticleOptions effect = ParticleTypes.STREAM_CODEC.decode(buf);
               return new ParameterPayload(polar,tick,rgba,x,y,z,color,vx,vy,vz,begin,end,expression,step,cpt,age,speedExpression,speedStep,group,effect);
           }
   );
