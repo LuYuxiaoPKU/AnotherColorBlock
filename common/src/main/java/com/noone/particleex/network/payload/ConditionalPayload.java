@@ -30,20 +30,20 @@ public record ConditionalPayload(double x, double y, double z, float red, float 
               buf.writeDouble(value.dz);
               buf.writeBoolean(!Strings.isNullOrEmpty(value.expression) && !value.expression.equals("null"));
               if (!Strings.isNullOrEmpty(value.expression) && !value.expression.equals("null")) {
-                  buf.writeString(value.expression);
+                  buf.writeUtf(value.expression);
                   buf.writeDouble(value.step);
               }
 
               buf.writeInt(value.age);
               buf.writeBoolean(!Strings.isNullOrEmpty(value.speedExpression) && !value.speedExpression.equals("null"));
               if (!Strings.isNullOrEmpty(value.speedExpression) && !value.speedExpression.equals("null")) {
-                  buf.writeString(value.speedExpression);
+                  buf.writeUtf(value.speedExpression);
                   buf.writeDouble(value.speedStep);
               }
 
               buf.writeBoolean(!Strings.isNullOrEmpty(value.group) && !value.group.equals("null"));
               if (!Strings.isNullOrEmpty(value.group) && !value.group.equals("null")) {
-                  buf.writeString(value.group);
+                  buf.writeUtf(value.group);
               }
               ParticleTypes.STREAM_CODEC.encode(buf,value.effect);
           },

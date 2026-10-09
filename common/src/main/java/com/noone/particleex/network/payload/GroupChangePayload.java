@@ -14,11 +14,11 @@ public record GroupChangePayload(int type,String group, String expression,String
   public static final StreamCodec<RegistryFriendlyByteBuf, GroupChangePayload> CODEC = StreamCodec.of(
           (buf, value) -> {
               buf.writeInt(value.type);
-              buf.writeString(value.group);
-              buf.writeString(value.expression);
+              buf.writeUtf(value.group);
+              buf.writeUtf(value.expression);
               buf.writeBoolean(!Strings.isNullOrEmpty(value.conditionalExpression) && !value.conditionalExpression.equals("null"));
               if (!Strings.isNullOrEmpty(value.conditionalExpression) && !value.conditionalExpression.equals("null")) {
-                  buf.writeString(value.conditionalExpression);
+                  buf.writeUtf(value.conditionalExpression);
               }
 
               buf.writeBoolean(value.pos != null);
