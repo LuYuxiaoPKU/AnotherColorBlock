@@ -103,6 +103,7 @@ class ExpressionTest {
         IExecutable exe = ExpressionUtil.parse(expr);
         exe.getData().x = s.x; exe.getData().y = s.y; exe.getData().z = s.z;
         exe.getData().age = s.age;
+        exe.invoke();
         return exe.getData();
     }
 
