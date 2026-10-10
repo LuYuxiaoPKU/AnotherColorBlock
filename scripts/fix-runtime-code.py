@@ -20,7 +20,7 @@ import os
 import subprocess
 import re
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT = os.getcwd()  # 在仓库根目录执行（脚本可能被复制到 /tmp 运行，不能用 __file__ 推导）
 
 # ---- 分线参数表 ----
 GET_DIST_BRANCHES = {"26.1", "26.2", "26.3"}          # FML 11.0 → getDist()
