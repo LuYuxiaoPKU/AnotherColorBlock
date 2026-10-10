@@ -47,6 +47,9 @@ jobs:
         run: |
           set -euo pipefail
           rm -rf "${{ matrix.module }}/runs/server" || true
+          # CI 全新工作区需接受 eula（fabric/vanilla 服务器缺 eula 会直接退出）
+          mkdir -p "${{ matrix.module }}/runs/server"
+          echo "eula=true" > "${{ matrix.module }}/runs/server/eula.txt"
           ( ./gradlew :${{ matrix.module }}:runServer --stacktrace > /tmp/runserver.log 2>&1 ) &
           GRADLE_PID=$!
           LOG="${{ matrix.module }}/runs/server/logs/latest.log"
