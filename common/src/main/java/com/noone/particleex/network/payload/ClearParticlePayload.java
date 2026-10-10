@@ -12,4 +12,8 @@ public record ClearParticlePayload() implements com.noone.particleex.network.Par
     return new ClearParticlePayload();
   }
 
+  @Override
+  public net.minecraft.resources.ResourceLocation packetId() {
+    return NetworkIdentifiers.CLEAR_PARTICLE_PAYLOAD_PACKET_ID;
+  }
 }

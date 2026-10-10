@@ -61,4 +61,8 @@ public record NormalPayload(double x, double y, double z, float red, float green
              ParticleOptions effect = com.noone.particleex.network.PayloadCodecUtil.readParticle(buf);
              return new NormalPayload(x,y,z,red,green,blue,alpha,vx,vy,vz,dx,dy,dz,count,age,speedExpression,speedStep,group,effect);
   }
+  @Override
+  public net.minecraft.resources.ResourceLocation packetId() {
+    return NetworkIdentifiers.NORMAL_PAYLOAD_PACKET_ID;
+  }
 }

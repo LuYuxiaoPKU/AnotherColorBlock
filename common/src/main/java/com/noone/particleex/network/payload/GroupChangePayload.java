@@ -41,4 +41,8 @@ public record GroupChangePayload(int changeType,String group, String expression,
               }
               return new GroupChangePayload(type,group,expression,conditionalExpression,pos);
   }
+  @Override
+  public net.minecraft.resources.ResourceLocation packetId() {
+    return NetworkIdentifiers.GROUP_CHANGE_PAYLOAD_PACKET_ID;
+  }
 }

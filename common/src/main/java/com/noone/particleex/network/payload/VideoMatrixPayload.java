@@ -46,7 +46,8 @@ public record VideoMatrixPayload(double x, double y, double z, String path, doub
               if (!Strings.isNullOrEmpty(this.group) && !this.group.equals("null")) {
                   buf.writeUtf(this.group);
               }
-              ParticleTypes.STREAM_CODEC.encode(buf,this.effect);
+              buf.writeId(net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE, this.effect.getType());
+              this.effect.writeToNetwork(buf);
   }
 
   public static VideoMatrixPayload read(FriendlyByteBuf buf) {
@@ -75,4 +76,8 @@ public record VideoMatrixPayload(double x, double y, double z, String path, doub
               ParticleOptions effect = com.noone.particleex.network.PayloadCodecUtil.readParticle(buf);
               return new VideoMatrixPayload(x,y,z,path,scaling,matrix,dpb,new Vec3(vx,vy,vz),age,speedExpression,speedStep,group,effect);
           }
+  @Override
+  public net.minecraft.resources.ResourceLocation packetId() {
+    return NetworkIdentifiers.VIDEO_MATRIX_PAYLOAD_PACKET_ID;
+  }
 }

@@ -12,4 +12,8 @@ public record ClearCachePayload() implements com.noone.particleex.network.Partic
     return new ClearCachePayload();
   }
 
+  @Override
+  public net.minecraft.resources.ResourceLocation packetId() {
+    return NetworkIdentifiers.CLEAR_CACHE_PAYLOAD_PACKET_ID;
+  }
 }

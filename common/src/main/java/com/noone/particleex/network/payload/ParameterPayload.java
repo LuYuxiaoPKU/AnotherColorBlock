@@ -82,4 +82,8 @@ public record ParameterPayload(boolean polar, boolean tick, boolean rgba, double
               ParticleOptions effect = com.noone.particleex.network.PayloadCodecUtil.readParticle(buf);
               return new ParameterPayload(polar,tick,rgba,x,y,z,color,vx,vy,vz,begin,end,expression,step,cpt,age,speedExpression,speedStep,group,effect);
   }
+  @Override
+  public net.minecraft.resources.ResourceLocation packetId() {
+    return NetworkIdentifiers.PARAMETER_PAYLOAD_PACKET_ID;
+  }
 }

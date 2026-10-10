@@ -13,7 +13,6 @@ import com.noone.particleex.util.ParticleUtil;
 import java.util.Iterator;
 import java.util.Random;
 
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.client.particle.Particle;
@@ -25,7 +24,7 @@ import org.joml.Vector4f;
 public class ClientNetworkHandler {
    private static final Random RANDOM = new Random();
 
-   public static void clearParticle(IPayloadContext context) {
+   public static void clearParticle() {
       Minecraft client = Minecraft.getInstance();
       client.execute(() -> {
          GroupUtil.clear();
@@ -33,11 +32,11 @@ public class ClientNetworkHandler {
       });
    }
 
-   public static void clearCache(IPayloadContext context) {
+   public static void clearCache() {
       Minecraft.getInstance().execute(ImageUtil::clear);
    }
 
-   public static void normal(NormalPayload payload, IPayloadContext context) {
+   public static void normal(NormalPayload payload) {
       double x = payload.x();
       double y = payload.y();
       double z = payload.z();
@@ -68,7 +67,7 @@ public class ClientNetworkHandler {
       });
    }
 
-   public static void conditional(ConditionalPayload payload, IPayloadContext context) {
+   public static void conditional(ConditionalPayload payload) {
       double x = payload.x();
       double y = payload.y();
       double z = payload.z();
@@ -114,7 +113,7 @@ public class ClientNetworkHandler {
       });
    }
 
-   public static void parameter(ParameterPayload payload, IPayloadContext context) {
+   public static void parameter(ParameterPayload payload) {
       boolean polar = payload.polar();
       boolean tick = payload.tick();
       boolean rgba = payload.rgba();
@@ -174,28 +173,28 @@ public class ClientNetworkHandler {
       });
    }
 
-   public static void image(ImagePayload payload, IPayloadContext context) {
+   public static void image(ImagePayload payload) {
       Vec3 speed = payload.speed();
       Minecraft.getInstance().execute(() -> ParticleUtil.spawnImageParticle(payload.effect(), payload.x(), payload.y(), payload.z(), payload.path(), payload.scaling(), payload.xRotate(), payload.yRotate(), payload.zRotate(), payload.flip() != 0, payload.dpb(), speed.x, speed.y, speed.z, payload.age(), payload.speedExpression(), payload.speedStep(), payload.group()));
    }
 
-   public static void imageMatrix(ImageMatrixPayload payload, IPayloadContext context) {
+   public static void imageMatrix(ImageMatrixPayload payload) {
       Vec3 speed = payload.speed();
       Minecraft.getInstance().execute(() -> ParticleUtil.spawnImageParticle(payload.effect(), payload.x(), payload.y(), payload.z(), payload.path(), payload.scaling(), payload.matrix(), payload.dpb(), speed.x, speed.y, speed.z, payload.age(), payload.speedExpression(), payload.speedStep(), payload.group()));
    }
 
-   public static void video(VideoPayload payload, IPayloadContext context) {
+   public static void video(VideoPayload payload) {
       Vec3 speed = payload.speed();
       Minecraft.getInstance().execute(() -> ParticleUtil.spawnVideoParticle(payload.effect(), payload.x(), payload.y(), payload.z(), payload.path(), payload.scaling(), payload.xRotate(), payload.yRotate(), payload.zRotate(), payload.flip() != 0, payload.dpb(), speed.x, speed.y, speed.z, payload.age(), payload.speedExpression(), payload.speedStep(), payload.group()));
    }
 
-   public static void videoMatrix(VideoMatrixPayload payload, IPayloadContext context) {
+   public static void videoMatrix(VideoMatrixPayload payload) {
       Vec3 speed = payload.speed();
       Minecraft.getInstance().execute(() -> ParticleUtil.spawnVideoParticle(payload.effect(), payload.x(), payload.y(), payload.z(), payload.path(), payload.scaling(), payload.matrix(), payload.dpb(), speed.x, speed.y, speed.z, payload.age(), payload.speedExpression(), payload.speedStep(), payload.group()));
    }
 
-   public static void groupRemove(GroupRemovePayload payload, IPayloadContext context) {
-      Player player = context.player();
+   public static void groupRemove(GroupRemovePayload payload) {
+      Player player = Minecraft.getInstance().player;
       Vec3 pos = payload.pos();
       double x,y,z;
       if(pos == null){
@@ -210,12 +209,12 @@ public class ClientNetworkHandler {
       Minecraft.getInstance().execute(() -> GroupUtil.remove(payload.group(), payload.expression(), x, y, z));
    }
 
-   public static void groupChange(GroupChangePayload payload, IPayloadContext context) {
+   public static void groupChange(GroupChangePayload payload) {
       int type = payload.changeType();
       String group = payload.group();
       String expression = payload.expression();
       String conditionalExpression = payload.conditionalExpression();
-      Player player = context.player();
+      Player player = Minecraft.getInstance().player;
       Vec3 pos = payload.pos();
       double x,y,z;
       if(pos == null){
