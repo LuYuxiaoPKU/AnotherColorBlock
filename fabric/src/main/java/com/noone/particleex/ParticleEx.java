@@ -42,15 +42,15 @@ public class ParticleEx implements ModInitializer {
 
     /** 注册自定义命令参数类型（同 26.2 fabric 版；缺注册致客户端进档时命令树序列化崩溃） */
     private static void registerArgumentTypes() {
-        ArgumentTypeRegistry.registerArgumentType(ResourceLocation.fromNamespaceAndPath(MOD_ID, "color4"), Color4ArgumentType.class, SingletonArgumentInfo.contextFree(Color4ArgumentType::color4));
-        ArgumentTypeRegistry.registerArgumentType(ResourceLocation.fromNamespaceAndPath(MOD_ID, "flip"), FlipArgumentType.class, SingletonArgumentInfo.contextFree(FlipArgumentType::flip));
-        ArgumentTypeRegistry.registerArgumentType(ResourceLocation.fromNamespaceAndPath(MOD_ID, "group_change"), GroupChangeTypeArgumentType.class, SingletonArgumentInfo.contextFree(GroupChangeTypeArgumentType::type));
-        ArgumentTypeRegistry.registerArgumentType(ResourceLocation.fromNamespaceAndPath(MOD_ID, "range3"), Range3ArgumentType.class, SingletonArgumentInfo.contextFree(Range3ArgumentType::range3));
-        ArgumentTypeRegistry.registerArgumentType(ResourceLocation.fromNamespaceAndPath(MOD_ID, "rotate"), RotateArgumentType.class, SingletonArgumentInfo.contextFree(RotateArgumentType::rotate));
-        ArgumentTypeRegistry.registerArgumentType(ResourceLocation.fromNamespaceAndPath(MOD_ID, "speed3"), Speed3ArgumentType.class, SingletonArgumentInfo.contextFree(Speed3ArgumentType::speed3));
-        ArgumentTypeRegistry.registerArgumentType(ResourceLocation.fromNamespaceAndPath(MOD_ID, "suggest_string"), SuggestArgumentType.class, SuggestArgumentType.Serializer.INSTANCE);
-        ArgumentTypeRegistry.registerArgumentType(ResourceLocation.fromNamespaceAndPath(MOD_ID, "suggest_double"), SuggestDoubleArgumentType.class, SuggestDoubleArgumentType.Serializer.INSTANCE);
-        ArgumentTypeRegistry.registerArgumentType(ResourceLocation.fromNamespaceAndPath(MOD_ID, "suggest_integer"), SuggestIntegerArgumentType.class, SuggestIntegerArgumentType.Serializer.INSTANCE);
+        ArgumentTypeRegistry.registerArgumentType(new ResourceLocation(MOD_ID, "color4"), Color4ArgumentType.class, SingletonArgumentInfo.contextFree(Color4ArgumentType::color4));
+        ArgumentTypeRegistry.registerArgumentType(new ResourceLocation(MOD_ID, "flip"), FlipArgumentType.class, SingletonArgumentInfo.contextFree(FlipArgumentType::flip));
+        ArgumentTypeRegistry.registerArgumentType(new ResourceLocation(MOD_ID, "group_change"), GroupChangeTypeArgumentType.class, SingletonArgumentInfo.contextFree(GroupChangeTypeArgumentType::type));
+        ArgumentTypeRegistry.registerArgumentType(new ResourceLocation(MOD_ID, "range3"), Range3ArgumentType.class, SingletonArgumentInfo.contextFree(Range3ArgumentType::range3));
+        ArgumentTypeRegistry.registerArgumentType(new ResourceLocation(MOD_ID, "rotate"), RotateArgumentType.class, SingletonArgumentInfo.contextFree(RotateArgumentType::rotate));
+        ArgumentTypeRegistry.registerArgumentType(new ResourceLocation(MOD_ID, "speed3"), Speed3ArgumentType.class, SingletonArgumentInfo.contextFree(Speed3ArgumentType::speed3));
+        ArgumentTypeRegistry.registerArgumentType(new ResourceLocation(MOD_ID, "suggest_string"), SuggestArgumentType.class, SuggestArgumentType.Serializer.INSTANCE);
+        ArgumentTypeRegistry.registerArgumentType(new ResourceLocation(MOD_ID, "suggest_double"), SuggestDoubleArgumentType.class, SuggestDoubleArgumentType.Serializer.INSTANCE);
+        ArgumentTypeRegistry.registerArgumentType(new ResourceLocation(MOD_ID, "suggest_integer"), SuggestIntegerArgumentType.class, SuggestIntegerArgumentType.Serializer.INSTANCE);
     }
 
 }
