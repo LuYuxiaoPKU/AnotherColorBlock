@@ -13,6 +13,11 @@ on:
 permissions:
   contents: read
 
+# 同一分支只保留最新一次冒烟（旧 commit 触发的中途取消，省 runner 排队）
+concurrency:
+  group: smoke-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   smoke:
     strategy:
