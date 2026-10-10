@@ -69,8 +69,7 @@ public record ConditionalPayload(double x, double y, double z, float red, float 
               String speedExpression = readString(buf, hasSpeedExpression);
               double speedStep = readDouble(buf, hasSpeedExpression, 1.0D);
               String group = readString(buf, buf.readBoolean());
-              ParticleType<?> particleType = buf.readById(net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE);
-              ParticleOptions effect = particleType.getDeserializer().fromNetwork(particleType, buf);
+              ParticleOptions effect = com.noone.particleex.network.PayloadCodecUtil.readParticle(buf);
              return new ConditionalPayload(x,y,z,red,green,blue,alpha,vx,vy,vz,dx,dy,dz,expression,step,age,speedExpression,speedStep,group,effect);
   }
 
