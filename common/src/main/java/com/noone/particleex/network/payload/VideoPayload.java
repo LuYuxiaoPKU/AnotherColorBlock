@@ -45,7 +45,7 @@ public record VideoPayload(double x, double y, double z, String path, double sca
                   buf.writeUtf(this.group);
               }
 
-              buf.writeUtf(net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE.getKey(this.effect.getType()).toString());
+              buf.writeId(net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE, this.effect.getType());
               this.effect.writeToNetwork(buf);
   }
 
@@ -68,7 +68,8 @@ public record VideoPayload(double x, double y, double z, String path, double sca
               String speedExpression = readString(buf, hasSpeedExpression);
               double speedStep = readDouble(buf, hasSpeedExpression, 1.0D);
               String group = readString(buf, buf.readBoolean());
-              ParticleOptions effect = ParticleOptions.fromNetwork(net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE.get(new net.minecraft.resources.ResourceLocation(buf.readUtf())), buf);
+              ParticleType<?> particleType = buf.readById(net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE);
+              ParticleOptions effect = particleType.getDeserializer().fromNetwork(particleType, buf);
               return new VideoPayload(x,y,z,path,scaling,xRotate,yRotate,zRotate,flip,dpb,new Vec3(vx,vy,vz),age,speedExpression,speedStep,group,effect);
   }
 

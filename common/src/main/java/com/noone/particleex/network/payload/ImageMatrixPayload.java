@@ -47,7 +47,7 @@ public record ImageMatrixPayload(double x, double y, double z, String path, doub
               if (!Strings.isNullOrEmpty(this.group) && !this.group.equals("null")) {
                   buf.writeUtf(this.group);
               }
-              buf.writeUtf(net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE.getKey(this.effect.getType()).toString());
+              buf.writeId(net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE, this.effect.getType());
               this.effect.writeToNetwork(buf);
   }
 
@@ -74,7 +74,8 @@ public record ImageMatrixPayload(double x, double y, double z, String path, doub
               String speedExpression = readString(buf, hasSpeedExpression);
               double speedStep = readDouble(buf, hasSpeedExpression, 1.0D);
               String group = readString(buf, buf.readBoolean());
-              ParticleOptions effect = ParticleOptions.fromNetwork(net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE.get(new net.minecraft.resources.ResourceLocation(buf.readUtf())), buf);
+              ParticleType<?> particleType = buf.readById(net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE);
+              ParticleOptions effect = particleType.getDeserializer().fromNetwork(particleType, buf);
               return new ImageMatrixPayload(x,y,z,path,scaling,matrix,dpb,new Vec3(vx,vy,vz),age,speedExpression,speedStep,group,effect);
           }
 
