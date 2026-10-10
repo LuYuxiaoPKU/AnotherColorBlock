@@ -34,7 +34,7 @@ public abstract class ParticleManagerMixin {
       ((IParticle)particle).customTick();
    }
 
-   @ModifyArg(method = {"<init>"}, at = @At(value = "INVOKE", target = "com/google/common/collect/EvictingQueue.create:(I)Lcom/google/common/collect/EvictingQueue;", remap = false))
+   @ModifyArg(method = {"<init>"}, at = @At(value = "INVOKE", target = "com/google/common/collect/EvictingQueue.create(I)Lcom/google/common/collect/EvictingQueue;", remap = false))
    private static int modifyArgTick(int maxParticleCount) {
       return ParticleExConfig.config.maxParticleCount;
    }
