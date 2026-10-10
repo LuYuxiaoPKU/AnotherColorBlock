@@ -1,6 +1,15 @@
 package com.noone.particleex;
 
 import com.noone.particleex.command.ParticleExCommand;
+import com.noone.particleex.command.argument.Color4ArgumentType;
+import com.noone.particleex.command.argument.FlipArgumentType;
+import com.noone.particleex.command.argument.GroupChangeTypeArgumentType;
+import com.noone.particleex.command.argument.Range3ArgumentType;
+import com.noone.particleex.command.argument.RotateArgumentType;
+import com.noone.particleex.command.argument.Speed3ArgumentType;
+import com.noone.particleex.command.argument.SuggestArgumentType;
+import com.noone.particleex.command.argument.SuggestDoubleArgumentType;
+import com.noone.particleex.command.argument.SuggestIntegerArgumentType;
 import com.noone.particleex.common.Bridge;
 import com.noone.particleex.network.ClientNetworkHandler;
 import com.noone.particleex.network.NetworkIdentifiers;
@@ -17,9 +26,13 @@ import com.noone.particleex.network.payload.VideoMatrixPayload;
 import com.noone.particleex.network.payload.VideoPayload;
 import com.noone.particleex.util.ClientMessageUtil;
 import com.noone.particleex.util.MessageBridge;
+import net.minecraft.commands.synchronization.SingletonArgumentInfo;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLEnvironment;
@@ -48,8 +61,29 @@ public class NeoForgeEntry {
             MessageBridge.setSink(new ClientMessageUtil());
         }
 
+        registerArgumentTypes();
         modBus.addListener(RegisterPayloadHandlersEvent.class, this::registerPayloads);
         NeoForge.EVENT_BUS.addListener(this::registerCommands);
+    }
+
+    /**
+     * 注册自定义命令参数类型（与 Fabric 端 ParticleEx.onInitialize 的
+     * ArgumentTypeRegistry.registerArgumentType 对等）。
+     * 不注册的话，服务端下发命令树时客户端 ArgumentTypeInfos.byClass 抛
+     * IllegalArgumentException（Unrecognized argument type）→ 进档失败。
+     * 字节码实证：26.x 无 ArgumentTypeInfos.register，注册表驱动
+     * （BuiltInRegistries.COMMAND_ARGUMENT_TYPE + Registry.register，Fabric API 同款）。
+     */
+    private void registerArgumentTypes() {
+        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, ResourceLocation.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "color4"), SingletonArgumentInfo.contextFree(Color4ArgumentType::color4));
+        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, ResourceLocation.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "flip"), SingletonArgumentInfo.contextFree(FlipArgumentType::flip));
+        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, ResourceLocation.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "group_change"), SingletonArgumentInfo.contextFree(GroupChangeTypeArgumentType::type));
+        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, ResourceLocation.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "range3"), SingletonArgumentInfo.contextFree(Range3ArgumentType::range3));
+        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, ResourceLocation.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "rotate"), SingletonArgumentInfo.contextFree(RotateArgumentType::rotate));
+        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, ResourceLocation.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "speed3"), SingletonArgumentInfo.contextFree(Speed3ArgumentType::speed3));
+        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, ResourceLocation.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "suggest_string"), SuggestArgumentType.Serializer.INSTANCE);
+        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, ResourceLocation.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "suggest_double"), SuggestDoubleArgumentType.Serializer.INSTANCE);
+        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, ResourceLocation.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "suggest_integer"), SuggestIntegerArgumentType.Serializer.INSTANCE);
     }
 
     private void registerCommands(RegisterCommandsEvent event) {
