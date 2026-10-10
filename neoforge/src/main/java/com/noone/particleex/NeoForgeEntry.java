@@ -32,7 +32,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLEnvironment;
@@ -75,15 +75,15 @@ public class NeoForgeEntry {
      * （BuiltInRegistries.COMMAND_ARGUMENT_TYPE + Registry.register，Fabric API 同款）。
      */
     private void registerArgumentTypes() {
-        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, ResourceLocation.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "color4"), SingletonArgumentInfo.contextFree(Color4ArgumentType::color4));
-        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, ResourceLocation.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "flip"), SingletonArgumentInfo.contextFree(FlipArgumentType::flip));
-        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, ResourceLocation.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "group_change"), SingletonArgumentInfo.contextFree(GroupChangeTypeArgumentType::type));
-        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, ResourceLocation.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "range3"), SingletonArgumentInfo.contextFree(Range3ArgumentType::range3));
-        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, ResourceLocation.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "rotate"), SingletonArgumentInfo.contextFree(RotateArgumentType::rotate));
-        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, ResourceLocation.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "speed3"), SingletonArgumentInfo.contextFree(Speed3ArgumentType::speed3));
-        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, ResourceLocation.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "suggest_string"), SuggestArgumentType.Serializer.INSTANCE);
-        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, ResourceLocation.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "suggest_double"), SuggestDoubleArgumentType.Serializer.INSTANCE);
-        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, ResourceLocation.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "suggest_integer"), SuggestIntegerArgumentType.Serializer.INSTANCE);
+        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, Identifier.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "color4"), SingletonArgumentInfo.contextFree(Color4ArgumentType::color4));
+        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, Identifier.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "flip"), SingletonArgumentInfo.contextFree(FlipArgumentType::flip));
+        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, Identifier.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "group_change"), SingletonArgumentInfo.contextFree(GroupChangeTypeArgumentType::type));
+        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, Identifier.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "range3"), SingletonArgumentInfo.contextFree(Range3ArgumentType::range3));
+        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, Identifier.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "rotate"), SingletonArgumentInfo.contextFree(RotateArgumentType::rotate));
+        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, Identifier.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "speed3"), SingletonArgumentInfo.contextFree(Speed3ArgumentType::speed3));
+        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, Identifier.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "suggest_string"), SuggestArgumentType.Serializer.INSTANCE);
+        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, Identifier.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "suggest_double"), SuggestDoubleArgumentType.Serializer.INSTANCE);
+        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, Identifier.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, "suggest_integer"), SuggestIntegerArgumentType.Serializer.INSTANCE);
     }
 
     private void registerCommands(RegisterCommandsEvent event) {
