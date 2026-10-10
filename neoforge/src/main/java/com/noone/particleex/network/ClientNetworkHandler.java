@@ -195,7 +195,7 @@ public class ClientNetworkHandler {
    }
 
    public static void groupRemove(GroupRemovePayload payload, IPayloadContext context) {
-      Player player = context.player();
+      Player player = context.player().orElse(null);
       Vec3 pos = payload.pos();
       double x,y,z;
       if(pos == null){
@@ -215,7 +215,7 @@ public class ClientNetworkHandler {
       String group = payload.group();
       String expression = payload.expression();
       String conditionalExpression = payload.conditionalExpression();
-      Player player = context.player();
+      Player player = context.player().orElse(null);
       Vec3 pos = payload.pos();
       double x,y,z;
       if(pos == null){
