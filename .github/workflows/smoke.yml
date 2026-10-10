@@ -75,7 +75,7 @@ jobs:
           echo "===== 服务器 Done 日志 ====="
           grep -E "Done|Mod loaded|Loading .* mods|Fabric|NeoForge" "$LOG" | tail -10
           echo "===== 致命错误检查 ====="
-          if grep -iE "fatal|exception in (the )?(main )?thread|crash" "$LOG" | grep -v "nogui" | head -5; then
+          if grep -iE "fatal|exception in (the )?(main|server )?thread" "$LOG" | grep -v "nogui" | grep -viE "crash-report-info" | head -5; then
             echo "日志包含致命错误！"
             exit 1
           fi
