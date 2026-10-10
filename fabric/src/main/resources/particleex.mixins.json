@@ -8,7 +8,6 @@
   "client": [
     "IBillboardParticleMixin",
     "IParticleMixin",
-    "ParticleManagerAccessor",
     "ParticleManagerMixin",
     "ParticleMixin"
   ],
