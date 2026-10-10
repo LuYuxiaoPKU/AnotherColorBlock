@@ -2,8 +2,7 @@ package com.noone.particleex.network.payload;
 
 import com.google.common.base.Strings;
 import com.noone.particleex.network.NetworkIdentifiers;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -13,46 +12,48 @@ import static com.noone.particleex.network.PayloadCodecUtil.*;
 
 public record ParameterPayload(boolean polar, boolean tick, boolean rgba, double x, double y, double z, Vector4f color, double vx, double vy, double vz, double begin, double end, String expression, double step, int cpt, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements CustomPacketPayload {
   public static final Type<ParameterPayload> TYPE = new Type<>(NetworkIdentifiers.PARAMETER_PACKET_ID);
-  public static final StreamCodec<RegistryFriendlyByteBuf, ParameterPayload> CODEC = StreamCodec.of(
-          (buf, value) -> {
-              buf.writeBoolean(value.polar);
-              buf.writeBoolean(value.tick);
-              buf.writeBoolean(value.rgba);
-              buf.writeDouble(value.x);
-              buf.writeDouble(value.y);
-              buf.writeDouble(value.z);
-              if (!value.rgba) {
-                  buf.writeFloat(value.color.x);
-                  buf.writeFloat(value.color.y);
-                  buf.writeFloat(value.color.z);
-                  buf.writeFloat(value.color.w);
+  @Override
+  public void write(FriendlyByteBuf buf) {
+              buf.writeBoolean(this.polar);
+              buf.writeBoolean(this.tick);
+              buf.writeBoolean(this.rgba);
+              buf.writeDouble(this.x);
+              buf.writeDouble(this.y);
+              buf.writeDouble(this.z);
+              if (!this.rgba) {
+                  buf.writeFloat(this.color.x);
+                  buf.writeFloat(this.color.y);
+                  buf.writeFloat(this.color.z);
+                  buf.writeFloat(this.color.w);
               }
 
-              buf.writeDouble(value.vx);
-              buf.writeDouble(value.vy);
-              buf.writeDouble(value.vz);
-              buf.writeDouble(value.begin);
-              buf.writeDouble(value.end);
-              buf.writeUtf(value.expression);
-              buf.writeDouble(value.step);
-              if (value.tick) {
-                  buf.writeInt(value.cpt);
+              buf.writeDouble(this.vx);
+              buf.writeDouble(this.vy);
+              buf.writeDouble(this.vz);
+              buf.writeDouble(this.begin);
+              buf.writeDouble(this.end);
+              buf.writeUtf(this.expression);
+              buf.writeDouble(this.step);
+              if (this.tick) {
+                  buf.writeInt(this.cpt);
               }
 
-              buf.writeInt(value.age);
-              buf.writeBoolean(!Strings.isNullOrEmpty(value.speedExpression) && !value.speedExpression.equals("null"));
-              if (!Strings.isNullOrEmpty(value.speedExpression) && !value.speedExpression.equals("null")) {
-                  buf.writeUtf(value.speedExpression);
-                  buf.writeDouble(value.speedStep);
+              buf.writeInt(this.age);
+              buf.writeBoolean(!Strings.isNullOrEmpty(this.speedExpression) && !this.speedExpression.equals("null"));
+              if (!Strings.isNullOrEmpty(this.speedExpression) && !this.speedExpression.equals("null")) {
+                  buf.writeUtf(this.speedExpression);
+                  buf.writeDouble(this.speedStep);
               }
 
-              buf.writeBoolean(!Strings.isNullOrEmpty(value.group) && !value.group.equals("null"));
-              if (!Strings.isNullOrEmpty(value.group) && !value.group.equals("null")) {
-                  buf.writeUtf(value.group);
+              buf.writeBoolean(!Strings.isNullOrEmpty(this.group) && !this.group.equals("null"));
+              if (!Strings.isNullOrEmpty(this.group) && !this.group.equals("null")) {
+                  buf.writeUtf(this.group);
               }
-              ParticleTypes.STREAM_CODEC.encode(buf, value.effect);
-          },
-          buf -> {
+              buf.writeUtf(this.effect.getType().getRegisteredName());
+              this.effect.writeToNetwork(buf);
+  }
+
+  public static ParameterPayload read(FriendlyByteBuf buf) {
               boolean polar = buf.readBoolean();
               boolean tick = buf.readBoolean();
               boolean rgba = buf.readBoolean();
@@ -80,12 +81,12 @@ public record ParameterPayload(boolean polar, boolean tick, boolean rgba, double
               String speedExpression = readString(buf, hasSpeedExpression);
               double speedStep = readDouble(buf, hasSpeedExpression, 1.0D);
               String group = readString(buf, buf.readBoolean());
-              ParticleOptions effect = ParticleTypes.STREAM_CODEC.decode(buf);
+              ParticleOptions effect = ParticleOptions.fromNetwork(net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE.get(net.minecraft.resources.ResourceLocation.parse(buf.readUtf())), buf);
               return new ParameterPayload(polar,tick,rgba,x,y,z,color,vx,vy,vz,begin,end,expression,step,cpt,age,speedExpression,speedStep,group,effect);
-          }
-  );
+  }
+
   @Override
-   public Type<? extends CustomPacketPayload> type() {
-      return TYPE;
-   }
+  public Type<? extends CustomPacketPayload> type() {
+    return TYPE;
+  }
 }

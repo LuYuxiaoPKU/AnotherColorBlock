@@ -3,43 +3,44 @@ package com.noone.particleex.network.payload;
 import com.google.common.base.Strings;
 import com.noone.particleex.network.PayloadCodecUtil;
 import com.noone.particleex.network.NetworkIdentifiers;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 
 public record NormalPayload(double x, double y, double z, float red, float green, float blue, float alpha, double vx, double vy, double vz, double dx, double dy, double dz, int count, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements CustomPacketPayload {
   public static final Type<NormalPayload> TYPE = new Type<>(NetworkIdentifiers.NORMAL_PACKET_ID);
-  public static final StreamCodec<RegistryFriendlyByteBuf, NormalPayload> CODEC = StreamCodec.of(
-          (buf, value) -> {
-              buf.writeDouble(value.x);
-              buf.writeDouble(value.y);
-              buf.writeDouble(value.z);
-              buf.writeFloat(value.red);
-              buf.writeFloat(value.green);
-              buf.writeFloat(value.blue);
-              buf.writeFloat(value.alpha);
-              buf.writeDouble(value.vx);
-              buf.writeDouble(value.vy);
-              buf.writeDouble(value.vz);
-              buf.writeDouble(value.dx);
-              buf.writeDouble(value.dy);
-              buf.writeDouble(value.dz);
-              buf.writeInt(value.count);
-              buf.writeInt(value.age);
-              buf.writeBoolean(!Strings.isNullOrEmpty(value.speedExpression) && !value.speedExpression.equals("null"));
-              if (!Strings.isNullOrEmpty(value.speedExpression) && !value.speedExpression.equals("null")) {
-                  buf.writeUtf(value.speedExpression);
-                  buf.writeDouble(value.speedStep);
+  @Override
+  public void write(FriendlyByteBuf buf) {
+              buf.writeDouble(this.x);
+              buf.writeDouble(this.y);
+              buf.writeDouble(this.z);
+              buf.writeFloat(this.red);
+              buf.writeFloat(this.green);
+              buf.writeFloat(this.blue);
+              buf.writeFloat(this.alpha);
+              buf.writeDouble(this.vx);
+              buf.writeDouble(this.vy);
+              buf.writeDouble(this.vz);
+              buf.writeDouble(this.dx);
+              buf.writeDouble(this.dy);
+              buf.writeDouble(this.dz);
+              buf.writeInt(this.count);
+              buf.writeInt(this.age);
+              buf.writeBoolean(!Strings.isNullOrEmpty(this.speedExpression) && !this.speedExpression.equals("null"));
+              if (!Strings.isNullOrEmpty(this.speedExpression) && !this.speedExpression.equals("null")) {
+                  buf.writeUtf(this.speedExpression);
+                  buf.writeDouble(this.speedStep);
               }
-              buf.writeBoolean(!Strings.isNullOrEmpty(value.group) && !value.group.equals("null"));
-              if (!Strings.isNullOrEmpty(value.group) && !value.group.equals("null")) {
-                  buf.writeUtf(value.group);
+              buf.writeBoolean(!Strings.isNullOrEmpty(this.group) && !this.group.equals("null"));
+              if (!Strings.isNullOrEmpty(this.group) && !this.group.equals("null")) {
+                  buf.writeUtf(this.group);
               }
-              ParticleTypes.STREAM_CODEC.encode(buf, value.effect);
-          },
-          buf -> {
+              buf.writeUtf(this.effect.getType().getRegisteredName());
+              this.effect.writeToNetwork(buf);
+  }
+
+  public static NormalPayload read(FriendlyByteBuf buf) {
              double x = buf.readDouble();
              double y = buf.readDouble();
              double z = buf.readDouble();
@@ -59,12 +60,12 @@ public record NormalPayload(double x, double y, double z, float red, float green
              String speedExpression = PayloadCodecUtil.readString(buf, hasSpeedExpression);
              double speedStep = PayloadCodecUtil.readDouble(buf, hasSpeedExpression, 1.0D);
              String group = PayloadCodecUtil.readString(buf, buf.readBoolean());
-             ParticleOptions effect = ParticleTypes.STREAM_CODEC.decode(buf);
+             ParticleOptions effect = ParticleOptions.fromNetwork(net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE.get(net.minecraft.resources.ResourceLocation.parse(buf.readUtf())), buf);
              return new NormalPayload(x,y,z,red,green,blue,alpha,vx,vy,vz,dx,dy,dz,count,age,speedExpression,speedStep,group,effect);
-          }
-  );
+  }
+
   @Override
-   public Type<? extends CustomPacketPayload> type() {
-      return TYPE;
-   }
+  public Type<? extends CustomPacketPayload> type() {
+    return TYPE;
+  }
 }

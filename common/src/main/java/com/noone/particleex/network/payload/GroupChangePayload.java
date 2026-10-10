@@ -2,8 +2,7 @@ package com.noone.particleex.network.payload;
 
 import com.google.common.base.Strings;
 import com.noone.particleex.network.NetworkIdentifiers;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.phys.Vec3;
 
@@ -11,24 +10,25 @@ import static com.noone.particleex.network.PayloadCodecUtil.readString;
 
 public record GroupChangePayload(int changeType,String group, String expression,String conditionalExpression, Vec3 pos) implements CustomPacketPayload {
   public static final Type<GroupChangePayload> TYPE = new Type<>(NetworkIdentifiers.GROUP_CHANGE_PACKET_ID);
-  public static final StreamCodec<RegistryFriendlyByteBuf, GroupChangePayload> CODEC = StreamCodec.of(
-          (buf, value) -> {
-              buf.writeInt(value.changeType);
-              buf.writeUtf(value.group);
-              buf.writeUtf(value.expression);
-              buf.writeBoolean(!Strings.isNullOrEmpty(value.conditionalExpression) && !value.conditionalExpression.equals("null"));
-              if (!Strings.isNullOrEmpty(value.conditionalExpression) && !value.conditionalExpression.equals("null")) {
-                  buf.writeUtf(value.conditionalExpression);
+  @Override
+  public void write(FriendlyByteBuf buf) {
+              buf.writeInt(this.changeType);
+              buf.writeUtf(this.group);
+              buf.writeUtf(this.expression);
+              buf.writeBoolean(!Strings.isNullOrEmpty(this.conditionalExpression) && !this.conditionalExpression.equals("null"));
+              if (!Strings.isNullOrEmpty(this.conditionalExpression) && !this.conditionalExpression.equals("null")) {
+                  buf.writeUtf(this.conditionalExpression);
               }
 
-              buf.writeBoolean(value.pos != null);
-              if (value.pos != null) {
-                  buf.writeDouble(value.pos.x);
-                  buf.writeDouble(value.pos.y);
-                  buf.writeDouble(value.pos.z);
+              buf.writeBoolean(this.pos != null);
+              if (this.pos != null) {
+                  buf.writeDouble(this.pos.x);
+                  buf.writeDouble(this.pos.y);
+                  buf.writeDouble(this.pos.z);
               }
-          },
-          buf -> {
+  }
+
+  public static GroupChangePayload read(FriendlyByteBuf buf) {
               int type = buf.readInt();
               String group = buf.readUtf();
               String expression = buf.readUtf();
@@ -42,10 +42,10 @@ public record GroupChangePayload(int changeType,String group, String expression,
                   pos = new Vec3(x, y, z);
               }
               return new GroupChangePayload(type,group,expression,conditionalExpression,pos);
-          }
-  );
+  }
+
   @Override
-   public Type<? extends CustomPacketPayload> type() {
-      return TYPE;
-   }
+  public Type<? extends CustomPacketPayload> type() {
+    return TYPE;
+  }
 }
