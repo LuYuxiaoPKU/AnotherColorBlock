@@ -12,7 +12,6 @@ neoForge {
 }
 
 dependencies {
-    implementation 'org.ow2.asm:asm:9.7.1'
     // Mixin 注解（common 中可放接口注入/可选的通用 mixin 工具类）
     compileOnly('net.fabricmc:sponge-mixin:0.17.3+mixin.0.8.7')
 
