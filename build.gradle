@@ -6,6 +6,12 @@ plugins {
 subprojects {
     apply plugin: 'java'
 
+    repositories {
+        mavenCentral()
+        // sponge-mixin 等 fabric 生态依赖
+        maven { url 'https://maven.fabricmc.net/' }
+    }
+
     java {
         toolchain.languageVersion = JavaLanguageVersion.of(17)
     }
