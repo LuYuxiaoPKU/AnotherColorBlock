@@ -44,7 +44,7 @@ public class NeoForgeEntry {
         Bridge.setSender((world, payload) -> {
             net.minecraft.network.FriendlyByteBuf buf = new net.minecraft.network.FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
             payload.write(buf);
-            PacketDistributor.sendToPlayersInDimension(world, payload.id(), buf);
+            PacketDistributor.sendToPlayersInDimension(world, new net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket(payload.id(), buf));
         });
         MessageBridge.setSink(new ClientMessageUtil());
 
@@ -75,7 +75,7 @@ public class NeoForgeEntry {
     private static <T extends CustomPacketPayload> void reg(
             IPayloadRegistrar registrar,
             ResourceLocation id,
-            java.util.function.Function<FriendlyByteBuf, T> reader,
+            java.util.function.Function<net.minecraft.network.FriendlyByteBuf, T> reader,
             BiConsumer<T, IPayloadContext> handler) {
         registrar.play(id, reader, (payload, ctx) -> ctx.enqueueWork(() -> handler.accept(payload, ctx)));
     }
