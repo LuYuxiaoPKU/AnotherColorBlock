@@ -28,6 +28,9 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Dump neoforge metadata（临时探测 1.20.1 可用 neoforge 版本）
+        run: curl -s https://maven.neoforged.net/releases/net/neoforged/neoforge/maven-metadata.xml | grep -o '<version>[^<]*</version>' | sed 's/<[^>]*>//g' | grep '^20\.1' | sort -V | tail -5 || true
+
       - name: 构建 ${{ matrix.module }} 模块
         run: ./gradlew :${{ matrix.module }}:build --stacktrace
 
