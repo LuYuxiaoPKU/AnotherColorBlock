@@ -68,57 +68,57 @@ public class NeoForgeEntry {
         CHANNEL.messageBuilder(ClearParticlePayload.class, 0)
                 .decoder(ClearParticlePayload::read)
                 .encoder((p, buf) -> p.write(buf))
-                .consumerMainThread(clientOnly((p) -> ClientNetworkHandler.clearParticle()))
+                .consumerMainThread(this.<ClearParticlePayload>clientOnly((p) -> ClientNetworkHandler.clearParticle()))
                 .add();
         CHANNEL.messageBuilder(ClearCachePayload.class, 1)
                 .decoder(ClearCachePayload::read)
                 .encoder((p, buf) -> p.write(buf))
-                .consumerMainThread(clientOnly((p) -> ClientNetworkHandler.clearCache()))
+                .consumerMainThread(this.<ClearCachePayload>clientOnly((p) -> ClientNetworkHandler.clearCache()))
                 .add();
         CHANNEL.messageBuilder(NormalPayload.class, 2)
                 .decoder(NormalPayload::read)
                 .encoder((p, buf) -> p.write(buf))
-                .consumerMainThread(clientOnly(ClientNetworkHandler::normal))
+                .consumerMainThread(this.<NormalPayload>clientOnly(ClientNetworkHandler::normal))
                 .add();
         CHANNEL.messageBuilder(ConditionalPayload.class, 3)
                 .decoder(ConditionalPayload::read)
                 .encoder((p, buf) -> p.write(buf))
-                .consumerMainThread(clientOnly(ClientNetworkHandler::conditional))
+                .consumerMainThread(this.<ConditionalPayload>clientOnly(ClientNetworkHandler::conditional))
                 .add();
         CHANNEL.messageBuilder(ParameterPayload.class, 4)
                 .decoder(ParameterPayload::read)
                 .encoder((p, buf) -> p.write(buf))
-                .consumerMainThread(clientOnly(ClientNetworkHandler::parameter))
+                .consumerMainThread(this.<ParameterPayload>clientOnly(ClientNetworkHandler::parameter))
                 .add();
         CHANNEL.messageBuilder(ImagePayload.class, 5)
                 .decoder(ImagePayload::read)
                 .encoder((p, buf) -> p.write(buf))
-                .consumerMainThread(clientOnly(ClientNetworkHandler::image))
+                .consumerMainThread(this.<ImagePayload>clientOnly(ClientNetworkHandler::image))
                 .add();
         CHANNEL.messageBuilder(ImageMatrixPayload.class, 6)
                 .decoder(ImageMatrixPayload::read)
                 .encoder((p, buf) -> p.write(buf))
-                .consumerMainThread(clientOnly(ClientNetworkHandler::imageMatrix))
+                .consumerMainThread(this.<ImageMatrixPayload>clientOnly(ClientNetworkHandler::imageMatrix))
                 .add();
         CHANNEL.messageBuilder(VideoPayload.class, 7)
                 .decoder(VideoPayload::read)
                 .encoder((p, buf) -> p.write(buf))
-                .consumerMainThread(clientOnly(ClientNetworkHandler::video))
+                .consumerMainThread(this.<VideoPayload>clientOnly(ClientNetworkHandler::video))
                 .add();
         CHANNEL.messageBuilder(VideoMatrixPayload.class, 8)
                 .decoder(VideoMatrixPayload::read)
                 .encoder((p, buf) -> p.write(buf))
-                .consumerMainThread(clientOnly(ClientNetworkHandler::videoMatrix))
+                .consumerMainThread(this.<VideoMatrixPayload>clientOnly(ClientNetworkHandler::videoMatrix))
                 .add();
         CHANNEL.messageBuilder(GroupRemovePayload.class, 9)
                 .decoder(GroupRemovePayload::read)
                 .encoder((p, buf) -> p.write(buf))
-                .consumerMainThread(clientOnly(ClientNetworkHandler::groupRemove))
+                .consumerMainThread(this.<GroupRemovePayload>clientOnly(ClientNetworkHandler::groupRemove))
                 .add();
         CHANNEL.messageBuilder(GroupChangePayload.class, 10)
                 .decoder(GroupChangePayload::read)
                 .encoder((p, buf) -> p.write(buf))
-                .consumerMainThread(clientOnly(ClientNetworkHandler::groupChange))
+                .consumerMainThread(this.<GroupChangePayload>clientOnly(ClientNetworkHandler::groupChange))
                 .add();
     }
 
