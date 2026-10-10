@@ -20,6 +20,7 @@ import com.noone.particleex.util.MessageBridge;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
@@ -43,7 +44,9 @@ public class NeoForgeEntry {
 
         // 平台桥注入（发送 + 错误上报）
         Bridge.setSender((world, payload) -> PacketDistributor.sendToPlayersInDimension(world, payload));
-        MessageBridge.setSink(new ClientMessageUtil());
+        if (FMLEnvironment.dist.isClient()) {
+            MessageBridge.setSink(new ClientMessageUtil());
+        }
 
         modBus.addListener(RegisterPayloadHandlersEvent.class, this::registerPayloads);
         NeoForge.EVENT_BUS.addListener(this::registerCommands);
