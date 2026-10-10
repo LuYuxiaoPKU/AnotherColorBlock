@@ -34,7 +34,9 @@ public abstract class ParticleManagerMixin {
       ((IParticle)particle).customTick();
    }
 
-   @ModifyArg(method = {"<init>"}, at = @At(value = "INVOKE", target = "com/google/common/collect/EvictingQueue.create:(I)Lcom/google/common/collect/EvictingQueue;", remap = false))
+   // 注意 MemberInfo 语法：方法描述符直接连在名称后（`create(I)...` 而非 `create:(I)...`——
+   // 后者 `(` 优先解析导致冒号残留在名称里，运行时 Invalid name 崩溃）
+   @ModifyArg(method = {"<init>"}, at = @At(value = "INVOKE", target = "com/google/common/collect/EvictingQueue.create(I)Lcom/google/common/collect/EvictingQueue;", remap = false))
    private static int modifyArgTick(int maxParticleCount) {
       return ParticleExConfig.config.maxParticleCount;
    }
