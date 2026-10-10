@@ -8,6 +8,7 @@ base {
 }
 
 neoForge {
+        if (project.hasProperty('neo_form_version')) {
     neoFormVersion = project.neo_form_version
 }
 
