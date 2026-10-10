@@ -163,7 +163,7 @@ public class Parser {
 
       int lastLine = lexer.nextToken(EnumToken.RPAREN).line;
       if (row == 1 && col == 1) {
-         return ((Expression[])exps.getFirst())[0];
+         return ((Expression[])exps.get(0))[0];
       } else {
          int i;
          int j;
