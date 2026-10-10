@@ -63,6 +63,6 @@ public record NormalPayload(double x, double y, double z, float red, float green
   }
   @Override
   public net.minecraft.resources.ResourceLocation packetId() {
-    return NetworkIdentifiers.NORMAL_PAYLOAD_PACKET_ID;
+    return NetworkIdentifiers.NORMAL_PACKET_ID;
   }
 }

@@ -84,6 +84,6 @@ public record ParameterPayload(boolean polar, boolean tick, boolean rgba, double
   }
   @Override
   public net.minecraft.resources.ResourceLocation packetId() {
-    return NetworkIdentifiers.PARAMETER_PAYLOAD_PACKET_ID;
+    return NetworkIdentifiers.PARAMETER_PACKET_ID;
   }
 }

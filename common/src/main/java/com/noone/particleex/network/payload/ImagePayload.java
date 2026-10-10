@@ -74,6 +74,6 @@ public record ImagePayload(double x, double y, double z, String path, double sca
   }
   @Override
   public net.minecraft.resources.ResourceLocation packetId() {
-    return NetworkIdentifiers.IMAGE_PAYLOAD_PACKET_ID;
+    return NetworkIdentifiers.IMAGE_PACKET_ID;
   }
 }
