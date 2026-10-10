@@ -41,7 +41,11 @@ public class NeoForgeEntry {
         }
 
         // 平台桥注入（发送 + 错误上报）
-        Bridge.setSender((world, payload) -> PacketDistributor.sendToPlayersInDimension(world, payload));
+        Bridge.setSender((world, payload) -> {
+            net.minecraft.network.FriendlyByteBuf buf = new net.minecraft.network.FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
+            payload.write(buf);
+            PacketDistributor.sendToPlayersInDimension(world, payload.id(), buf);
+        });
         MessageBridge.setSink(new ClientMessageUtil());
 
         modBus.addListener(RegisterPayloadHandlerEvent.class, this::registerPayloads);
@@ -71,7 +75,7 @@ public class NeoForgeEntry {
     private static <T extends CustomPacketPayload> void reg(
             IPayloadRegistrar registrar,
             ResourceLocation id,
-            FriendlyByteBuf.Reader<T> reader,
+            java.util.function.Function<FriendlyByteBuf, T> reader,
             BiConsumer<T, IPayloadContext> handler) {
         registrar.play(id, reader, (payload, ctx) -> ctx.enqueueWork(() -> handler.accept(payload, ctx)));
     }
