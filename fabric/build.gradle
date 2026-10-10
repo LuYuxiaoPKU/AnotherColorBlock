@@ -61,6 +61,11 @@ tasks.named('compileJava', JavaCompile) {
 }
 
 processResources {
+    inputs.property 'minecraft_version', project.minecraft_version
     dependsOn(configurations.commonResources)
     from(configurations.commonResources)
+    // 在 fabric.mod.json 中展开 ${minecraft_version}，避免依赖版本写死
+    filesMatching('fabric.mod.json') {
+        expand 'minecraft_version': project.minecraft_version
+    }
 }
