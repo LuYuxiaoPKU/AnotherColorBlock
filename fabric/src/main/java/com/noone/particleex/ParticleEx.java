@@ -4,8 +4,6 @@ import com.noone.particleex.command.ParticleExCommand;
 import com.noone.particleex.command.argument.*;
 import com.noone.particleex.common.Bridge;
 import com.noone.particleex.network.payload.*;
-import com.noone.particleex.util.ClientMessageUtil;
-import com.noone.particleex.util.MessageBridge;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -30,7 +28,6 @@ public class ParticleEx implements ModInitializer {
         }
         // 平台桥：命令层发送 → Fabric 网络发送；错误上报 → 客户端聊天框
         Bridge.setSender((world, payload) -> PlayerLookup.world(world).forEach(player -> ServerPlayNetworking.send(player, payload)));
-        MessageBridge.setSink(new ClientMessageUtil());
         registerPayloads();
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, dedicated) -> ParticleExCommand.register(dispatcher, registryAccess));
     }

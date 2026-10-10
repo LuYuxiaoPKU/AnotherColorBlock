@@ -1,5 +1,7 @@
 package com.noone.particleex;
 
+import com.noone.particleex.util.ClientMessageUtil;
+import com.noone.particleex.util.MessageBridge;
 import com.noone.particleex.network.ClientNetworkHandler;
 import com.noone.particleex.network.payload.*;
 import com.noone.particleex.util.ParticleUtil;
@@ -9,6 +11,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 
 public class ParticleExClient implements ClientModInitializer {
    public void onInitializeClient() {
+      MessageBridge.setSink(new ClientMessageUtil());
       ClientTickEvents.START_CLIENT_TICK.register(client -> ParticleUtil.onStartClientTick());
       ClientTickEvents.END_CLIENT_TICK.register(client -> ParticleUtil.onEndClientTick());
       ClientPlayNetworking.registerGlobalReceiver(ClearParticlePayload.TYPE, (payload, context) -> ClientNetworkHandler.clearParticle(context));
