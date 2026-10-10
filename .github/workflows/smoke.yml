@@ -58,7 +58,7 @@ jobs:
             fi
             if ! kill -0 $GRADLE_PID 2>/dev/null; then
               echo "gradle 进程提前退出："
-              tail -50 /tmp/runserver.log
+              cat /tmp/runserver.log 2>/dev/null || true
               exit 1
             fi
             sleep 10
