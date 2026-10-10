@@ -18,13 +18,14 @@ configurations {
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    // 无混淆路径（net.fabricmc.fabric-loom）：无 modImplementation 扩展，
+    // 照 fabric-api 用普通依赖（loader=api 编译期，fabric-api=运行时）
+    api "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    // 26.x 映射全部走 loom 1.17 默认（RelativityMC modern-yarn）：
-    // fabric-api 26.x 构建链零自定义映射配置（实证：其 loom.gradle 无 mappings/intermediaryUrl），
-    // 显式配置 modern-yarn/intermediaryUrl 会破坏映射链（CI 实证 "Mappings src namespace
-    // must match remap src namespace, expected official but got intermediary"）。
+    // 26.x 映射全部走 loom 1.17 无混淆路径默认（26.x = non-obfuscated Minecraft，
+    // Mojang 直发可读名 jar）：零自定义映射配置（fabric-api 26.x 线上同款，
+    // 实证其 loom.gradle 无 mappings/intermediaryUrl/modImplementation）。
 
     // common 源码直接并入本模块编译（loom 统一映射到 Yarn）
     commonJava(project(path: ':common', configuration: 'commonJava'))
