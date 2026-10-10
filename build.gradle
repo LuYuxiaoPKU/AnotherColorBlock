@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.16.3' apply false
+    id 'fabric-loom' version '1.17.20' apply false
     // net.neoforged.moddev 在 neoforge 模块内声明（依赖 maven.neoforged.net，网络恢复后启用）
 }
 
