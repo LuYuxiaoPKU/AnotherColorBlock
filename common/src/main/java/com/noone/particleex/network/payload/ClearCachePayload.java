@@ -5,7 +5,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
 public record ClearCachePayload() implements CustomPacketPayload {
-    public static final Type<ClearCachePayload> TYPE = new Type<>(NetworkIdentifiers.CLEAR_CACHE_PACKET_ID);
     @Override
   public void write(FriendlyByteBuf buf) {
   }
@@ -14,8 +13,8 @@ public record ClearCachePayload() implements CustomPacketPayload {
     return new ClearCachePayload();
   }
 
-    @Override
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
-    }
+  @Override
+  public net.minecraft.resources.ResourceLocation id() {
+    return NetworkIdentifiers.CLEARCACHE_PACKET_ID;
+  }
 }
