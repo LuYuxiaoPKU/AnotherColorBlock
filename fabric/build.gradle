@@ -51,56 +51,16 @@ loom {
     }
 }
 
-configurations {
-    commonJava {
-        canBeResolved = true
-    }
-    commonResources {
-        canBeResolved = true
-    }
-}
-
-dependencies {
-    // 注意：不要在此声明 sponge-mixin 依赖——loom 1.18 的 mixin AP 默认已关闭，
-    // 显式声明会触发 legacy AP（javac 自动发现），把 @Shadow/@Inject 注解字符串
-    // remap 成 intermediary（class_XXXX），与 remapJar 的 MixinExtension 双重处理冲突。
-}
-
 // 26.x 生态缺陷绕过（客户端 Mixin apply 崩溃修复）：
 // loom 1.18 的 remapJar 把 mixin 注解字符串 remap 到 intermediary（class_XXXX），
-// 但 26.x 运行时命名空间 = official（可读名），且 jar 标注 official 时 loader 的
-// static remap（Fabric-Loom-Mixin-Remap-Type: static）不会触发 → 注解字符串停留
-// intermediary → 客户端 @Shadow/@Inject 签名不匹配崩溃（No refMap loaded）。
-// 对策：发布 jar 的 manifest 声明为 intermediary，触发 loader 运行时 remap——
-// 字节码已是 official（映射无匹配项时 tinyremapper 原样保留，不受影响），
-// mixin 注解的 class_XXXX 被映射到 official → 客户端正常。
-tasks.named('remapJar') {
-    doLast {
-        def src = remapJar.archiveFile.get().asFile
-        def tmp = new File(src.parentFile, src.name + '.tmp')
-        def zin = new java.util.zip.ZipInputStream(new FileInputStream(src))
-        def zout = new java.util.zip.ZipOutputStream(new FileOutputStream(tmp))
-        def buf = new byte[8192]
-        def entry
-        while ((entry = zin.nextEntry) != null) {
-            zout.putNextEntry(new java.util.zip.ZipEntry(entry.name))
-            if (entry.name == 'META-INF/MANIFEST.MF') {
-                def text = new String(zin.readAllBytes(), 'UTF-8')
-                        .replace('Fabric-Mapping-Namespace: official', 'Fabric-Mapping-Namespace: intermediary')
-                zout.write(text.getBytes('UTF-8'))
-            } else {
-                int n
-                while ((n = zin.read(buf)) > 0) zout.write(buf, 0, n)
-            }
-            zout.closeEntry()
-        }
-        zout.close()
-        zin.close()
-        src.delete()
-        tmp.renameTo(src)
-        println 'remapJar: manifest 已声明为 intermediary（26.x mixin 绕过）'
-    }
-}
+// 期望 loader 运行时 static remap 转回 official；但 26.x 无官方 mojmap，
+// loader 没有 intermediary→official 映射数据 → 注解停留中间名 → 客户端
+// @Shadow/@Inject 签名不匹配崩溃（No refMap loaded）。
+// 对策：与 fabric-api 构建链一致，loom 降级 1.16.2 —— mixin AP 在 javac 阶段
+// 直出 dev 命名空间（official 可读名），jar 内注解即官方名，运行时不依赖 remap。
+// 实证：fabric-particles-v1（26.x，loom 1.16.2 构建）注解 = 全可读名，无
+// Fabric-Loom-Mixin-Remap-Type 键；1.18 产物 = class_XXXX；两次实机复测确认
+// loader static remap 落空（manifest 声明 intermediary 亦无效）。
 
 tasks.named('compileJava', JavaCompile) {
     dependsOn(configurations.commonJava)

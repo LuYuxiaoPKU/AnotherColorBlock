@@ -1,5 +1,7 @@
 plugins {
-    id 'fabric-loom' version '1.18-SNAPSHOT' apply false
+    // loom 1.16.2（与 fabric-api 26.x 构建链一致）：mixin 注解由 AP 直出 official
+    // （loom 1.18 改走 remapJar 中间名 + loader 运行时 static remap，26.x 无官方映射此链路断裂）
+    id 'fabric-loom' version '1.16.2' apply false
     // net.neoforged.moddev 在 neoforge 模块内声明（依赖 maven.neoforged.net，网络恢复后启用）
 }
 
