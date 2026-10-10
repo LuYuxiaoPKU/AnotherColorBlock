@@ -4,8 +4,6 @@ import com.noone.particleex.command.ParticleExCommand;
 import com.noone.particleex.command.argument.*;
 import com.noone.particleex.common.Bridge;
 import com.noone.particleex.network.payload.*;
-import com.noone.particleex.util.ClientMessageUtil;
-import com.noone.particleex.util.MessageBridge;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -34,7 +32,6 @@ public class ParticleEx implements ModInitializer {
             ResourceLocation id = payload.packetId();
             PlayerLookup.world(world).forEach(player -> ServerPlayNetworking.send(player, id, buf));
         });
-        MessageBridge.setSink(new ClientMessageUtil());
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, dedicated) -> ParticleExCommand.register(dispatcher, registryAccess));
     }
 
