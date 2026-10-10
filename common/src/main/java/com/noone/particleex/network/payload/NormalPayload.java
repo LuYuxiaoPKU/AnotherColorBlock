@@ -59,7 +59,7 @@ public record NormalPayload(double x, double y, double z, float red, float green
              String speedExpression = PayloadCodecUtil.readString(buf, hasSpeedExpression);
              double speedStep = PayloadCodecUtil.readDouble(buf, hasSpeedExpression, 1.0D);
              String group = PayloadCodecUtil.readString(buf, buf.readBoolean());
-             ParticleOptions effect = ParticleOptions.fromNetwork(net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE.get(net.minecraft.resources.new ResourceLocation(buf.readUtf())), buf);
+             ParticleOptions effect = ParticleOptions.fromNetwork(net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE.get(new net.minecraft.resources.ResourceLocation(buf.readUtf())), buf);
              return new NormalPayload(x,y,z,red,green,blue,alpha,vx,vy,vz,dx,dy,dz,count,age,speedExpression,speedStep,group,effect);
   }
 

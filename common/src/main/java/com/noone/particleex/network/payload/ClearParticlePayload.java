@@ -15,6 +15,6 @@ public record ClearParticlePayload() implements CustomPacketPayload {
 
   @Override
   public net.minecraft.resources.ResourceLocation id() {
-    return NetworkIdentifiers.CLEARPARTICLE_PACKET_ID;
+    return NetworkIdentifiers.CLEAR_PARTICLE_PACKET_ID;
   }
 }
