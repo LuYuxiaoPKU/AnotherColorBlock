@@ -200,14 +200,14 @@ public class Lexer {
    }
 
    public void recovery() {
-      Lexer.Snapshot snapshot = this.snapshots.removeLast();
+      Lexer.Snapshot snapshot = this.snapshots.remove(snapshots.size() - 1);
       this.pointer = snapshot.pointer;
       this.line = snapshot.line;
       this.nextToken = snapshot.nextToken;
    }
 
    public void popSnapshot() {
-      this.snapshots.removeLast();
+      this.snapshots.remove(snapshots.size() - 1);
    }
 
    private String scanNumber() {
