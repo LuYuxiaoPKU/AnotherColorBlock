@@ -12,7 +12,7 @@ public class ClientMessageUtil implements IMessageSink {
    public void addChatMessage(Throwable e) {
       e.printStackTrace(new PrintStream(System.out) {
          public void println(Object x) {
-            ClientMessageUtil.CLIENT.gui.hud.getChat().addClientSystemMessage(Component.literal(x.toString()));
+            ClientMessageUtil.CLIENT.gui.getChat().addClientSystemMessage(Component.literal(x.toString()));
          }
       });
    }
