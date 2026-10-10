@@ -23,6 +23,7 @@ dependencies {
 
     mappings "org.relativitymc:modern-yarn:${project.yarn_mappings}:v2"
     // common 源码直接并入本模块编译（loom 统一映射到 Yarn）
+    commonJava(project(path: ':common', configuration: 'commonJava'))
     commonResources(project(path: ':common', configuration: 'commonResources'))
 }
 
