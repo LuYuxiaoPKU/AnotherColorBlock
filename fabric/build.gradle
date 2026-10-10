@@ -28,12 +28,12 @@ dependencies {
 }
 
 loom {
-    // devLocal 仅在本机用户级 ~/.gradle/gradle.properties 设置（CI 不读用户级，保持默认路径）
-    // 26.x 无官方 mojmap：SourceRemapper 需要 tiny tree 含 official 段，只能靠 RelativityMC
-    // intermediary（official→intermediary）提供；代价是 dev classpath 变 intermediary 命名空间
-    def devLocal = providers.gradleProperty('devLocal').present
+    // 26.x 无官方 mojmap：intermediary 由 RelativityMC 维护（CodeMC 镜像）。
+    // 设置 intermediaryUrl 使 loom 用 CodeMC 的 26.x intermediary（官方渠道止于 1.21.11），
+    // dev 命名空间保持官方可读名（26.x 生态 fabric-api 亦以官方名发布）
     intermediaryUrl = 'https://repo.codemc.io/repository/relativitymc/org/relativitymc/intermediary/%1$s/intermediary-%1$s-v2.jar'
-    useIntermediateMappings = devLocal
+    // 显式关掉 intermediate dev 映射（loom 默认值可能为 true，需与 CI 行为一致）
+    useIntermediateMappings = false
     runs {
         client {
             client()
