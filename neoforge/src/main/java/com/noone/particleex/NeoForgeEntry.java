@@ -22,6 +22,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -41,9 +42,11 @@ public class NeoForgeEntry {
             throw new RuntimeException(e);
         }
 
-        // 平台桥注入（发送 + 错误上报）
+        // 平台桥注入（发送 + 错误上报）：错误上报仅客户端（服务器端无 net.minecraft.client 类）
         Bridge.setSender((world, payload) -> PacketDistributor.sendToPlayersInDimension(world, payload));
-        MessageBridge.setSink(new ClientMessageUtil());
+        if (FMLEnvironment.dist.isClient()) {
+            MessageBridge.setSink(new ClientMessageUtil());
+        }
 
         modBus.addListener(RegisterPayloadHandlersEvent.class, this::registerPayloads);
         NeoForge.EVENT_BUS.addListener(this::registerCommands);
