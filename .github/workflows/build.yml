@@ -36,12 +36,9 @@ jobs:
         run: ./gradlew :common:test --stacktrace
 
       - name: 构建 ${{ matrix.module }} 模块
-        # 26.1 无 neoforge 正式版（仅 alpha），该分支 fabric-only
-        if: ${{ !(matrix.module == 'neoforge' && github.ref_name == '26.1') }}
         run: ./gradlew :${{ matrix.module }}:build --stacktrace
 
       - name: 上传产物
-        if: ${{ !(matrix.module == 'neoforge' && github.ref_name == '26.1') }}
         uses: actions/upload-artifact@v4
         with:
           name: particleex-${{ matrix.module }}-${{ github.sha }}

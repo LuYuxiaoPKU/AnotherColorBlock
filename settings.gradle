@@ -20,6 +20,6 @@ rootProject.name = 'AnotherColorBlock'
 
 include 'common'
 include 'fabric'
-// 26.1 无 neoforge 正式版（仅 alpha），fabric-only 分支
-// include 'neoforge'
+// 26.1 neoforge 正式版 26.1.2.115（metadata 实证），双平台
+include 'neoforge'
 
