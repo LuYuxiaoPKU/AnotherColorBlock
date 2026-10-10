@@ -13,7 +13,6 @@ import static com.noone.particleex.network.PayloadCodecUtil.readDouble;
 import static com.noone.particleex.network.PayloadCodecUtil.readString;
 
 public record GroupRemovePayload(String group, String expression, Vec3 pos) implements CustomPacketPayload {
-  public static final Type<GroupRemovePayload> TYPE = new Type<>(NetworkIdentifiers.GROUP_REMOVE_PACKET_ID);
   @Override
   public void write(FriendlyByteBuf buf) {
               buf.writeUtf(this.group);
@@ -45,7 +44,7 @@ public record GroupRemovePayload(String group, String expression, Vec3 pos) impl
   }
 
   @Override
-  public Type<? extends CustomPacketPayload> type() {
-    return TYPE;
+  public net.minecraft.resources.ResourceLocation id() {
+    return NetworkIdentifiers.GROUPREMOVE_PACKET_ID;
   }
 }

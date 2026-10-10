@@ -12,7 +12,6 @@ import static com.noone.particleex.network.PayloadCodecUtil.readDouble;
 import static com.noone.particleex.network.PayloadCodecUtil.readString;
 
 public record VideoPayload(double x, double y, double z, String path, double scaling, int xRotate, int yRotate, int zRotate, int flip, double dpb, Vec3 speed, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements CustomPacketPayload {
-  public static final Type<VideoPayload> TYPE = new Type<>(NetworkIdentifiers.VIDEO_PACKET_ID);
   @Override
   public void write(FriendlyByteBuf buf) {
               buf.writeDouble(this.x);
@@ -74,7 +73,7 @@ public record VideoPayload(double x, double y, double z, String path, double sca
   }
 
   @Override
-  public Type<? extends CustomPacketPayload> type() {
-    return TYPE;
+  public net.minecraft.resources.ResourceLocation id() {
+    return NetworkIdentifiers.VIDEO_PACKET_ID;
   }
 }

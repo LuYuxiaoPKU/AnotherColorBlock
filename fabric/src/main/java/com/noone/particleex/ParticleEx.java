@@ -31,7 +31,7 @@ public class ParticleEx implements ModInitializer {
         Bridge.setSender((world, payload) -> {
             net.minecraft.network.FriendlyByteBuf buf = net.fabricmc.fabric.api.networking.v1.PacketByteBufs.create();
             payload.write(buf);
-            ResourceLocation id = payload.type().id();
+            ResourceLocation id = payload.id();
             PlayerLookup.world(world).forEach(player -> ServerPlayNetworking.send(player, id, buf));
         });
         MessageBridge.setSink(new ClientMessageUtil());
