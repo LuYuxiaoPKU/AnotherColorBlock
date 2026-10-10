@@ -46,9 +46,19 @@ public class ClassExpression implements IExecutable {
    public int invoke() {
       try {
          return (Integer)this.method.invoke(null, this.struct);
-      } catch (IllegalArgumentException | InvocationTargetException | IllegalAccessException var2) {
+      } catch (InvocationTargetException var2) {
+         // 解包反射包装，直抛原始异常（与上游 GoldenMain 语义一致）；Error 也原样抛（如 final 字段写入的 IllegalAccessError）
          MessageBridge.report(var2);
-         throw new RuntimeException(var2);
+         Throwable cause = var2.getCause();
+         if (cause instanceof RuntimeException) {
+            throw (RuntimeException) cause;
+         }
+         if (cause instanceof Error) {
+            throw (Error) cause;
+         }
+         throw new RuntimeException(cause == null ? var2 : cause);
+      } catch (IllegalArgumentException | IllegalAccessException var3) {
+         throw new RuntimeException(var3);
       }
    }
 }
