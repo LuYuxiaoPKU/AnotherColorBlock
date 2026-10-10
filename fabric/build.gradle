@@ -21,7 +21,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    mappings "org.relativitymc:modern-yarn:26.2+build.3:v2"
+    mappings "org.relativitymc:modern-yarn:${project.yarn_mappings}:v2"
 
     // common 源码直接并入本模块编译（loom 统一映射到 Yarn）
     commonJava(project(path: ':common', configuration: 'commonJava'))
@@ -29,9 +29,12 @@ dependencies {
 }
 
 loom {
-    // 26.x intermediary 由 RelativityMC 维护（CodeMC 镜像，loom 默认的 fabricmc 渠道只到 1.21.11）
+    // devLocal 仅在本机用户级 ~/.gradle/gradle.properties 设置（CI 不读用户级，保持默认路径）
+    // 26.x 无官方 mojmap：SourceRemapper 需要 tiny tree 含 official 段，只能靠 RelativityMC
+    // intermediary（official→intermediary）提供；代价是 dev classpath 变 intermediary 命名空间
+    def devLocal = providers.gradleProperty('devLocal').present
     intermediaryUrl = 'https://repo.codemc.io/repository/relativitymc/org/relativitymc/intermediary/%1$s/intermediary-%1$s-v2.jar'
-    useIntermediateMappings = true
+    useIntermediateMappings = devLocal
     runs {
         client {
             client()
