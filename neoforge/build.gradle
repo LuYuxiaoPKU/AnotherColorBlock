@@ -7,10 +7,6 @@ base {
     archivesName = "${mod_id}-neoforge-${minecraft_version}"
 }
 
-neoForge {
-    version = project.neoforge_version
-}
-
 // NeoGradle 7 runs（moddev 2.x 之前 1.20.4 时代官方工具链，MDK 实证）
 runs {
     configureEach {
