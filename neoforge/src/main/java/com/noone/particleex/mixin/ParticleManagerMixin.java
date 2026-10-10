@@ -9,8 +9,10 @@ import net.minecraft.client.particle.ParticleGroup;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -34,9 +36,28 @@ public abstract class ParticleManagerMixin {
       ((IParticle)particle).customTick();
    }
 
-   @ModifyArg(method = {"<init>"}, at = @At(value = "INVOKE", target = "com/google/common/collect/EvictingQueue.create:(I)Lcom/google/common/collect/EvictingQueue;", remap = false))
+   // 26.x 专属（同 fabric）：构造器粒子上限注入点已从 Guava EvictingQueue.create 改为
+   // java.util.ArrayDeque.<init>(I)（26.2 起 ParticleGroup 移除 Guava 队列；字节码实证：
+   // 1.21.11/26.1 仍为 EvictingQueue.create(16384)，26.2+ 为 ArrayDeque(16384)）。
+   // MemberInfo 语法注意：方法描述符直接连在名称后（`<init>(I)...` 而非 `<init>:(I)...`）
+   @ModifyArg(method = {"<init>"}, at = @At(value = "INVOKE", target = "java/util/ArrayDeque.<init>(I)V", remap = false))
    private static int modifyArgTick(int maxParticleCount) {
       return ParticleExConfig.config.maxParticleCount;
+   }
+
+   // 26.2+ 专属（同 fabric）：粒子上限逻辑在 add() 内（size>=16384 拒绝；>=12288 概率拒绝，
+   // 阈值 (16384-size)/4096f）。@ModifyConstant 替换为配置派生值（maxParticleCount、75%、25%）。
+   @ModifyConstant(method = {"add(Lnet/minecraft/client/particle/Particle;)Z"},
+         constant = {@Constant(intValue = 16384, ordinal = 0), @Constant(intValue = 12288), @Constant(intValue = 16384, ordinal = 1)})
+   private static int modifyAddInt(int original) {
+      int max = ParticleExConfig.config.maxParticleCount;
+      return original == 16384 ? max : (int) (max * 0.75f);
+   }
+
+   @ModifyConstant(method = {"add(Lnet/minecraft/client/particle/Particle;)Z"},
+         constant = @Constant(floatValue = 4096f))
+   private static float modifyAddFloat(float original) {
+      return ParticleExConfig.config.maxParticleCount * 0.25f;
    }
 
    @Inject(method = {"tickParticles"}, at = @At("HEAD"), cancellable = true)
