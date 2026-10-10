@@ -18,6 +18,7 @@ import com.noone.particleex.network.payload.VideoPayload;
 import com.noone.particleex.util.ClientMessageUtil;
 import com.noone.particleex.util.MessageBridge;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -53,7 +54,9 @@ public class NeoForgeEntry {
         Bridge.setSender((world, payload) -> {
             CHANNEL.send(PacketDistributor.DIMENSION.with(() -> world.dimension()), payload);
         });
-        MessageBridge.setSink(new ClientMessageUtil());
+        if (FMLEnvironment.dist.isClient()) {
+            MessageBridge.setSink(new ClientMessageUtil());
+        }
 
         registerMessages();
         MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
