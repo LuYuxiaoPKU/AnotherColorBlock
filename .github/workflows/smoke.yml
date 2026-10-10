@@ -58,15 +58,15 @@ jobs:
             fi
             if ! kill -0 $GRADLE_PID 2>/dev/null; then
               echo "gradle 进程提前退出："
-              tail -50 /tmp/runserver.log
+              cat /tmp/runserver.log 2>/dev/null || true
               exit 1
             fi
             sleep 10
           done
           if [ -z "$DONE" ]; then
             echo "超时：服务器未出现 Done 日志"
-            tail -30 "$LOG" 2>/dev/null || true
-            tail -50 /tmp/runserver.log || true
+            cat "$LOG" 2>/dev/null || true
+            cat /tmp/runserver.log 2>/dev/null || true
             exit 1
           fi
           echo "===== 服务器 Done 日志 ====="
