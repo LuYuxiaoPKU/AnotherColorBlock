@@ -74,8 +74,7 @@ public record ImageMatrixPayload(double x, double y, double z, String path, doub
               String speedExpression = readString(buf, hasSpeedExpression);
               double speedStep = readDouble(buf, hasSpeedExpression, 1.0D);
               String group = readString(buf, buf.readBoolean());
-              ParticleType<?> particleType = buf.readById(net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE);
-              ParticleOptions effect = particleType.getDeserializer().fromNetwork(particleType, buf);
+              ParticleOptions effect = com.noone.particleex.network.PayloadCodecUtil.readParticle(buf);
               return new ImageMatrixPayload(x,y,z,path,scaling,matrix,dpb,new Vec3(vx,vy,vz),age,speedExpression,speedStep,group,effect);
           }
 
