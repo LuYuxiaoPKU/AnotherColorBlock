@@ -9,7 +9,6 @@ import net.minecraft.world.phys.Vec3;
 import static com.noone.particleex.network.PayloadCodecUtil.readString;
 
 public record GroupChangePayload(int changeType,String group, String expression,String conditionalExpression, Vec3 pos) implements CustomPacketPayload {
-  public static final Type<GroupChangePayload> TYPE = new Type<>(NetworkIdentifiers.GROUP_CHANGE_PACKET_ID);
   @Override
   public void write(FriendlyByteBuf buf) {
               buf.writeInt(this.changeType);
@@ -45,7 +44,7 @@ public record GroupChangePayload(int changeType,String group, String expression,
   }
 
   @Override
-  public Type<? extends CustomPacketPayload> type() {
-    return TYPE;
+  public net.minecraft.resources.ResourceLocation id() {
+    return NetworkIdentifiers.GROUPCHANGE_PACKET_ID;
   }
 }

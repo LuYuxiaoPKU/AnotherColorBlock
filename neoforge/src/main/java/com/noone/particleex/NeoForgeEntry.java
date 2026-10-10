@@ -18,6 +18,7 @@ import com.noone.particleex.network.payload.VideoPayload;
 import com.noone.particleex.util.ClientMessageUtil;
 import com.noone.particleex.util.MessageBridge;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
@@ -53,25 +54,25 @@ public class NeoForgeEntry {
 
     private void registerPayloads(RegisterPayloadHandlerEvent event) {
         IPayloadRegistrar registrar = event.registrar(NetworkIdentifiers.MOD_ID).versioned("1");
-        reg(registrar, ClearParticlePayload.TYPE, ClearParticlePayload::read, (p, ctx) -> ClientNetworkHandler.clearParticle(ctx));
-        reg(registrar, ClearCachePayload.TYPE, ClearCachePayload::read, (p, ctx) -> ClientNetworkHandler.clearCache(ctx));
-        reg(registrar, NormalPayload.TYPE, NormalPayload::read, ClientNetworkHandler::normal);
-        reg(registrar, ConditionalPayload.TYPE, ConditionalPayload::read, ClientNetworkHandler::conditional);
-        reg(registrar, ParameterPayload.TYPE, ParameterPayload::read, ClientNetworkHandler::parameter);
-        reg(registrar, ImagePayload.TYPE, ImagePayload::read, ClientNetworkHandler::image);
-        reg(registrar, ImageMatrixPayload.TYPE, ImageMatrixPayload::read, ClientNetworkHandler::imageMatrix);
-        reg(registrar, VideoPayload.TYPE, VideoPayload::read, ClientNetworkHandler::video);
-        reg(registrar, VideoMatrixPayload.TYPE, VideoMatrixPayload::read, ClientNetworkHandler::videoMatrix);
-        reg(registrar, GroupRemovePayload.TYPE, GroupRemovePayload::read, ClientNetworkHandler::groupRemove);
-        reg(registrar, GroupChangePayload.TYPE, GroupChangePayload::read, ClientNetworkHandler::groupChange);
+        reg(registrar, NetworkIdentifiers.CLEAR_PARTICLE_PACKET_ID, ClearParticlePayload::read, (p, ctx) -> ClientNetworkHandler.clearParticle(ctx));
+        reg(registrar, NetworkIdentifiers.CLEAR_CACHE_PACKET_ID, ClearCachePayload::read, (p, ctx) -> ClientNetworkHandler.clearCache(ctx));
+        reg(registrar, NetworkIdentifiers.NORMAL_PACKET_ID, NormalPayload::read, ClientNetworkHandler::normal);
+        reg(registrar, NetworkIdentifiers.CONDITIONAL_PACKET_ID, ConditionalPayload::read, ClientNetworkHandler::conditional);
+        reg(registrar, NetworkIdentifiers.PARAMETER_PACKET_ID, ParameterPayload::read, ClientNetworkHandler::parameter);
+        reg(registrar, NetworkIdentifiers.IMAGE_PACKET_ID, ImagePayload::read, ClientNetworkHandler::image);
+        reg(registrar, NetworkIdentifiers.IMAGE_MATRIX_PACKET_ID, ImageMatrixPayload::read, ClientNetworkHandler::imageMatrix);
+        reg(registrar, NetworkIdentifiers.VIDEO_PACKET_ID, VideoPayload::read, ClientNetworkHandler::video);
+        reg(registrar, NetworkIdentifiers.VIDEO_MATRIX_PACKET_ID, VideoMatrixPayload::read, ClientNetworkHandler::videoMatrix);
+        reg(registrar, NetworkIdentifiers.GROUP_REMOVE_PACKET_ID, GroupRemovePayload::read, ClientNetworkHandler::groupRemove);
+        reg(registrar, NetworkIdentifiers.GROUP_CHANGE_PACKET_ID, GroupChangePayload::read, ClientNetworkHandler::groupChange);
     }
 
     /** 注册 S2C payload：handler 包 enqueueWork 切回主线程（NeoForge 网络线程要求） */
     private static <T extends CustomPacketPayload> void reg(
             IPayloadRegistrar registrar,
-            CustomPacketPayload.Type<T> type,
+            ResourceLocation id,
             FriendlyByteBuf.Reader<T> reader,
             BiConsumer<T, IPayloadContext> handler) {
-        registrar.play(type.id(), reader, (payload, ctx) -> ctx.enqueueWork(() -> handler.accept(payload, ctx)));
+        registrar.play(id, reader, (payload, ctx) -> ctx.enqueueWork(() -> handler.accept(payload, ctx)));
     }
 }

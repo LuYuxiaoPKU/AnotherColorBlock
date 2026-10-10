@@ -11,7 +11,6 @@ import static com.noone.particleex.network.PayloadCodecUtil.readDouble;
 import static com.noone.particleex.network.PayloadCodecUtil.readString;
 
 public record ConditionalPayload(double x, double y, double z, float red, float green, float blue, float alpha, double vx, double vy, double vz, double dx, double dy, double dz,String expression,double step, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements CustomPacketPayload {
-  public static final Type<ConditionalPayload> TYPE = new Type<>(NetworkIdentifiers.CONDITIONAL_PACKET_ID);
   @Override
   public void write(FriendlyByteBuf buf) {
               buf.writeDouble(this.x);
@@ -75,7 +74,7 @@ public record ConditionalPayload(double x, double y, double z, float red, float 
   }
 
   @Override
-  public Type<? extends CustomPacketPayload> type() {
-    return TYPE;
+  public net.minecraft.resources.ResourceLocation id() {
+    return NetworkIdentifiers.CONDITIONAL_PACKET_ID;
   }
 }

@@ -11,7 +11,6 @@ import org.joml.Vector4f;
 import static com.noone.particleex.network.PayloadCodecUtil.*;
 
 public record ParameterPayload(boolean polar, boolean tick, boolean rgba, double x, double y, double z, Vector4f color, double vx, double vy, double vz, double begin, double end, String expression, double step, int cpt, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements CustomPacketPayload {
-  public static final Type<ParameterPayload> TYPE = new Type<>(NetworkIdentifiers.PARAMETER_PACKET_ID);
   @Override
   public void write(FriendlyByteBuf buf) {
               buf.writeBoolean(this.polar);
@@ -86,7 +85,7 @@ public record ParameterPayload(boolean polar, boolean tick, boolean rgba, double
   }
 
   @Override
-  public Type<? extends CustomPacketPayload> type() {
-    return TYPE;
+  public net.minecraft.resources.ResourceLocation id() {
+    return NetworkIdentifiers.PARAMETER_PACKET_ID;
   }
 }

@@ -12,7 +12,6 @@ import static com.noone.particleex.network.PayloadCodecUtil.readDouble;
 import static com.noone.particleex.network.PayloadCodecUtil.readString;
 
 public record ImageMatrixPayload(double x, double y, double z, String path, double scaling, double[][] matrix, double dpb, Vec3 speed, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements CustomPacketPayload {
-   public static final Type<ImageMatrixPayload> TYPE = new Type<>(NetworkIdentifiers.IMAGE_MATRIX_PACKET_ID);
    @Override
   public void write(FriendlyByteBuf buf) {
               buf.writeDouble(this.x);
@@ -80,7 +79,7 @@ public record ImageMatrixPayload(double x, double y, double z, String path, doub
           }
 
   @Override
-  public Type<? extends CustomPacketPayload> type() {
-    return TYPE;
+  public net.minecraft.resources.ResourceLocation id() {
+    return NetworkIdentifiers.IMAGEMATRIX_PACKET_ID;
   }
 }
