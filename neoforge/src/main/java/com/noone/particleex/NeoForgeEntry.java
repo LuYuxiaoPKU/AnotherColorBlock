@@ -51,6 +51,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 @Mod(NetworkIdentifiers.MOD_ID)
