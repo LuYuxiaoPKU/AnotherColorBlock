@@ -15,7 +15,6 @@ legacyForge {
     runs {
         configureEach {
             systemProperty('forge.enabledGameTestNamespaces', project.mod_id)
-            modSource project.sourceSets.main
         }
         client {
         }
