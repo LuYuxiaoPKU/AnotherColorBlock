@@ -29,7 +29,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Dump neoforge metadata（临时探测 1.20.2 可用 neoforge 版本）
-        run: curl -s -w "\nHTTP:%{http_code}\n" https://maven.neoforged.net/releases/net/neoforged/neoforge/maven-metadata.xml | grep -o '<version>[^<]*</version>\|HTTP:[0-9]*' | sed 's/<[^>]*>//g' | grep -E '^20\.|^HTTP' | sort -V | tail -12 || true
+        run: curl -s -w "\nHTTP:%{http_code}\n" https://maven.neoforged.net/releases/net/neoforged/neoforge/maven-metadata.xml | grep -o '<version>[^<]*</version>\|HTTP:[0-9]*' | sed 's/<[^>]*>//g' | grep -E '^20\.2|^HTTP' | sort -V | tail -25 || true
 
       - name: 构建 ${{ matrix.module }} 模块
         run: ./gradlew :${{ matrix.module }}:build --stacktrace
