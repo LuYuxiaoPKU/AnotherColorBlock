@@ -8,7 +8,6 @@ import com.noone.particleex.util.ClientMessageUtil;
 import com.noone.particleex.util.MessageBridge;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.resources.ResourceLocation;
@@ -29,23 +28,15 @@ public class ParticleEx implements ModInitializer {
             throw new RuntimeException(e);
         }
         // 平台桥：命令层发送 → Fabric 网络发送；错误上报 → 客户端聊天框
-        Bridge.setSender((world, payload) -> PlayerLookup.world(world).forEach(player -> ServerPlayNetworking.send(player, payload)));
+        Bridge.setSender((world, payload) -> {
+            net.minecraft.network.FriendlyByteBuf buf = net.fabricmc.fabric.api.networking.v1.PacketByteBufs.create();
+            payload.write(buf);
+            ResourceLocation id = payload.packetId();
+            PlayerLookup.world(world).forEach(player -> ServerPlayNetworking.send(player, id, buf));
+        });
         MessageBridge.setSink(new ClientMessageUtil());
-        registerPayloads();
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, dedicated) -> ParticleExCommand.register(dispatcher, registryAccess));
     }
 
-    private static void registerPayloads() {
-        PayloadTypeRegistry.playS2C().register(ClearParticlePayload.TYPE, ClearParticlePayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(ClearCachePayload.TYPE, ClearCachePayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(NormalPayload.TYPE, NormalPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(ConditionalPayload.TYPE, ConditionalPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(ParameterPayload.TYPE, ParameterPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(ImagePayload.TYPE, ImagePayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(ImageMatrixPayload.TYPE, ImageMatrixPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(VideoPayload.TYPE, VideoPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(VideoMatrixPayload.TYPE, VideoMatrixPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(GroupRemovePayload.TYPE, GroupRemovePayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(GroupChangePayload.TYPE, GroupChangePayload.CODEC);
-    }
+
 }

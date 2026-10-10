@@ -1,6 +1,7 @@
 package com.noone.particleex;
 
 import com.noone.particleex.network.ClientNetworkHandler;
+import com.noone.particleex.network.NetworkIdentifiers;
 import com.noone.particleex.network.payload.*;
 import com.noone.particleex.util.ParticleUtil;
 import net.fabricmc.api.ClientModInitializer;
@@ -11,16 +12,16 @@ public class ParticleExClient implements ClientModInitializer {
    public void onInitializeClient() {
       ClientTickEvents.START_CLIENT_TICK.register(client -> ParticleUtil.onStartClientTick());
       ClientTickEvents.END_CLIENT_TICK.register(client -> ParticleUtil.onEndClientTick());
-      ClientPlayNetworking.registerGlobalReceiver(ClearParticlePayload.TYPE, (payload, context) -> ClientNetworkHandler.clearParticle(context));
-      ClientPlayNetworking.registerGlobalReceiver(ClearCachePayload.TYPE, (payload, context) -> ClientNetworkHandler.clearCache(context));
-      ClientPlayNetworking.registerGlobalReceiver(NormalPayload.TYPE, ClientNetworkHandler::normal);
-      ClientPlayNetworking.registerGlobalReceiver(ConditionalPayload.TYPE, ClientNetworkHandler::conditional);
-      ClientPlayNetworking.registerGlobalReceiver(ParameterPayload.TYPE, ClientNetworkHandler::parameter);
-      ClientPlayNetworking.registerGlobalReceiver(ImagePayload.TYPE, ClientNetworkHandler::image);
-      ClientPlayNetworking.registerGlobalReceiver(ImageMatrixPayload.TYPE, ClientNetworkHandler::imageMatrix);
-      ClientPlayNetworking.registerGlobalReceiver(VideoPayload.TYPE, ClientNetworkHandler::video);
-      ClientPlayNetworking.registerGlobalReceiver(VideoMatrixPayload.TYPE, ClientNetworkHandler::videoMatrix);
-      ClientPlayNetworking.registerGlobalReceiver(GroupRemovePayload.TYPE, ClientNetworkHandler::groupRemove);
-      ClientPlayNetworking.registerGlobalReceiver(GroupChangePayload.TYPE, ClientNetworkHandler::groupChange);
+      ClientPlayNetworking.registerGlobalReceiver(NetworkIdentifiers.CLEAR_PARTICLE_PACKET_ID, (client, handler, buf, sender) -> { ClearParticlePayload.read(buf); ClientNetworkHandler.clearParticle(); });
+      ClientPlayNetworking.registerGlobalReceiver(NetworkIdentifiers.CLEAR_CACHE_PACKET_ID, (client, handler, buf, sender) -> { ClearCachePayload.read(buf); ClientNetworkHandler.clearCache(); });
+      ClientPlayNetworking.registerGlobalReceiver(NetworkIdentifiers.NORMAL_PACKET_ID, (client, handler, buf, sender) -> ClientNetworkHandler.normal(NormalPayload.read(buf)));
+      ClientPlayNetworking.registerGlobalReceiver(NetworkIdentifiers.CONDITIONAL_PACKET_ID, (client, handler, buf, sender) -> ClientNetworkHandler.conditional(ConditionalPayload.read(buf)));
+      ClientPlayNetworking.registerGlobalReceiver(NetworkIdentifiers.PARAMETER_PACKET_ID, (client, handler, buf, sender) -> ClientNetworkHandler.parameter(ParameterPayload.read(buf)));
+      ClientPlayNetworking.registerGlobalReceiver(NetworkIdentifiers.IMAGE_PACKET_ID, (client, handler, buf, sender) -> ClientNetworkHandler.image(ImagePayload.read(buf)));
+      ClientPlayNetworking.registerGlobalReceiver(NetworkIdentifiers.IMAGE_MATRIX_PACKET_ID, (client, handler, buf, sender) -> ClientNetworkHandler.imageMatrix(ImageMatrixPayload.read(buf)));
+      ClientPlayNetworking.registerGlobalReceiver(NetworkIdentifiers.VIDEO_PACKET_ID, (client, handler, buf, sender) -> ClientNetworkHandler.video(VideoPayload.read(buf)));
+      ClientPlayNetworking.registerGlobalReceiver(NetworkIdentifiers.VIDEO_MATRIX_PACKET_ID, (client, handler, buf, sender) -> ClientNetworkHandler.videoMatrix(VideoMatrixPayload.read(buf)));
+      ClientPlayNetworking.registerGlobalReceiver(NetworkIdentifiers.GROUP_REMOVE_PACKET_ID, (client, handler, buf, sender) -> ClientNetworkHandler.groupRemove(GroupRemovePayload.read(buf)));
+      ClientPlayNetworking.registerGlobalReceiver(NetworkIdentifiers.GROUP_CHANGE_PACKET_ID, (client, handler, buf, sender) -> ClientNetworkHandler.groupChange(GroupChangePayload.read(buf)));
    }
 }

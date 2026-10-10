@@ -2,52 +2,50 @@ package com.noone.particleex.network.payload;
 
 import com.google.common.base.Strings;
 import com.noone.particleex.network.NetworkIdentifiers;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 
 import static com.noone.particleex.network.PayloadCodecUtil.readDouble;
 import static com.noone.particleex.network.PayloadCodecUtil.readString;
 
-public record ConditionalPayload(double x, double y, double z, float red, float green, float blue, float alpha, double vx, double vy, double vz, double dx, double dy, double dz,String expression,double step, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements CustomPacketPayload {
-  public static final Type<ConditionalPayload> TYPE = new Type<>(NetworkIdentifiers.CONDITIONAL_PACKET_ID);
-  public static final StreamCodec<RegistryFriendlyByteBuf, ConditionalPayload> CODEC = StreamCodec.of(
-          (buf, value) -> {
-              buf.writeDouble(value.x);
-              buf.writeDouble(value.y);
-              buf.writeDouble(value.z);
-              buf.writeFloat(value.red);
-              buf.writeFloat(value.green);
-              buf.writeFloat(value.blue);
-              buf.writeFloat(value.alpha);
-              buf.writeDouble(value.vx);
-              buf.writeDouble(value.vy);
-              buf.writeDouble(value.vz);
-              buf.writeDouble(value.dx);
-              buf.writeDouble(value.dy);
-              buf.writeDouble(value.dz);
-              buf.writeBoolean(!Strings.isNullOrEmpty(value.expression) && !value.expression.equals("null"));
-              if (!Strings.isNullOrEmpty(value.expression) && !value.expression.equals("null")) {
-                  buf.writeUtf(value.expression);
-                  buf.writeDouble(value.step);
+public record ConditionalPayload(double x, double y, double z, float red, float green, float blue, float alpha, double vx, double vy, double vz, double dx, double dy, double dz,String expression,double step, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements com.noone.particleex.network.ParticlePayload {
+  @Override
+  public void write(FriendlyByteBuf buf) {
+              buf.writeDouble(this.x);
+              buf.writeDouble(this.y);
+              buf.writeDouble(this.z);
+              buf.writeFloat(this.red);
+              buf.writeFloat(this.green);
+              buf.writeFloat(this.blue);
+              buf.writeFloat(this.alpha);
+              buf.writeDouble(this.vx);
+              buf.writeDouble(this.vy);
+              buf.writeDouble(this.vz);
+              buf.writeDouble(this.dx);
+              buf.writeDouble(this.dy);
+              buf.writeDouble(this.dz);
+              buf.writeBoolean(!Strings.isNullOrEmpty(this.expression) && !this.expression.equals("null"));
+              if (!Strings.isNullOrEmpty(this.expression) && !this.expression.equals("null")) {
+                  buf.writeUtf(this.expression);
+                  buf.writeDouble(this.step);
               }
 
-              buf.writeInt(value.age);
-              buf.writeBoolean(!Strings.isNullOrEmpty(value.speedExpression) && !value.speedExpression.equals("null"));
-              if (!Strings.isNullOrEmpty(value.speedExpression) && !value.speedExpression.equals("null")) {
-                  buf.writeUtf(value.speedExpression);
-                  buf.writeDouble(value.speedStep);
+              buf.writeInt(this.age);
+              buf.writeBoolean(!Strings.isNullOrEmpty(this.speedExpression) && !this.speedExpression.equals("null"));
+              if (!Strings.isNullOrEmpty(this.speedExpression) && !this.speedExpression.equals("null")) {
+                  buf.writeUtf(this.speedExpression);
+                  buf.writeDouble(this.speedStep);
               }
 
-              buf.writeBoolean(!Strings.isNullOrEmpty(value.group) && !value.group.equals("null"));
-              if (!Strings.isNullOrEmpty(value.group) && !value.group.equals("null")) {
-                  buf.writeUtf(value.group);
+              buf.writeBoolean(!Strings.isNullOrEmpty(this.group) && !this.group.equals("null"));
+              if (!Strings.isNullOrEmpty(this.group) && !this.group.equals("null")) {
+                  buf.writeUtf(this.group);
               }
-              ParticleTypes.STREAM_CODEC.encode(buf,value.effect);
-          },
-          buf -> {
+              ParticleTypes.STREAM_CODEC.encode(buf,this.effect);
+  }
+
+  public static ConditionalPayload read(FriendlyByteBuf buf) {
               double x = buf.readDouble();
               double y = buf.readDouble();
               double z = buf.readDouble();
@@ -69,12 +67,7 @@ public record ConditionalPayload(double x, double y, double z, float red, float 
               String speedExpression = readString(buf, hasSpeedExpression);
               double speedStep = readDouble(buf, hasSpeedExpression, 1.0D);
               String group = readString(buf, buf.readBoolean());
-              ParticleOptions effect = ParticleTypes.STREAM_CODEC.decode(buf);
+              ParticleOptions effect = com.noone.particleex.network.PayloadCodecUtil.readParticle(buf);
              return new ConditionalPayload(x,y,z,red,green,blue,alpha,vx,vy,vz,dx,dy,dz,expression,step,age,speedExpression,speedStep,group,effect);
-          }
-  );
-  @Override
-   public Type<? extends CustomPacketPayload> type() {
-      return TYPE;
-   }
+  }
 }
