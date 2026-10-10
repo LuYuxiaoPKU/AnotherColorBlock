@@ -4,7 +4,7 @@
   "package": "com.noone.particleex.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ArgumentTypesAccessor",
+    "ArgumentTypeInfosAccessor",
     "MappedRegistryAccessor"
   ],
   "client": [
