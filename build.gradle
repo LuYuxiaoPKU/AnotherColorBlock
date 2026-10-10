@@ -19,4 +19,9 @@ subprojects {
     tasks.withType(ProcessResources).configureEach {
         it.setFilteringCharset('UTF-8')
     }
+
+    tasks.withType(Test).configureEach {
+        // CodeGen 以 --enable-preview 编译（switch patterns），测试 JVM 需同步开启
+        it.jvmArgs('--enable-preview')
+    }
 }
