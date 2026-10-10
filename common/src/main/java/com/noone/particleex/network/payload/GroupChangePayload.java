@@ -43,6 +43,6 @@ public record GroupChangePayload(int changeType,String group, String expression,
   }
   @Override
   public net.minecraft.resources.ResourceLocation packetId() {
-    return NetworkIdentifiers.GROUP_CHANGE_PAYLOAD_PACKET_ID;
+    return NetworkIdentifiers.GROUP_CHANGE_PACKET_ID;
   }
 }

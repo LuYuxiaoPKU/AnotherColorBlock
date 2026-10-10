@@ -73,6 +73,6 @@ public record ConditionalPayload(double x, double y, double z, float red, float 
   }
   @Override
   public net.minecraft.resources.ResourceLocation packetId() {
-    return NetworkIdentifiers.CONDITIONAL_PAYLOAD_PACKET_ID;
+    return NetworkIdentifiers.CONDITIONAL_PACKET_ID;
   }
 }

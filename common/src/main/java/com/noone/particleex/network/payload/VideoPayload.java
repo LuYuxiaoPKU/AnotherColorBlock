@@ -72,6 +72,6 @@ public record VideoPayload(double x, double y, double z, String path, double sca
   }
   @Override
   public net.minecraft.resources.ResourceLocation packetId() {
-    return NetworkIdentifiers.VIDEO_PAYLOAD_PACKET_ID;
+    return NetworkIdentifiers.VIDEO_PACKET_ID;
   }
 }
