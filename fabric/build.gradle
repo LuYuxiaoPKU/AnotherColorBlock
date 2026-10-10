@@ -24,7 +24,6 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     // common 源码直接并入本模块编译（loom 统一映射到 Yarn）
-    compileOnly(project(':common'))
     commonJava(project(path: ':common', configuration: 'commonJava'))
     commonResources(project(path: ':common', configuration: 'commonResources'))
 }
