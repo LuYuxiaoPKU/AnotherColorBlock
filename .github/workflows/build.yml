@@ -28,9 +28,6 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Dump neoforge metadata（临时探测 1.20.4 可用 neoforge 版本）
-        run: curl -s -w "\nHTTP:%{http_code}\n" https://maven.neoforged.net/releases/net/neoforged/neoforge/maven-metadata.xml | grep -o '<version>[^<]*</version>\|HTTP:[0-9]*' | sed 's/<[^>]*>//g' | grep -E '^20\.4|^HTTP' | sort -V | tail -25 || true
-
       - name: 表达式引擎单元测试（common）
         run: ./gradlew :common:test --stacktrace
 
