@@ -9,6 +9,7 @@ build/
 
 # Game run directory
 /run/
+**/runs/
 
 # IDE build output
 /out/
