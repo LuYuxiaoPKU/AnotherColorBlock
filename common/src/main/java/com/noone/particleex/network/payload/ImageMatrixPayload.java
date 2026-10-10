@@ -75,5 +75,4 @@ public record ImageMatrixPayload(double x, double y, double z, String path, doub
               ParticleOptions effect = com.noone.particleex.network.PayloadCodecUtil.readParticle(buf);
               return new ImageMatrixPayload(x,y,z,path,scaling,matrix,dpb,new Vec3(vx,vy,vz),age,speedExpression,speedStep,group,effect);
           }
-   );
 }
