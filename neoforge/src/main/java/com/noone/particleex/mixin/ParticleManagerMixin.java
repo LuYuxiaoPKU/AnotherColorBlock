@@ -2,11 +2,9 @@ package com.noone.particleex.mixin;
 
 import com.noone.particleex.ParticleExConfig;
 import com.noone.particleex.util.IParticle;
-import java.util.Map;
 import java.util.Queue;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.ParticleEngine;
-import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.particle.ParticleGroup;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -14,11 +12,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** 旧引擎（1.20.6/1.21.1）：粒子实体由 ParticleEngine 直管（Map<RenderType, Queue<Particle>>），无 ParticleGroup/ParticleLimit/容量注入点。 */
-@Mixin({ParticleEngine.class})
+/** 1.21.9+：粒子批处理由 ParticleGroup 直管（方法随结构从 ParticleEngine 迁出）。NeoForge 运行时为 mojmap 空间，注解直写 mojmap 名。 */
+@Mixin({ParticleGroup.class})
 public abstract class ParticleManagerMixin {
    @Shadow
-   private Map<ParticleRenderType, Queue<Particle>> particles;
+   private Queue<Particle> particles;
 
    @Redirect(
       method = {"tickParticle(Lnet/minecraft/client/particle/Particle;)V"},
@@ -36,8 +34,8 @@ public abstract class ParticleManagerMixin {
       if (this.particles.isEmpty()) {
          ci.cancel();
       } else if (ParticleExConfig.config.ParallelParticleUpdate) {
-         this.particles.values().forEach(queue -> queue.parallelStream().forEach(particle -> this.tickParticle(particle)));
-         this.particles.values().forEach(queue -> queue.removeIf(particle -> !particle.isAlive()));
+         this.particles.parallelStream().forEach(particle -> this.tickParticle(particle));
+         this.particles.removeIf(particle -> !particle.isAlive());
          ci.cancel();
       }
    }
