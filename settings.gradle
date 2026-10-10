@@ -20,5 +20,6 @@ rootProject.name = 'AnotherColorBlock'
 
 include 'common'
 include 'fabric'
-include 'neoforge'
+// 1.20.5 线暂不构建 neoforge：NeoForge 对 1.20.5 仅发 beta 且 maven 无主 jar
+// （neoforge-20.5.x-beta.jar 404，moddev 的 neoFormRuntimeDependenciesNeoForgeClasses 无法解析）→ fabric-only
 
