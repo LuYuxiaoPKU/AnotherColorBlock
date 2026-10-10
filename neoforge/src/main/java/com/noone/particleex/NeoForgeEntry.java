@@ -7,6 +7,17 @@ package com.noone.particleex;
 import com.noone.particleex.command.ParticleExCommand;
 
 
+import com.noone.particleex.command.argument.Color4ArgumentType;
+import com.noone.particleex.command.argument.FlipArgumentType;
+import com.noone.particleex.command.argument.GroupChangeTypeArgumentType;
+import com.noone.particleex.command.argument.Range3ArgumentType;
+import com.noone.particleex.command.argument.RotateArgumentType;
+import com.noone.particleex.command.argument.Speed3ArgumentType;
+import com.noone.particleex.command.argument.SuggestArgumentType;
+import com.noone.particleex.command.argument.SuggestDoubleArgumentType;
+import com.noone.particleex.command.argument.SuggestIntegerArgumentType;
+import com.noone.particleex.mixin.ArgumentTypeInfosAccessor;
+import com.noone.particleex.mixin.MappedRegistryAccessor;
 import com.noone.particleex.common.Bridge;
 
 
@@ -55,6 +66,15 @@ import com.noone.particleex.util.ClientMessageUtil;
 import com.noone.particleex.util.MessageBridge;
 
 
+import it.unimi.dsi.fastutil.objects.ObjectList;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.commands.synchronization.ArgumentTypeInfo;
+import net.minecraft.commands.synchronization.SingletonArgumentInfo;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderOwner;
+import net.minecraft.core.MappedRegistry;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 
 
@@ -177,6 +197,7 @@ public class NeoForgeEntry {
         registerMessages();
 
 
+        registerArgumentTypes();
         NeoForge.EVENT_BUS.addListener(this::registerCommands);
 
 
@@ -185,6 +206,37 @@ public class NeoForgeEntry {
 
 
 
+
+    /**
+     * 注册自定义命令参数类型（1.20.1~1.20.4 同步类名 ArgumentTypeInfos，同 26.2 修复：
+     * BY_CLASS + 注册表直塞；MappedRegistry.toId 类型按版本取 Object2IntMap/Reference2IntMap）。
+     */
+    private void registerArgumentTypes() {
+        Map<Class<?>, ArgumentTypeInfo<?, ?>> byClass = ArgumentTypeInfosAccessor.particleex$getByClass();
+        byClass.put(Color4ArgumentType.class, SingletonArgumentInfo.contextFree(Color4ArgumentType::color4));
+        byClass.put(FlipArgumentType.class, SingletonArgumentInfo.contextFree(FlipArgumentType::flip));
+        byClass.put(GroupChangeTypeArgumentType.class, SingletonArgumentInfo.contextFree(GroupChangeTypeArgumentType::type));
+        byClass.put(Range3ArgumentType.class, SingletonArgumentInfo.contextFree(Range3ArgumentType::range3));
+        byClass.put(RotateArgumentType.class, SingletonArgumentInfo.contextFree(RotateArgumentType::rotate));
+        byClass.put(Speed3ArgumentType.class, SingletonArgumentInfo.contextFree(Speed3ArgumentType::speed3));
+        byClass.put(SuggestArgumentType.class, SuggestArgumentType.Serializer.INSTANCE);
+        byClass.put(SuggestDoubleArgumentType.class, SuggestDoubleArgumentType.Serializer.INSTANCE);
+        byClass.put(SuggestIntegerArgumentType.class, SuggestIntegerArgumentType.Serializer.INSTANCE);
+
+        Registry<ArgumentTypeInfo<?, ?>> registry = BuiltInRegistries.COMMAND_ARGUMENT_TYPE;
+        if (!(registry instanceof MappedRegistry)) {
+            throw new IllegalStateException("COMMAND_ARGUMENT_TYPE 不是 MappedRegistry，无法注册参数类型");
+        }
+        @SuppressWarnings({"rawtypes", "unchecked"})
+        MappedRegistryAccessor regAccessor = (MappedRegistryAccessor) (Object) registry;
+        ObjectList<Holder.Reference<Object>> byId = (ObjectList) regAccessor.particleex$getById();
+        Object2IntMap<Object> toId = (Object2IntMap) regAccessor.particleex$getToId();
+        for (ArgumentTypeInfo<?, ?> info : byClass.values()) {
+            int id = byId.size();
+            byId.add((Holder.Reference<Object>) (Object) Holder.Reference.createIntrusive((HolderOwner<Object>) (Object) registry, info));
+            toId.put(info, id);
+        }
+    }
 
     private void registerCommands(RegisterCommandsEvent event) {
 
