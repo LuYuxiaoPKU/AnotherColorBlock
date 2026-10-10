@@ -47,7 +47,7 @@ public record ImageMatrixPayload(double x, double y, double z, String path, doub
               if (!Strings.isNullOrEmpty(this.group) && !this.group.equals("null")) {
                   buf.writeUtf(this.group);
               }
-              buf.writeUtf(this.effect.getType().getRegisteredName());
+              buf.writeUtf(net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE.getKey(this.effect.getType()).toString());
               this.effect.writeToNetwork(buf);
   }
 
