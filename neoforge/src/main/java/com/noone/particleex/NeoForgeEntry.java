@@ -105,9 +105,10 @@ public class NeoForgeEntry {
         if (!(registry instanceof MappedRegistry)) {
             throw new IllegalStateException("COMMAND_ARGUMENT_TYPE 不是 MappedRegistry，无法注册参数类型");
         }
-        MappedRegistryAccessor<?> regAccessor = (MappedRegistryAccessor<?>) (Object) registry;
-        ObjectList<Holder.Reference<?>> byId = regAccessor.particleex$getById();
-        Reference2IntMap<Object> toId = (Reference2IntMap<Object>) (Object) regAccessor.particleex$getToId();
+        @SuppressWarnings({"rawtypes", "unchecked"})
+        MappedRegistryAccessor regAccessor = (MappedRegistryAccessor) (Object) registry;
+        ObjectList<Holder.Reference<Object>> byId = (ObjectList) regAccessor.particleex$getById();
+        Reference2IntMap<Object> toId = (Reference2IntMap) regAccessor.particleex$getToId();
         for (ArgumentTypeInfo<?, ?> info : byClass.values()) {
             int id = byId.size();
             byId.add((Holder.Reference<Object>) (Object) Holder.Reference.createIntrusive((HolderOwner<Object>) (Object) registry, info));
