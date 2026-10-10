@@ -75,6 +75,6 @@ public class NeoForgeEntry {
             ResourceLocation id,
             net.minecraft.network.FriendlyByteBuf.Reader<T> reader,
             BiConsumer<T, IPayloadContext> handler) {
-        registrar.play(id, reader, (payload, ctx) -> ctx.enqueueWork(() -> handler.accept(payload, ctx)));
+        registrar.play(id, reader, (payload, ctx) -> ctx.workHandler().execute(() -> handler.accept(payload, ctx)));
     }
 }
