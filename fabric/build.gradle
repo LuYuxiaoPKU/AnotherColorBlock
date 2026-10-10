@@ -21,7 +21,10 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    mappings "org.relativitymc:modern-yarn:${project.yarn_mappings}:v2"
+    // 26.x 映射全部走 loom 1.17 默认（RelativityMC modern-yarn）：
+    // fabric-api 26.x 构建链零自定义映射配置（实证：其 loom.gradle 无 mappings/intermediaryUrl），
+    // 显式配置 modern-yarn/intermediaryUrl 会破坏映射链（CI 实证 "Mappings src namespace
+    // must match remap src namespace, expected official but got intermediary"）。
 
     // common 源码直接并入本模块编译（loom 统一映射到 Yarn）
     commonJava(project(path: ':common', configuration: 'commonJava'))
@@ -29,12 +32,6 @@ dependencies {
 }
 
 loom {
-    // 26.x 无官方 mojmap：intermediary 由 RelativityMC 维护（CodeMC 镜像）。
-    // 设置 intermediaryUrl 使 loom 用 CodeMC 的 26.x intermediary（官方渠道止于 1.21.11），
-    // dev 命名空间保持官方可读名（26.x 生态 fabric-api 亦以官方名发布）
-    intermediaryUrl = 'https://repo.codemc.io/repository/relativitymc/org/relativitymc/intermediary/%1$s/intermediary-%1$s-v2.jar'
-    // 显式关掉 intermediate dev 映射（loom 默认值可能为 true，需与 CI 行为一致）
-    useIntermediateMappings = false
     runs {
         client {
             client()
@@ -56,9 +53,10 @@ loom {
 // 期望 loader 运行时 static remap 转回 official；但 26.x 无官方 mojmap，
 // loader 没有 intermediary→official 映射数据 → 注解停留中间名 → 客户端
 // @Shadow/@Inject 签名不匹配崩溃（No refMap loaded）。
-// 对策：与 fabric-api 构建链一致，loom 降级 1.16.2 —— mixin AP 在 javac 阶段
+// 对策：loom 1.17.20（fabric-api 26.x 线上同款）——mixin AP 在 javac 阶段
 // 直出 dev 命名空间（official 可读名），jar 内注解即官方名，运行时不依赖 remap。
-// 实证：fabric-particles-v1（26.x，loom 1.16.2 构建）注解 = 全可读名，无
+// 实证：fabric-api 26.x 构建链零自定义映射配置（loom.gradle 无 mappings/
+// intermediaryUrl，仅 maven.fabricmc.net 仓库）；其产物注解全可读名、无
 // Fabric-Loom-Mixin-Remap-Type 键；1.18 产物 = class_XXXX；两次实机复测确认
 // loader static remap 落空（manifest 声明 intermediary 亦无效）。
 
@@ -74,15 +72,5 @@ processResources {
     // 在 fabric.mod.json 中展开 ${minecraft_version}，避免依赖版本写死
     filesMatching('fabric.mod.json') {
         expand 'minecraft_version': project.minecraft_version, 'version': project.version
-    }
-}
-
-repositories {
-    // modern-yarn（26.x 映射）的公开镜像：CodeMC 托管 RelativityMC 制品
-    exclusiveContent {
-        forRepository {
-            maven { url = 'https://repo.codemc.io/repository/relativitymc/' }
-        }
-        filter { includeGroup 'org.relativitymc' }
     }
 }
