@@ -49,3 +49,10 @@ artifacts {
     commonJava sourceSets.main.java.sourceDirectories.singleFile
     commonResources sourceSets.main.resources.sourceDirectories.singleFile
 }
+
+// neoform 对 asm 有 strictly 约束（1.21.10 为 9.6），sponge-mixin 传递请求 9.8 冲突；统一钉到 neoform 约束版本
+configurations.compileClasspath {
+    resolutionStrategy.eachDependency {
+        if (requested.group == 'org.ow2.asm') { useVersion('9.6') }
+    }
+}
