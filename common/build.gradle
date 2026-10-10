@@ -18,6 +18,7 @@ dependencies {
     // 单元测试：表达式引擎与参数解析（纯 Java，CI 自动运行）
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.ow2.asm:asm:9.6'
     // 表达式引擎运行时依赖 Guava（编译类路径由 moddev 提供，测试运行需显式补全）
     testImplementation 'com.google.guava:guava:33.2.1-jre'
 }
@@ -52,7 +53,6 @@ artifacts {
 
 // neoform 对 asm 有 strictly 约束（1.21.8 为 9.6），sponge-mixin 传递请求 9.8 冲突；统一钉到 neoform 约束版本
 configurations.compileClasspath {
-testImplementation 'org.ow2.asm:asm:9.6'
     resolutionStrategy.eachDependency {
         if (requested.group == 'org.ow2.asm') { useVersion('9.6') }
     }
