@@ -2,10 +2,11 @@
 # 批量修复 19 个版本分支的两个发布级运行时 bug：
 # 1. fabric.mod.json: depends "fabric" → "fabric-api"（26.x/1.21/1.20 全线，官方模板实证）
 # 2. neoforge.mods.toml: minecraft versionRange 写死（1.21.11/26.3 复制残留）→ 对齐 gradle.properties 的 minecraft_version_range
-# 用法：在仓库根目录执行；每个分支 checkout → 改 → commit → push
+# 用法：在仓库根目录执行；默认全部 19 分支，可传参指定分支：bash fix-runtime-meta.py 1.20.1 26.1
 set -euo pipefail
 
-BRANCHES="1.20.1 1.20.2 1.20.4 1.20.6 1.21 1.21.1 1.21.2 1.21.3 1.21.4 1.21.5 1.21.6 1.21.7 1.21.8 1.21.9 1.21.10 1.21.11 26.1 26.2 26.3"
+ALL="1.20.1 1.20.2 1.20.4 1.20.6 1.21 1.21.1 1.21.2 1.21.3 1.21.4 1.21.5 1.21.6 1.21.7 1.21.8 1.21.9 1.21.10 1.21.11 26.1 26.2 26.3"
+BRANCHES="${*:-$ALL}"
 
 for b in $BRANCHES; do
   echo "=== $b"
