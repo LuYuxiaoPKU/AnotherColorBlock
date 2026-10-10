@@ -1,46 +1,29 @@
 plugins {
     id 'java-library'
-    id 'net.neoforged.moddev' version '2.0.144'
+    id 'net.neoforged.moddev.legacyforge' version '2.0.91'
 }
 
 base {
     archivesName = "${mod_id}-neoforge-${minecraft_version}"
 }
 
-neoForge {
-    version = project.neoforge_version
+// 1.20.1 = Forge 47 体系（NeoForge 20.1 沿用 Forge userdev，非新网络工具链）
+legacyForge {
+    version = project.minecraft_version + '-' + project.forge_version
 
+    // Default run configurations
     runs {
         configureEach {
-            systemProperty('neoforge.enabledGameTestNamespaces', project.mod_id)
-            ideName = "NeoForge ${it.name.capitalize()} (${project.path})"
+            systemProperty('forge.enabledGameTestNamespaces', project.mod_id)
+            modSource project.sourceSets.main
         }
         client {
-            client()
-            gameDirectory = this.mkdir(this.file('runs/client'))
         }
         server {
-            server()
             programArgument '--nogui'
-            gameDirectory = this.mkdir(this.file('runs/server'))
         }
         gameTestServer {
-            type = 'gameTestServer'
-            systemProperty('neoforge.enabledGameTestNamespaces', project.mod_id)
-            gameDirectory = this.mkdir(this.file('runs/gametest'))
-        }
-        data {
-            data()
-            programArguments.addAll '--mod', project.mod_id, '--all',
-                    '--output', file('src/generated/resources/').getAbsolutePath(),
-                    '--existing', file('src/main/resources/').getAbsolutePath()
-            gameDirectory = this.mkdir(this.file('runs/data'))
-        }
-    }
-
-    mods {
-        "${project.mod_id}" {
-            sourceSet sourceSets.main
+            systemProperty('forge.enabledGameTestNamespaces', project.mod_id)
         }
     }
 }
@@ -75,7 +58,7 @@ tasks.named('compileJava', JavaCompile) {
 processResources {
     dependsOn(configurations.commonResources)
     from(configurations.commonResources)
-    filesMatching('META-INF/neoforge.mods.toml') {
+    filesMatching('META-INF/mods.toml') {
         expand 'version': project.version
     }
 }
