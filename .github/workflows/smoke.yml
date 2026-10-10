@@ -1,0 +1,74 @@
+name: Smoke Test（服务器启动冒烟）
+
+# 每个分支推送时对其对应 MC 版本跑服务器启动冒烟：
+# fabric/neoforge 的 runServer 启动到 Minecraft "Done" 日志 = 模组加载成功。
+# 补 build.yml 的编译验证（编译过 ≠ 运行时加载过）。
+# 可通过 workflow_dispatch 手动触发全部版本。
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ '**' ]
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    strategy:
+      fail-fast: false
+      matrix:
+        module: [ fabric, neoforge ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 解析 MC 版本（决定 JDK）
+        id: mcver
+        run: echo "version=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ startsWith(steps.mcver.outputs.version, '26') && '25' || '21' }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: 服务器启动冒烟（${{ matrix.module }}）
+        # runServer 常驻不退出：后台启动 + 轮询日志含 Done → 通过；超时/异常 → 失败
+        timeout-minutes: 15
+        run: |
+          set -euo pipefail
+          rm -rf "${{ matrix.module }}/runs/server" || true
+          ( ./gradlew :${{ matrix.module }}:runServer --stacktrace > /tmp/runserver.log 2>&1 ) &
+          GRADLE_PID=$!
+          LOG="${{ matrix.module }}/runs/server/logs/latest.log"
+          DONE=""
+          for i in $(seq 1 80); do
+            if [ -f "$LOG" ] && grep -qE "Done \([0-9.]+s\)|For help, type" "$LOG"; then
+              DONE=yes
+              break
+            fi
+            if ! kill -0 $GRADLE_PID 2>/dev/null; then
+              echo "gradle 进程提前退出："
+              tail -50 /tmp/runserver.log
+              exit 1
+            fi
+            sleep 10
+          done
+          if [ -z "$DONE" ]; then
+            echo "超时：服务器未出现 Done 日志"
+            tail -30 "$LOG" 2>/dev/null || true
+            tail -50 /tmp/runserver.log || true
+            exit 1
+          fi
+          echo "===== 服务器 Done 日志 ====="
+          grep -E "Done|Mod loaded|Loading .* mods|Fabric|NeoForge" "$LOG" | tail -10
+          echo "===== 致命错误检查 ====="
+          if grep -iE "fatal|exception in (the )?(main )?thread|crash" "$LOG" | grep -v "nogui" | head -5; then
+            echo "日志包含致命错误！"
+            exit 1
+          fi
+          echo "冒烟通过：服务器启动到 Done，无致命错误"
