@@ -19,4 +19,14 @@ public final class PayloadCodecUtil {
     public static String readString(FriendlyByteBuf buf, boolean read) {
         return read ? buf.readUtf() : null;
     }
+
+    /** 读粒子：注册表 ID + Deserializer（1.20.x 无 ParticleOptions.fromNetwork 静态方法） */
+    public static ParticleOptions readParticle(FriendlyByteBuf buf) {
+        ParticleType<?> type = buf.readById(net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE);
+        return readParticleFromType(buf, type);
+    }
+
+    private static <T extends ParticleOptions> T readParticleFromType(FriendlyByteBuf buf, ParticleType<T> type) {
+        return type.getDeserializer().fromNetwork(type, buf);
+    }
 }

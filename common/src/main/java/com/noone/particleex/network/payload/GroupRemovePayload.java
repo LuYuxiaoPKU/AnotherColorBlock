@@ -41,4 +41,8 @@ public record GroupRemovePayload(String group, String expression, Vec3 pos) impl
               }
               return new GroupRemovePayload(group,expression,pos);
   }
+  @Override
+  public net.minecraft.resources.ResourceLocation packetId() {
+    return NetworkIdentifiers.GROUP_REMOVE_PAYLOAD_PACKET_ID;
+  }
 }

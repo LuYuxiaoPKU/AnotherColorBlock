@@ -72,4 +72,8 @@ public record ImagePayload(double x, double y, double z, String path, double sca
               ParticleOptions effect = com.noone.particleex.network.PayloadCodecUtil.readParticle(buf);
               return new ImagePayload(x,y,z,path,scaling,xRotate,yRotate,zRotate,flip,dpb,new Vec3(vx,vy,vz),age,speedExpression,speedStep,group,effect);
   }
+  @Override
+  public net.minecraft.resources.ResourceLocation packetId() {
+    return NetworkIdentifiers.IMAGE_PAYLOAD_PACKET_ID;
+  }
 }

@@ -17,23 +17,31 @@ import com.noone.particleex.network.payload.VideoMatrixPayload;
 import com.noone.particleex.network.payload.VideoPayload;
 import com.noone.particleex.util.ClientMessageUtil;
 import com.noone.particleex.util.MessageBridge;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
-import net.neoforged.neoforge.network.registration.PayloadRegistrar;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.simple.SimpleChannel;
 
 import java.io.IOException;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @Mod(NetworkIdentifiers.MOD_ID)
 public class NeoForgeEntry {
+    /** Forge 47 SimpleChannel（1.20.1 无 CustomPacketPayload 体系，payload 走 ParticlePayload + packetId）。 */
+    private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
+            new ResourceLocation(NetworkIdentifiers.MOD_ID, "main"),
+            () -> "1",
+            s -> true,
+            s -> true);
+
     public NeoForgeEntry(IEventBus modBus) {
         try {
             ParticleExConfig.init();
@@ -42,38 +50,84 @@ public class NeoForgeEntry {
         }
 
         // 平台桥注入（发送 + 错误上报）
-        Bridge.setSender((world, payload) -> PacketDistributor.sendToPlayersInDimension(world, payload));
+        Bridge.setSender((world, payload) -> {
+            CHANNEL.send(PacketDistributor.DIMENSION.with(() -> world.dimension()), payload);
+        });
         MessageBridge.setSink(new ClientMessageUtil());
 
-        modBus.addListener(RegisterPayloadHandlersEvent.class, this::registerPayloads);
-        NeoForge.EVENT_BUS.addListener(this::registerCommands);
+        registerMessages();
+        MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
     }
 
     private void registerCommands(RegisterCommandsEvent event) {
         ParticleExCommand.register(event.getDispatcher(), event.getBuildContext());
     }
 
-    private void registerPayloads(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar(NetworkIdentifiers.MOD_ID).versioned("1");
-        reg(registrar, ClearParticlePayload.TYPE, ClearParticlePayload.CODEC, (p, ctx) -> ClientNetworkHandler.clearParticle(ctx));
-        reg(registrar, ClearCachePayload.TYPE, ClearCachePayload.CODEC, (p, ctx) -> ClientNetworkHandler.clearCache(ctx));
-        reg(registrar, NormalPayload.TYPE, NormalPayload.CODEC, ClientNetworkHandler::normal);
-        reg(registrar, ConditionalPayload.TYPE, ConditionalPayload.CODEC, ClientNetworkHandler::conditional);
-        reg(registrar, ParameterPayload.TYPE, ParameterPayload.CODEC, ClientNetworkHandler::parameter);
-        reg(registrar, ImagePayload.TYPE, ImagePayload.CODEC, ClientNetworkHandler::image);
-        reg(registrar, ImageMatrixPayload.TYPE, ImageMatrixPayload.CODEC, ClientNetworkHandler::imageMatrix);
-        reg(registrar, VideoPayload.TYPE, VideoPayload.CODEC, ClientNetworkHandler::video);
-        reg(registrar, VideoMatrixPayload.TYPE, VideoMatrixPayload.CODEC, ClientNetworkHandler::videoMatrix);
-        reg(registrar, GroupRemovePayload.TYPE, GroupRemovePayload.CODEC, ClientNetworkHandler::groupRemove);
-        reg(registrar, GroupChangePayload.TYPE, GroupChangePayload.CODEC, ClientNetworkHandler::groupChange);
+    /** 注册 S2C 消息：decoder=read，encoder=write，consumerMainThread 已保证主线程执行。 */
+    private void registerMessages() {
+        CHANNEL.messageBuilder(ClearParticlePayload.class, 0)
+                .decoder(ClearParticlePayload::read)
+                .encoder((p, buf) -> p.write(buf))
+                .consumerMainThread(clientOnly((p) -> ClientNetworkHandler.clearParticle()))
+                .add();
+        CHANNEL.messageBuilder(ClearCachePayload.class, 1)
+                .decoder(ClearCachePayload::read)
+                .encoder((p, buf) -> p.write(buf))
+                .consumerMainThread(clientOnly((p) -> ClientNetworkHandler.clearCache()))
+                .add();
+        CHANNEL.messageBuilder(NormalPayload.class, 2)
+                .decoder(NormalPayload::read)
+                .encoder((p, buf) -> p.write(buf))
+                .consumerMainThread(clientOnly(ClientNetworkHandler::normal))
+                .add();
+        CHANNEL.messageBuilder(ConditionalPayload.class, 3)
+                .decoder(ConditionalPayload::read)
+                .encoder((p, buf) -> p.write(buf))
+                .consumerMainThread(clientOnly(ClientNetworkHandler::conditional))
+                .add();
+        CHANNEL.messageBuilder(ParameterPayload.class, 4)
+                .decoder(ParameterPayload::read)
+                .encoder((p, buf) -> p.write(buf))
+                .consumerMainThread(clientOnly(ClientNetworkHandler::parameter))
+                .add();
+        CHANNEL.messageBuilder(ImagePayload.class, 5)
+                .decoder(ImagePayload::read)
+                .encoder((p, buf) -> p.write(buf))
+                .consumerMainThread(clientOnly(ClientNetworkHandler::image))
+                .add();
+        CHANNEL.messageBuilder(ImageMatrixPayload.class, 6)
+                .decoder(ImageMatrixPayload::read)
+                .encoder((p, buf) -> p.write(buf))
+                .consumerMainThread(clientOnly(ClientNetworkHandler::imageMatrix))
+                .add();
+        CHANNEL.messageBuilder(VideoPayload.class, 7)
+                .decoder(VideoPayload::read)
+                .encoder((p, buf) -> p.write(buf))
+                .consumerMainThread(clientOnly(ClientNetworkHandler::video))
+                .add();
+        CHANNEL.messageBuilder(VideoMatrixPayload.class, 8)
+                .decoder(VideoMatrixPayload::read)
+                .encoder((p, buf) -> p.write(buf))
+                .consumerMainThread(clientOnly(ClientNetworkHandler::videoMatrix))
+                .add();
+        CHANNEL.messageBuilder(GroupRemovePayload.class, 9)
+                .decoder(GroupRemovePayload::read)
+                .encoder((p, buf) -> p.write(buf))
+                .consumerMainThread(clientOnly(ClientNetworkHandler::groupRemove))
+                .add();
+        CHANNEL.messageBuilder(GroupChangePayload.class, 10)
+                .decoder(GroupChangePayload::read)
+                .encoder((p, buf) -> p.write(buf))
+                .consumerMainThread(clientOnly(ClientNetworkHandler::groupChange))
+                .add();
     }
 
-    /** 注册 S2C payload：handler 包 enqueueWork 切回主线程（NeoForge 网络线程要求） */
-    private static <T extends CustomPacketPayload> void reg(
-            PayloadRegistrar registrar,
-            CustomPacketPayload.Type<T> type,
-            StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
-            BiConsumer<T, IPayloadContext> handler) {
-        registrar.playToClient(type, codec, (payload, ctx) -> ctx.enqueueWork(() -> handler.accept(payload, ctx)));
+    /** 包装为仅处理 S2C 方向（本 mod 全部 payload 均为服务端命令下发）。 */
+    private static <T> BiConsumer<T, Supplier<NetworkEvent.Context>> clientOnly(Consumer<T> handler) {
+        return (payload, ctx) -> {
+            if (ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+                handler.accept(payload);
+            }
+        };
     }
 }

@@ -42,7 +42,8 @@ public record ConditionalPayload(double x, double y, double z, float red, float 
               if (!Strings.isNullOrEmpty(this.group) && !this.group.equals("null")) {
                   buf.writeUtf(this.group);
               }
-              ParticleTypes.STREAM_CODEC.encode(buf,this.effect);
+              buf.writeId(net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE, this.effect.getType());
+              this.effect.writeToNetwork(buf);
   }
 
   public static ConditionalPayload read(FriendlyByteBuf buf) {
@@ -69,5 +70,9 @@ public record ConditionalPayload(double x, double y, double z, float red, float 
               String group = readString(buf, buf.readBoolean());
               ParticleOptions effect = com.noone.particleex.network.PayloadCodecUtil.readParticle(buf);
              return new ConditionalPayload(x,y,z,red,green,blue,alpha,vx,vy,vz,dx,dy,dz,expression,step,age,speedExpression,speedStep,group,effect);
+  }
+  @Override
+  public net.minecraft.resources.ResourceLocation packetId() {
+    return NetworkIdentifiers.CONDITIONAL_PAYLOAD_PACKET_ID;
   }
 }
