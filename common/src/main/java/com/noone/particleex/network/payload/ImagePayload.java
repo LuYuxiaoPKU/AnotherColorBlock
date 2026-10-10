@@ -3,9 +3,7 @@ package com.noone.particleex.network.payload;
 import com.google.common.base.Strings;
 import com.noone.particleex.network.PayloadCodecUtil;
 import com.noone.particleex.network.NetworkIdentifiers;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
@@ -14,44 +12,45 @@ import net.minecraft.world.phys.Vec3;
 import static com.noone.particleex.network.PayloadCodecUtil.readDouble;
 import static com.noone.particleex.network.PayloadCodecUtil.readString;
 
-public record ImagePayload(double x, double y, double z, String path, double scaling, int xRotate, int yRotate, int zRotate, int flip, double dpb, Vec3 speed, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements CustomPacketPayload {
-  public static final Type<ImagePayload> TYPE = new Type<>(NetworkIdentifiers.IMAGE_PACKET_ID);
-  public static final StreamCodec<RegistryFriendlyByteBuf, ImagePayload> CODEC = StreamCodec.of(
-          (buf, value) -> {
-              buf.writeDouble(value.x);
-              buf.writeDouble(value.y);
-              buf.writeDouble(value.z);
-              buf.writeUtf(value.path);
-              buf.writeDouble(value.scaling);
-              buf.writeInt(value.xRotate);
-              buf.writeInt(value.yRotate);
-              buf.writeInt(value.zRotate);
-              buf.writeInt(value.flip);
-              buf.writeDouble(value.dpb);
-              if (value.speed == null) {
+public record ImagePayload(double x, double y, double z, String path, double scaling, int xRotate, int yRotate, int zRotate, int flip, double dpb, Vec3 speed, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements com.noone.particleex.network.ParticlePayload {
+  @Override
+  public void write(FriendlyByteBuf buf) {
+              buf.writeDouble(this.x);
+              buf.writeDouble(this.y);
+              buf.writeDouble(this.z);
+              buf.writeUtf(this.path);
+              buf.writeDouble(this.scaling);
+              buf.writeInt(this.xRotate);
+              buf.writeInt(this.yRotate);
+              buf.writeInt(this.zRotate);
+              buf.writeInt(this.flip);
+              buf.writeDouble(this.dpb);
+              if (this.speed == null) {
                   buf.writeDouble(0.0D);
                   buf.writeDouble(0.0D);
                   buf.writeDouble(0.0D);
               } else {
-                  buf.writeDouble(value.speed.x);
-                  buf.writeDouble(value.speed.y);
-                  buf.writeDouble(value.speed.z);
+                  buf.writeDouble(this.speed.x);
+                  buf.writeDouble(this.speed.y);
+                  buf.writeDouble(this.speed.z);
               }
-              buf.writeInt(value.age);
-              buf.writeBoolean(!Strings.isNullOrEmpty(value.speedExpression) && !value.speedExpression.equals("null"));
-              if (!Strings.isNullOrEmpty(value.speedExpression) && !value.speedExpression.equals("null")) {
-                  buf.writeUtf(value.speedExpression);
-                  buf.writeDouble(value.speedStep);
-              }
-
-              buf.writeBoolean(!Strings.isNullOrEmpty(value.group) && !value.group.equals("null"));
-              if (!Strings.isNullOrEmpty(value.group) && !value.group.equals("null")) {
-                  buf.writeUtf(value.group);
+              buf.writeInt(this.age);
+              buf.writeBoolean(!Strings.isNullOrEmpty(this.speedExpression) && !this.speedExpression.equals("null"));
+              if (!Strings.isNullOrEmpty(this.speedExpression) && !this.speedExpression.equals("null")) {
+                  buf.writeUtf(this.speedExpression);
+                  buf.writeDouble(this.speedStep);
               }
 
-              ParticleTypes.STREAM_CODEC.encode(buf, value.effect);
-          },
-          buf -> {
+              buf.writeBoolean(!Strings.isNullOrEmpty(this.group) && !this.group.equals("null"));
+              if (!Strings.isNullOrEmpty(this.group) && !this.group.equals("null")) {
+                  buf.writeUtf(this.group);
+              }
+
+              buf.writeId(net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE, this.effect.getType());
+              this.effect.writeToNetwork(buf);
+  }
+
+  public static ImagePayload read(FriendlyByteBuf buf) {
               double x = buf.readDouble();
               double y = buf.readDouble();
               double z = buf.readDouble();
@@ -70,12 +69,7 @@ public record ImagePayload(double x, double y, double z, String path, double sca
               String speedExpression = readString(buf, hasSpeedExpression);
               double speedStep = readDouble(buf, hasSpeedExpression, 1.0D);
               String group = readString(buf, buf.readBoolean());
-              ParticleOptions effect = ParticleTypes.STREAM_CODEC.decode(buf);
+              ParticleOptions effect = com.noone.particleex.network.PayloadCodecUtil.readParticle(buf);
               return new ImagePayload(x,y,z,path,scaling,xRotate,yRotate,zRotate,flip,dpb,new Vec3(vx,vy,vz),age,speedExpression,speedStep,group,effect);
-          }
-  );
-  @Override
-   public Type<? extends CustomPacketPayload> type() {
-      return TYPE;
-   }
+  }
 }

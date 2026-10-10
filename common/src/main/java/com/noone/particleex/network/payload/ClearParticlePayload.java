@@ -2,15 +2,14 @@ package com.noone.particleex.network.payload;
 
 import com.noone.particleex.network.NetworkIdentifiers;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
-public record ClearParticlePayload() implements CustomPacketPayload {
-    public static final Type<ClearParticlePayload> TYPE = new Type<>(NetworkIdentifiers.CLEAR_PARTICLE_PACKET_ID);
-    public static final StreamCodec<FriendlyByteBuf, ClearParticlePayload> CODEC = StreamCodec.unit(new ClearParticlePayload());
-
+public record ClearParticlePayload() implements com.noone.particleex.network.ParticlePayload {
     @Override
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
-    }
+  public void write(FriendlyByteBuf buf) {
+  }
+
+  public static ClearParticlePayload read(FriendlyByteBuf buf) {
+    return new ClearParticlePayload();
+  }
+
 }
