@@ -13,12 +13,14 @@ jobs:
   probe-beta-artifacts:
     runs-on: ubuntu-latest
     steps:
-      - name: 检查 20.5.x beta 的 pom 存在性（临时探针）
+      - name: 检查 20.5.21-beta 文件存在性（临时探针）
         run: |
-          echo "=== 20.5.21-beta pom 内容:"
-          curl -s --max-time 20 "https://maven.neoforged.net/releases/net/neoforged/neoforge/20.5.21-beta/neoforge-20.5.21-beta.pom" | grep -E "<parent>|<groupId>|<artifactId>|<version>|</parent>" | head -25
-          echo "=== 20.5.21-beta 目录文件:"
-          curl -s --max-time 20 "https://maven.neoforged.net/releases/net/neoforged/neoforge/20.5.21-beta/" | grep -oE "neoforge-20\.5\.21-beta[^\"<]*" | sort -u | head -15
+          for f in neoforge-20.5.21-beta.jar neoforge-20.5.21-beta-userdev.jar neoforge-20.5.21-beta-installer.jar; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 "https://maven.neoforged.net/releases/net/neoforged/neoforge/20.5.21-beta/$f")
+            echo "$f: $code"
+          done
+          echo "=== 目录列表:"
+          curl -s --max-time 20 "https://maven.neoforged.net/releases/net/neoforged/neoforge/20.5.21-beta/" | grep -oE 'href="[^"]+"' | head -20
 
   build:
     strategy:
