@@ -23,7 +23,7 @@ import re
 ROOT = os.getcwd()  # 在仓库根目录执行（脚本可能被复制到 /tmp 运行，不能用 __file__ 推导）
 
 # ---- 分线参数表 ----
-GET_DIST_BRANCHES = {"26.1", "26.2", "26.3"}          # FML 11.0 → getDist()
+GET_DIST_BRANCHES = {"26.1", "26.2", "26.3", "1.21.9", "1.21.10", "1.21.11"}  # FML 11.0 → getDist()（neoforge 21.9 起切 FML 11.0）
 FORGE_PKG_BRANCHES = {"1.20.1"}                        # Forge 47 → net.minecraftforge
 
 FABRIC_SERVER = "fabric/src/main/java/com/noone/particleex/ParticleEx.java"
