@@ -21,7 +21,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    mappings "org.relativitymc:modern-yarn:26.3-pre-3+build.1:v2"
+    mappings "org.relativitymc:modern-yarn:26.2+build.3:v2"
     // common 源码直接并入本模块编译（loom 统一映射到 Yarn）
     compileOnly(project(':common'))
     commonJava(project(path: ':common', configuration: 'commonJava'))
