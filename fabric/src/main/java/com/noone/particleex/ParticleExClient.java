@@ -12,8 +12,8 @@ public class ParticleExClient implements ClientModInitializer {
    public void onInitializeClient() {
       ClientTickEvents.START_CLIENT_TICK.register(client -> ParticleUtil.onStartClientTick());
       ClientTickEvents.END_CLIENT_TICK.register(client -> ParticleUtil.onEndClientTick());
-      ClientPlayNetworking.registerGlobalReceiver(NetworkIdentifiers.CLEAR_PARTICLE_PACKET_ID, (client, handler, buf, sender) -> ClientNetworkHandler.clearParticle(ClearParticlePayload.read(buf)));
-      ClientPlayNetworking.registerGlobalReceiver(NetworkIdentifiers.CLEAR_CACHE_PACKET_ID, (client, handler, buf, sender) -> ClientNetworkHandler.clearCache(ClearCachePayload.read(buf)));
+      ClientPlayNetworking.registerGlobalReceiver(NetworkIdentifiers.CLEAR_PARTICLE_PACKET_ID, (client, handler, buf, sender) -> { ClearParticlePayload.read(buf); ClientNetworkHandler.clearParticle(); });
+      ClientPlayNetworking.registerGlobalReceiver(NetworkIdentifiers.CLEAR_CACHE_PACKET_ID, (client, handler, buf, sender) -> { ClearCachePayload.read(buf); ClientNetworkHandler.clearCache(); });
       ClientPlayNetworking.registerGlobalReceiver(NetworkIdentifiers.NORMAL_PACKET_ID, (client, handler, buf, sender) -> ClientNetworkHandler.normal(NormalPayload.read(buf)));
       ClientPlayNetworking.registerGlobalReceiver(NetworkIdentifiers.CONDITIONAL_PACKET_ID, (client, handler, buf, sender) -> ClientNetworkHandler.conditional(ConditionalPayload.read(buf)));
       ClientPlayNetworking.registerGlobalReceiver(NetworkIdentifiers.PARAMETER_PACKET_ID, (client, handler, buf, sender) -> ClientNetworkHandler.parameter(ParameterPayload.read(buf)));
