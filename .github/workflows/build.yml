@@ -10,6 +10,18 @@ permissions:
   contents: read
 
 jobs:
+  probe-beta-artifacts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检查 20.5.x beta 的 pom 存在性（临时探针）
+        run: |
+          for v in 20.5.17-beta 20.5.18-beta 20.5.19-beta 20.5.20-beta 20.5.21-beta; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 "https://maven.neoforged.net/releases/net/neoforged/neoforge/$v/neoforge-$v.pom")
+            echo "$v pom: $code"
+          done
+          echo "=== 20.5.17-beta 目录:"
+          curl -s --max-time 20 "https://maven.neoforged.net/releases/net/neoforged/neoforge/20.5.17-beta/" | head -20
+
   build:
     strategy:
       fail-fast: false
