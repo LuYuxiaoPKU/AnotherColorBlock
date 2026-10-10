@@ -10,7 +10,7 @@ import com.noone.particleex.command.argument.Speed3ArgumentType;
 import com.noone.particleex.command.argument.SuggestArgumentType;
 import com.noone.particleex.command.argument.SuggestDoubleArgumentType;
 import com.noone.particleex.command.argument.SuggestIntegerArgumentType;
-import com.noone.particleex.mixin.ArgumentTypesAccessor;
+import com.noone.particleex.mixin.ArgumentTypeInfosAccessor;
 import com.noone.particleex.mixin.MappedRegistryAccessor;
 import com.noone.particleex.common.Bridge;
 import com.noone.particleex.network.ClientNetworkHandler;
@@ -78,7 +78,7 @@ public class NeoForgeEntry {
      * 注册自定义命令参数类型（1.20.5+ 同步类名 ArgumentTypes，同 26.2 修复：BY_CLASS + 注册表直塞）。
      */
     private void registerArgumentTypes() {
-        Map<Class<?>, ArgumentTypeInfo<?, ?>> byClass = ArgumentTypesAccessor.particleex$getByClass();
+        Map<Class<?>, ArgumentTypeInfo<?, ?>> byClass = ArgumentTypeInfosAccessor.particleex$getByClass();
         byClass.put(Color4ArgumentType.class, SingletonArgumentInfo.contextFree(Color4ArgumentType::color4));
         byClass.put(FlipArgumentType.class, SingletonArgumentInfo.contextFree(FlipArgumentType::flip));
         byClass.put(GroupChangeTypeArgumentType.class, SingletonArgumentInfo.contextFree(GroupChangeTypeArgumentType::type));
