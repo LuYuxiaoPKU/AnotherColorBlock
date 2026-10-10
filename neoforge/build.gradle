@@ -40,7 +40,6 @@ dependencies {
     compileOnly "org.bytedeco:javacv:1.5.11"
 
     // common 源码直接并入本模块编译（两端同为官方映射，无需转换）
-    compileOnly(project(':common'))
     commonJava(project(path: ':common', configuration: 'commonJava'))
     commonResources(project(path: ':common', configuration: 'commonResources'))
 }
