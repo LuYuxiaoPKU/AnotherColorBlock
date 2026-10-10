@@ -9,7 +9,7 @@ import net.minecraft.commands.CommandSourceStack;
 
 public class ParticleExCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext registryAccess) {
-        LiteralArgumentBuilder<CommandSourceStack> rootCommand = Commands.literal("particleex").requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS));
+        LiteralArgumentBuilder<CommandSourceStack> rootCommand = Commands.literal("particleex").requires((source) -> source.hasPermission(2));
         FunctionListCommand.register(rootCommand);
         ClearParticleCommand.register(rootCommand);
         ClearCacheCommand.register(rootCommand);
