@@ -12,6 +12,7 @@ import com.noone.particleex.command.argument.SuggestDoubleArgumentType;
 import com.noone.particleex.command.argument.SuggestIntegerArgumentType;
 import com.noone.particleex.common.Bridge;
 import com.noone.particleex.mixin.ArgumentTypeInfosAccessor;
+import com.noone.particleex.mixin.MappedRegistryAccessor;
 import com.noone.particleex.network.ClientNetworkHandler;
 import com.noone.particleex.network.NetworkIdentifiers;
 import com.noone.particleex.network.payload.ClearCachePayload;
@@ -27,8 +28,15 @@ import com.noone.particleex.network.payload.VideoMatrixPayload;
 import com.noone.particleex.network.payload.VideoPayload;
 import com.noone.particleex.util.ClientMessageUtil;
 import com.noone.particleex.util.MessageBridge;
+import it.unimi.dsi.fastutil.objects.ObjectList;
+import it.unimi.dsi.fastutil.objects.Reference2IntMap;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderOwner;
+import net.minecraft.core.MappedRegistry;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -88,6 +96,23 @@ public class NeoForgeEntry {
         byClass.put(SuggestArgumentType.class, SuggestArgumentType.Serializer.INSTANCE);
         byClass.put(SuggestDoubleArgumentType.class, SuggestDoubleArgumentType.Serializer.INSTANCE);
         byClass.put(SuggestIntegerArgumentType.class, SuggestIntegerArgumentType.Serializer.INSTANCE);
+
+        // 注册表直塞：发包协议 serializeCap 写 getId(info)、收包 byId(id) 查注册表，
+        // 仅塞 BY_CLASS 会让未注册的 info 拿到默认 id 0（bool），导致数据流错位
+        // （ArrayIndexOutOfBounds: Index 115 实机崩溃）。neoforge 构造期注册表已冻结，
+        // 无法走公开 Registry.register，改字段级插入（freeze 不锁 byId/toId，字节码实证）。
+        Registry<ArgumentTypeInfo<?, ?>> registry = BuiltInRegistries.COMMAND_ARGUMENT_TYPE;
+        if (!(registry instanceof MappedRegistry)) {
+            throw new IllegalStateException("COMMAND_ARGUMENT_TYPE 不是 MappedRegistry，无法注册参数类型");
+        }
+        MappedRegistryAccessor<?> regAccessor = (MappedRegistryAccessor<?>) (Object) registry;
+        ObjectList<Holder.Reference<?>> byId = regAccessor.particleex$getById();
+        Reference2IntMap<Object> toId = (Reference2IntMap<Object>) (Object) regAccessor.particleex$getToId();
+        for (ArgumentTypeInfo<?, ?> info : byClass.values()) {
+            int id = byId.size();
+            byId.add((Holder.Reference<Object>) (Object) Holder.Reference.createIntrusive((HolderOwner<Object>) (Object) registry, info));
+            toId.put(info, id);
+        }
     }
 
     private void registerCommands(RegisterCommandsEvent event) {
