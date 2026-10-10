@@ -15,6 +15,6 @@ public record ClearCachePayload() implements CustomPacketPayload {
 
   @Override
   public net.minecraft.resources.ResourceLocation id() {
-    return NetworkIdentifiers.CLEARCACHE_PACKET_ID;
+    return NetworkIdentifiers.CLEAR_CACHE_PACKET_ID;
   }
 }
