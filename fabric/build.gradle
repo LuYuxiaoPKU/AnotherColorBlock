@@ -60,6 +60,24 @@ tasks.named('compileJava', JavaCompile) {
     source(configurations.commonJava)
 }
 
+// 表达式引擎单元测试（纯 Java）：并入 common 的测试源码，loom 提供 MC 类路径
+sourceSets {
+    test {
+        java.srcDirs(project(':common').sourceSets.test.java.srcDirs)
+    }
+}
+
+dependencies {
+    testImplementation(project(':common'))
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'com.google.guava:guava:33.2.1-jre'
+}
+
+tasks.named('test', Test) {
+    useJUnitPlatform()
+}
+
 processResources {
     dependsOn(configurations.commonResources)
     from(configurations.commonResources)
