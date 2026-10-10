@@ -1,6 +1,6 @@
 plugins {
     id 'java-library'
-    id 'fabric-loom'
+    id 'net.fabricmc.fabric-loom'
 }
 
 base {
@@ -18,10 +18,16 @@ configurations {
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    // 无混淆路径（net.fabricmc.fabric-loom）：无 modImplementation 扩展，
+    // 照 fabric-api 用普通依赖（loader=api 编译期，fabric-api=运行时）
+    api "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    mappings "org.relativitymc:modern-yarn:${project.yarn_mappings}:v2"
+    // 26.x 映射全部走 loom 1.17 无混淆路径默认（26.x = non-obfuscated Minecraft，
+    // Mojang 直发可读名 jar）：零自定义映射配置（fabric-api 26.x 线上同款）。
+    // 曾经的显式 modern-yarn/intermediaryUrl 会破坏映射链（CI 实证 'Mappings src
+    // namespace must match remap src namespace, expected official but got intermediary'）。
+
     // common 源码直接并入本模块编译（loom 统一映射到 Yarn）
     commonJava(project(path: ':common', configuration: 'commonJava'))
     commonResources(project(path: ':common', configuration: 'commonResources'))
@@ -86,36 +92,11 @@ repositories {
 
 // 26.x 生态缺陷绕过（客户端 Mixin apply 崩溃修复）：
 // loom 1.18 的 remapJar 把 mixin 注解字符串 remap 到 intermediary（class_XXXX），
-// 但 26.x 运行时命名空间 = official（可读名），且 jar 标注 official 时 loader 的
-// static remap（Fabric-Loom-Mixin-Remap-Type: static）不会触发 → 注解字符串停留
-// intermediary → 客户端 @Shadow/@Inject 签名不匹配崩溃（No refMap loaded）。
-// 对策：发布 jar 的 manifest 声明为 intermediary，触发 loader 运行时 remap——
-// 字节码已是 official（映射无匹配项时 tinyremapper 原样保留，不受影响），
-// mixin 注解的 class_XXXX 被映射到 official → 客户端正常。
-tasks.named('remapJar') {
-    doLast {
-        def src = remapJar.archiveFile.get().asFile
-        def tmp = new File(src.parentFile, src.name + '.tmp')
-        def zin = new java.util.zip.ZipInputStream(new FileInputStream(src))
-        def zout = new java.util.zip.ZipOutputStream(new FileOutputStream(tmp))
-        def buf = new byte[8192]
-        def entry
-        while ((entry = zin.nextEntry) != null) {
-            zout.putNextEntry(new java.util.zip.ZipEntry(entry.name))
-            if (entry.name == 'META-INF/MANIFEST.MF') {
-                def text = new String(zin.readAllBytes(), 'UTF-8')
-                        .replace('Fabric-Mapping-Namespace: official', 'Fabric-Mapping-Namespace: intermediary')
-                zout.write(text.getBytes('UTF-8'))
-            } else {
-                int n
-                while ((n = zin.read(buf)) > 0) zout.write(buf, 0, n)
-            }
-            zout.closeEntry()
-        }
-        zout.close()
-        zin.close()
-        src.delete()
-        tmp.renameTo(src)
-        println 'remapJar: manifest 已声明为 intermediary（26.x mixin 绕过）'
-    }
-}
+// 期望 loader 运行时 static remap 转回 official；但 26.x 无官方 mojmap，
+// loader 没有 intermediary→official 映射数据 → 注解停留中间名 → 客户端
+// @Shadow/@Inject 签名不匹配崩溃（No refMap loaded）。
+// 对策：loom 1.17.20 + 无混淆插件（fabric-api 26.x 线上同款）——mixin AP 在
+// javac 阶段直出 official 可读名，jar 内注解即官方名，运行时不依赖 remap。
+// 实证：fabric-api 0.162.0+26.3 发布物 = loom 1.17.20 / Mapping-Namespace: official /
+// 无 Fabric-Loom-Mixin-Remap-Type 键；两次实机复测确认 manifest 声明 intermediary
+// 的 workaround 无效（loader 无 intermediary→official 映射可查），予以移除。
