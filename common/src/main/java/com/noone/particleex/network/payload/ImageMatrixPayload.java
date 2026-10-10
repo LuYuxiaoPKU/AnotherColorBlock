@@ -2,8 +2,7 @@ package com.noone.particleex.network.payload;
 
 import com.google.common.base.Strings;
 import com.noone.particleex.network.NetworkIdentifiers;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -14,44 +13,46 @@ import static com.noone.particleex.network.PayloadCodecUtil.readString;
 
 public record ImageMatrixPayload(double x, double y, double z, String path, double scaling, double[][] matrix, double dpb, Vec3 speed, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements CustomPacketPayload {
    public static final Type<ImageMatrixPayload> TYPE = new Type<>(NetworkIdentifiers.IMAGE_MATRIX_PACKET_ID);
-   public static final StreamCodec<RegistryFriendlyByteBuf, ImageMatrixPayload> CODEC = StreamCodec.of(
-          (buf, value) -> {
-              buf.writeDouble(value.x);
-              buf.writeDouble(value.y);
-              buf.writeDouble(value.z);
-              buf.writeUtf(value.path);
-              buf.writeDouble(value.scaling);
-              buf.writeInt(value.matrix.length);
-              buf.writeInt(value.matrix.length > 0 ? value.matrix[0].length : 0);
+   @Override
+  public void write(FriendlyByteBuf buf) {
+              buf.writeDouble(this.x);
+              buf.writeDouble(this.y);
+              buf.writeDouble(this.z);
+              buf.writeUtf(this.path);
+              buf.writeDouble(this.scaling);
+              buf.writeInt(this.matrix.length);
+              buf.writeInt(this.matrix.length > 0 ? this.matrix[0].length : 0);
 
-              for(int row = 0; row < value.matrix.length; ++row) {
-                  for(int col = 0; col < value.matrix[0].length; ++col) {
-                      buf.writeDouble(value.matrix[row][col]);
+              for(int row = 0; row < this.matrix.length; ++row) {
+                  for(int col = 0; col < this.matrix[0].length; ++col) {
+                      buf.writeDouble(this.matrix[row][col]);
                   }
               }
-              buf.writeDouble(value.dpb);
-              if (value.speed == null) {
+              buf.writeDouble(this.dpb);
+              if (this.speed == null) {
                   buf.writeDouble(0.0D);
                   buf.writeDouble(0.0D);
                   buf.writeDouble(0.0D);
               } else {
-                  buf.writeDouble(value.speed.x);
-                  buf.writeDouble(value.speed.y);
-                  buf.writeDouble(value.speed.z);
+                  buf.writeDouble(this.speed.x);
+                  buf.writeDouble(this.speed.y);
+                  buf.writeDouble(this.speed.z);
               }
-              buf.writeInt(value.age);
-              buf.writeBoolean(!Strings.isNullOrEmpty(value.speedExpression) && !value.speedExpression.equals("null"));
-              if (!Strings.isNullOrEmpty(value.speedExpression) && !value.speedExpression.equals("null")) {
-                  buf.writeUtf(value.speedExpression);
-                  buf.writeDouble(value.speedStep);
+              buf.writeInt(this.age);
+              buf.writeBoolean(!Strings.isNullOrEmpty(this.speedExpression) && !this.speedExpression.equals("null"));
+              if (!Strings.isNullOrEmpty(this.speedExpression) && !this.speedExpression.equals("null")) {
+                  buf.writeUtf(this.speedExpression);
+                  buf.writeDouble(this.speedStep);
               }
-              buf.writeBoolean(!Strings.isNullOrEmpty(value.group) && !value.group.equals("null"));
-              if (!Strings.isNullOrEmpty(value.group) && !value.group.equals("null")) {
-                  buf.writeUtf(value.group);
+              buf.writeBoolean(!Strings.isNullOrEmpty(this.group) && !this.group.equals("null"));
+              if (!Strings.isNullOrEmpty(this.group) && !this.group.equals("null")) {
+                  buf.writeUtf(this.group);
               }
-              ParticleTypes.STREAM_CODEC.encode(buf,value.effect);
-          },
-          buf -> {
+              buf.writeUtf(this.effect.getType().getRegisteredName());
+              this.effect.writeToNetwork(buf);
+  }
+
+  public static ImageMatrixPayload read(FriendlyByteBuf buf) {
               double x = buf.readDouble();
               double y = buf.readDouble();
               double z = buf.readDouble();
@@ -74,12 +75,12 @@ public record ImageMatrixPayload(double x, double y, double z, String path, doub
               String speedExpression = readString(buf, hasSpeedExpression);
               double speedStep = readDouble(buf, hasSpeedExpression, 1.0D);
               String group = readString(buf, buf.readBoolean());
-              ParticleOptions effect = ParticleTypes.STREAM_CODEC.decode(buf);
+              ParticleOptions effect = ParticleOptions.fromNetwork(net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE.get(net.minecraft.resources.ResourceLocation.parse(buf.readUtf())), buf);
               return new ImageMatrixPayload(x,y,z,path,scaling,matrix,dpb,new Vec3(vx,vy,vz),age,speedExpression,speedStep,group,effect);
           }
-   );
-   @Override
-   public Type<? extends CustomPacketPayload> type() {
-      return TYPE;
-   }
+
+  @Override
+  public Type<? extends CustomPacketPayload> type() {
+    return TYPE;
+  }
 }
