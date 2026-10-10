@@ -1,8 +1,10 @@
 plugins {
-    // loom 1.17.20（fabric-api 26.x 线上同款）：loom 1.17 内置 26.x 支持，
-    // 默认映射 = RelativityMC modern-yarn，mixin 注解直出 official（可读名），
-    // 运行时不依赖 loader remap（loom 1.18 的 intermediary 中转在 26.x 断链）
-    id 'fabric-loom' version '1.17.20' apply false
+    // loom 1.17.20 + 新插件 id net.fabricmc.fabric-loom（fabric-api 26.x 线上同款）：
+// 26.x = 无混淆版本（Mojang 直接发布可读名 jar，loom 1.14 起支持），走无混淆路径
+// 无需 intermediary/mappings 配置；mixin 注解直出 official，运行时不依赖 loader remap
+// （旧 id fabric-loom 走混淆 remap 路径，26.x 上强制要求 mappings 且注解中转 intermediary，
+//  在无官方映射下断链——客户端崩溃 + CI 报 "Configuration 'mappings' has no dependencies"）
+id 'net.fabricmc.fabric-loom' version '1.17.20' apply false
     // net.neoforged.moddev 在 neoforge 模块内声明（依赖 maven.neoforged.net，网络恢复后启用）
 }
 
