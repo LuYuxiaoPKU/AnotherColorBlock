@@ -1,6 +1,6 @@
 plugins {
     id 'java-library'
-    id 'net.neoforged.moddev' version '2.0.144'
+    id 'net.neoforged.gradle.userdev' version '7.0.97'
 }
 
 base {
@@ -9,39 +9,21 @@ base {
 
 neoForge {
     version = project.neoforge_version
+}
 
-    runs {
-        configureEach {
-            systemProperty('neoforge.enabledGameTestNamespaces', project.mod_id)
-            ideName = "NeoForge ${it.name.capitalize()} (${project.path})"
-        }
-        client {
-            client()
-            gameDirectory = this.mkdir(this.file('runs/client'))
-        }
-        server {
-            server()
-            programArgument '--nogui'
-            gameDirectory = this.mkdir(this.file('runs/server'))
-        }
-        gameTestServer {
-            type = 'gameTestServer'
-            systemProperty('neoforge.enabledGameTestNamespaces', project.mod_id)
-            gameDirectory = this.mkdir(this.file('runs/gametest'))
-        }
-        data {
-            data()
-            programArguments.addAll '--mod', project.mod_id, '--all',
-                    '--output', file('src/generated/resources/').getAbsolutePath(),
-                    '--existing', file('src/main/resources/').getAbsolutePath()
-            gameDirectory = this.mkdir(this.file('runs/data'))
-        }
+// NeoGradle 7 runs（moddev 2.x 之前 1.20.4 时代官方工具链，MDK 实证）
+runs {
+    configureEach {
+        systemProperty('neoforge.enabledGameTestNamespaces', project.mod_id)
+        modSource project.sourceSets.main
     }
-
-    mods {
-        "${project.mod_id}" {
-            sourceSet sourceSets.main
-        }
+    client {
+    }
+    server {
+        programArgument '--nogui'
+    }
+    gameTestServer {
+        systemProperty('neoforge.enabledGameTestNamespaces', project.mod_id)
     }
 }
 
@@ -55,6 +37,7 @@ configurations {
 }
 
 dependencies {
+    implementation "net.neoforged:neoforge:${project.neoforge_version}"
     compileOnly "org.bytedeco:javacv:1.5.11"
 
     // common 源码直接并入本模块编译（两端同为官方映射，无需转换）
