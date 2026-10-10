@@ -44,7 +44,7 @@ public class NeoForgeEntry {
 
         // 平台桥注入（发送 + 错误上报）：错误上报仅客户端（服务器端无 net.minecraft.client 类）
         Bridge.setSender((world, payload) -> PacketDistributor.sendToPlayersInDimension(world, payload));
-        if (FMLEnvironment.dist.isClient()) {
+        if (FMLEnvironment.getDist().isClient()) {
             MessageBridge.setSink(new ClientMessageUtil());
         }
 
