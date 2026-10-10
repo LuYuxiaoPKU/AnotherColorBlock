@@ -22,13 +22,16 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     mappings "org.relativitymc:modern-yarn:26.2+build.3:v2"
+
     // common 源码直接并入本模块编译（loom 统一映射到 Yarn）
-    compileOnly(project(':common'))
     commonJava(project(path: ':common', configuration: 'commonJava'))
     commonResources(project(path: ':common', configuration: 'commonResources'))
 }
 
 loom {
+    // 26.x intermediary 由 RelativityMC 维护（CodeMC 镜像，loom 默认的 fabricmc 渠道只到 1.21.11）
+    intermediaryUrl = 'https://repo.codemc.io/repository/relativitymc/org/relativitymc/intermediary/%1$s/intermediary-%1$s-v2.jar'
+    useIntermediateMappings = true
     runs {
         client {
             client()
