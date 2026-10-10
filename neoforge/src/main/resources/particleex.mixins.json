@@ -3,6 +3,10 @@
   "minVersion": "0.8",
   "package": "com.noone.particleex.mixin",
   "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ArgumentTypeInfosAccessor",
+    "MappedRegistryAccessor"
+  ],
   "client": [
     "IBillboardParticleMixin",
     "IParticleMixin",
