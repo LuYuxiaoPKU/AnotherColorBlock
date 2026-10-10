@@ -80,8 +80,7 @@ public record ParameterPayload(boolean polar, boolean tick, boolean rgba, double
               String speedExpression = readString(buf, hasSpeedExpression);
               double speedStep = readDouble(buf, hasSpeedExpression, 1.0D);
               String group = readString(buf, buf.readBoolean());
-              ParticleType<?> particleType = buf.readById(net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE);
-              ParticleOptions effect = particleType.getDeserializer().fromNetwork(particleType, buf);
+              ParticleOptions effect = com.noone.particleex.network.PayloadCodecUtil.readParticle(buf);
               return new ParameterPayload(polar,tick,rgba,x,y,z,color,vx,vy,vz,begin,end,expression,step,cpt,age,speedExpression,speedStep,group,effect);
   }
 
