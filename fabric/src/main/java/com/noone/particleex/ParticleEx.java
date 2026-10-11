@@ -5,11 +5,11 @@ import com.noone.particleex.command.argument.*;
 import com.noone.particleex.common.Bridge;
 import com.noone.particleex.network.payload.*;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.commands.synchronization.SingletonArgumentInfo;
+import net.minecraft.commands.synchronization.ArgumentTypes;
+import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,23 +34,23 @@ public class ParticleEx implements ModInitializer {
             ResourceLocation id = payload.packetId();
             PlayerLookup.world(world).forEach(player -> ServerPlayNetworking.send(player, id, buf));
         });
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, dedicated) -> ParticleExCommand.register(dispatcher, registryAccess));
+        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> ParticleExCommand.register(dispatcher));
         registerArgumentTypes();
     }
 
 
 
-    /** 注册自定义命令参数类型（同 26.2 fabric 版；缺注册致客户端进档时命令树序列化崩溃） */
+    /** 注册自定义命令参数类型（1.18.2 旧体系：vanilla ArgumentTypes.register + EmptyArgumentSerializer） */
     private static void registerArgumentTypes() {
-        ArgumentTypeRegistry.registerArgumentType(new ResourceLocation(MOD_ID, "color4"), Color4ArgumentType.class, SingletonArgumentInfo.contextFree(Color4ArgumentType::color4));
-        ArgumentTypeRegistry.registerArgumentType(new ResourceLocation(MOD_ID, "flip"), FlipArgumentType.class, SingletonArgumentInfo.contextFree(FlipArgumentType::flip));
-        ArgumentTypeRegistry.registerArgumentType(new ResourceLocation(MOD_ID, "group_change"), GroupChangeTypeArgumentType.class, SingletonArgumentInfo.contextFree(GroupChangeTypeArgumentType::type));
-        ArgumentTypeRegistry.registerArgumentType(new ResourceLocation(MOD_ID, "range3"), Range3ArgumentType.class, SingletonArgumentInfo.contextFree(Range3ArgumentType::range3));
-        ArgumentTypeRegistry.registerArgumentType(new ResourceLocation(MOD_ID, "rotate"), RotateArgumentType.class, SingletonArgumentInfo.contextFree(RotateArgumentType::rotate));
-        ArgumentTypeRegistry.registerArgumentType(new ResourceLocation(MOD_ID, "speed3"), Speed3ArgumentType.class, SingletonArgumentInfo.contextFree(Speed3ArgumentType::speed3));
-        ArgumentTypeRegistry.registerArgumentType(new ResourceLocation(MOD_ID, "suggest_string"), SuggestArgumentType.class, SuggestArgumentType.Serializer.INSTANCE);
-        ArgumentTypeRegistry.registerArgumentType(new ResourceLocation(MOD_ID, "suggest_double"), SuggestDoubleArgumentType.class, SuggestDoubleArgumentType.Serializer.INSTANCE);
-        ArgumentTypeRegistry.registerArgumentType(new ResourceLocation(MOD_ID, "suggest_integer"), SuggestIntegerArgumentType.class, SuggestIntegerArgumentType.Serializer.INSTANCE);
+        ArgumentTypes.register(MOD_ID + ":color4", Color4ArgumentType.class, new EmptyArgumentSerializer<>(Color4ArgumentType::color4));
+        ArgumentTypes.register(MOD_ID + ":flip", FlipArgumentType.class, new EmptyArgumentSerializer<>(FlipArgumentType::flip));
+        ArgumentTypes.register(MOD_ID + ":group_change", GroupChangeTypeArgumentType.class, new EmptyArgumentSerializer<>(GroupChangeTypeArgumentType::type));
+        ArgumentTypes.register(MOD_ID + ":range3", Range3ArgumentType.class, new EmptyArgumentSerializer<>(Range3ArgumentType::range3));
+        ArgumentTypes.register(MOD_ID + ":rotate", RotateArgumentType.class, new EmptyArgumentSerializer<>(RotateArgumentType::rotate));
+        ArgumentTypes.register(MOD_ID + ":speed3", Speed3ArgumentType.class, new EmptyArgumentSerializer<>(Speed3ArgumentType::speed3));
+        ArgumentTypes.register(MOD_ID + ":suggest_string", SuggestArgumentType.class, SuggestArgumentType.Serializer.INSTANCE);
+        ArgumentTypes.register(MOD_ID + ":suggest_double", SuggestDoubleArgumentType.class, SuggestDoubleArgumentType.Serializer.INSTANCE);
+        ArgumentTypes.register(MOD_ID + ":suggest_integer", SuggestIntegerArgumentType.class, SuggestIntegerArgumentType.Serializer.INSTANCE);
     }
 
 }

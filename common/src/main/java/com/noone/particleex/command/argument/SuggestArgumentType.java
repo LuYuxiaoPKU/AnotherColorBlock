@@ -11,12 +11,11 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
-import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSource;
-import net.minecraft.commands.synchronization.ArgumentTypeInfo;
+import net.minecraft.commands.synchronization.ArgumentSerializer;
 import net.minecraft.network.FriendlyByteBuf;
 
-public class SuggestArgumentType implements ArgumentType<String>, ArgumentTypeInfo.Template<SuggestArgumentType>{
+public class SuggestArgumentType implements ArgumentType<String>{
    private final StringArgumentType parser;
    private final String[] suggests;
 
@@ -51,17 +50,7 @@ public class SuggestArgumentType implements ArgumentType<String>, ArgumentTypeIn
        return this.parser.getExamples();
    }
 
-    @Override
-    public SuggestArgumentType instantiate(CommandBuildContext commandRegistryAccess) {
-        return this;
-    }
-
-    @Override
-    public ArgumentTypeInfo<SuggestArgumentType, ?> type() {
-        return Serializer.INSTANCE;
-    }
-
-    public static class Serializer implements ArgumentTypeInfo<SuggestArgumentType, SuggestArgumentType> {
+    public static class Serializer implements ArgumentSerializer<SuggestArgumentType> {
         public static final SuggestArgumentType.Serializer INSTANCE = new SuggestArgumentType.Serializer();
         private Serializer() {}
 
@@ -92,9 +81,5 @@ public class SuggestArgumentType implements ArgumentType<String>, ArgumentTypeIn
             json.add("suggestions", suggestsJson);
         }
 
-        @Override
-        public SuggestArgumentType unpack(SuggestArgumentType argumentType) {
-            return argumentType;
-        }
     }
 }

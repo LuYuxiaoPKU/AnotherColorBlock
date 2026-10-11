@@ -11,12 +11,11 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
-import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSource;
-import net.minecraft.commands.synchronization.ArgumentTypeInfo;
+import net.minecraft.commands.synchronization.ArgumentSerializer;
 import net.minecraft.network.FriendlyByteBuf;
 
-public class SuggestDoubleArgumentType implements ArgumentType<Double>, ArgumentTypeInfo.Template<SuggestDoubleArgumentType>{
+public class SuggestDoubleArgumentType implements ArgumentType<Double>{
    private final DoubleArgumentType parser;
    private final double suggest;
 
@@ -101,17 +100,7 @@ public class SuggestDoubleArgumentType implements ArgumentType<Double>, Argument
    }
 
 
-   @Override
-   public SuggestDoubleArgumentType instantiate(CommandBuildContext commandRegistryAccess) {
-      return this;
-   }
-
-   @Override
-   public ArgumentTypeInfo<SuggestDoubleArgumentType, ?> type() {
-      return Serializer.INSTANCE;
-   }
-
-   public static class Serializer implements ArgumentTypeInfo<SuggestDoubleArgumentType, SuggestDoubleArgumentType> {
+   public static class Serializer implements ArgumentSerializer<SuggestDoubleArgumentType> {
       public static final Serializer INSTANCE = new Serializer();
       private Serializer() {}
 
@@ -137,9 +126,5 @@ public class SuggestDoubleArgumentType implements ArgumentType<Double>, Argument
          json.addProperty("suggest", properties.getSuggest());
       }
 
-      @Override
-      public SuggestDoubleArgumentType unpack(SuggestDoubleArgumentType argumentType) {
-         return argumentType;
-      }
    }
 }

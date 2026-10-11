@@ -13,7 +13,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.noone.particleex.network.payload.VideoPayload;
-import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.arguments.ParticleArgument;
 import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.core.particles.ParticleOptions;
@@ -22,9 +21,9 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.world.phys.Vec3;
 
 public class VideoCommand {
-   public static void register(LiteralArgumentBuilder<CommandSourceStack> rootCommand, CommandBuildContext registryAccess) {
+   public static void register(LiteralArgumentBuilder<CommandSourceStack> rootCommand) {
       rootCommand.then(Commands.literal("video")
-          .then(Commands.argument("name", ParticleArgument.particle(registryAccess))
+          .then(Commands.argument("name", ParticleArgument.particle())
               .then(Commands.argument("pos", Vec3Argument.vec3())
                   .then(Commands.argument("path", StringArgumentType.string())
                       .executes(context -> execute(context, ParticleArgument.getParticle(context, "name"), Vec3Argument.getVec3(context, "pos"), StringArgumentType.getString(context, "path"), 0.1D, 0, 0, 0, 0, 10.0D, null, 0, null, 1.0D, null))

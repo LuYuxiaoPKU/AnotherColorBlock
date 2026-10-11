@@ -13,7 +13,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.noone.particleex.network.payload.ConditionalPayload;
-import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.arguments.ParticleArgument;
 import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.core.particles.ParticleOptions;
@@ -23,9 +22,9 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector4f;
 
 public class ConditionalCommand {
-   public static void register(LiteralArgumentBuilder<CommandSourceStack> rootCommand, CommandBuildContext registryAccess) {
+   public static void register(LiteralArgumentBuilder<CommandSourceStack> rootCommand) {
       rootCommand.then(Commands.literal("conditional")
-          .then(Commands.argument("name", ParticleArgument.particle(registryAccess))
+          .then(Commands.argument("name", ParticleArgument.particle())
               .then(Commands.argument("pos", Vec3Argument.vec3())
                   .then(Commands.argument("color", Color4ArgumentType.color4())
                       .then(Commands.argument("speed", Speed3ArgumentType.speed3())

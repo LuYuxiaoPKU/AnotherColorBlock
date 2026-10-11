@@ -11,12 +11,11 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
-import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSource;
-import net.minecraft.commands.synchronization.ArgumentTypeInfo;
+import net.minecraft.commands.synchronization.ArgumentSerializer;
 import net.minecraft.network.FriendlyByteBuf;
 
-public class SuggestIntegerArgumentType implements ArgumentType<Integer>, ArgumentTypeInfo.Template<SuggestIntegerArgumentType> {
+public class SuggestIntegerArgumentType implements ArgumentType<Integer> {
    private final IntegerArgumentType parser;
    private final int suggest;
 
@@ -100,17 +99,7 @@ public class SuggestIntegerArgumentType implements ArgumentType<Integer>, Argume
       }
    }
 
-   @Override
-   public SuggestIntegerArgumentType instantiate(CommandBuildContext commandRegistryAccess) {
-      return this;
-   }
-
-   @Override
-   public ArgumentTypeInfo<SuggestIntegerArgumentType, ?> type() {
-      return Serializer.INSTANCE;
-   }
-
-   public static class Serializer implements ArgumentTypeInfo<SuggestIntegerArgumentType, SuggestIntegerArgumentType> {
+   public static class Serializer implements ArgumentSerializer<SuggestIntegerArgumentType> {
       public static final SuggestIntegerArgumentType.Serializer INSTANCE = new SuggestIntegerArgumentType.Serializer();
       private Serializer() {}
 
@@ -136,9 +125,5 @@ public class SuggestIntegerArgumentType implements ArgumentType<Integer>, Argume
          json.addProperty("suggest", properties.getSuggest());
       }
 
-      @Override
-      public SuggestIntegerArgumentType unpack(SuggestIntegerArgumentType argumentType) {
-         return argumentType;
-      }
    }
 }

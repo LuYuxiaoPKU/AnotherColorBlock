@@ -14,7 +14,6 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.noone.particleex.network.payload.ParameterPayload;
-import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.arguments.ParticleArgument;
 import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.core.particles.ParticleOptions;
@@ -24,11 +23,11 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector4f;
 
 public class ParameterCommand {
-   public static void register(LiteralArgumentBuilder<CommandSourceStack> rootCommand,CommandBuildContext registryAccess) {
+   public static void register(LiteralArgumentBuilder<CommandSourceStack> rootCommand) {
       rootCommand
           .then(Commands.literal("parameter")
               .then(
-                  getStart(registryAccess,
+                  getStart(
                       getColoe(
                           getMid(
                               new String[]{"null", "\"x,y=t,sin(t)\"", "\"x=t;y=t^2\""},
@@ -47,7 +46,7 @@ public class ParameterCommand {
           )
           .then(Commands.literal("polarparameter")
               .then(
-                  getStart(registryAccess,
+                  getStart(
                       getColoe(
                           getMid(
                               new String[]{"null", "\"s1,s2,dis=t*10,t*PI/20,1\""},
@@ -66,7 +65,7 @@ public class ParameterCommand {
           )
           .then(Commands.literal("tickparameter")
               .then(
-                  getStart(registryAccess,
+                  getStart(
                       getColoe(
                           getMid(
                               new String[]{"null", "\"x,y=t,sin(t)\"", "\"x=t;y=t^2\""},
@@ -88,7 +87,7 @@ public class ParameterCommand {
           )
           .then(Commands.literal("tickpolarparameter")
               .then(
-                  getStart(registryAccess,
+                  getStart(
                       getColoe(
                           getMid(
                               new String[]{"null", "\"s1,s2,dis=t*10,t*PI/20,1\""},
@@ -110,7 +109,7 @@ public class ParameterCommand {
           )
           .then(Commands.literal("rgbaparameter").
               then(
-                  getStart(registryAccess,
+                  getStart(
                       getMid(
                           new String[]{"null", "\"x,y,cr,cg,cb=t,sin(t),sin(t/7)/4+0.75,sin(t/5)/4+0.75,sin(t/3)/4+0.75\""},
                           context -> execute(context, false, false, true, ParticleArgument.getParticle(context, "name"), Vec3Argument.getVec3(context, "pos"), null, Speed3ArgumentType.getSpeed3(context, "speed"), DoubleArgumentType.getDouble(context, "begin"), DoubleArgumentType.getDouble(context, "end"), StringArgumentType.getString(context, "expression"), 0.1D, 10, 0, null, 1.0D, null),
@@ -128,7 +127,7 @@ public class ParameterCommand {
           )
           .then(Commands.literal("rgbapolarparameter")
               .then(
-                  getStart(registryAccess,
+                  getStart(
                       getMid(
                           new String[]{"null", "\"s1,s2,dis=t*10,t*PI/20,1;cr,cg,cb=sin(t/7)/4+0.75,sin(t/5)/4+0.75,sin(t/3)/4+0.75\""},
                           context -> execute(context, true, false, true, ParticleArgument.getParticle(context, "name"), Vec3Argument.getVec3(context, "pos"), null, Speed3ArgumentType.getSpeed3(context, "speed"), DoubleArgumentType.getDouble(context, "begin"), DoubleArgumentType.getDouble(context, "end"), StringArgumentType.getString(context, "expression"), 0.1D, 10, 0, null, 1.0D, null),
@@ -145,7 +144,7 @@ public class ParameterCommand {
           )
           .then(Commands.literal("rgbatickparameter")
               .then(
-                  getStart(registryAccess,
+                  getStart(
                       getMid(
                           new String[]{"null", "\"x,y,cr,cg,cb=t,sin(t),sin(t/7)/4+0.75,sin(t/5)/4+0.75,sin(t/3)/4+0.75\""},
                           context -> execute(context, false, true, true, ParticleArgument.getParticle(context, "name"), Vec3Argument.getVec3(context, "pos"), null, Speed3ArgumentType.getSpeed3(context, "speed"), DoubleArgumentType.getDouble(context, "begin"), DoubleArgumentType.getDouble(context, "end"), StringArgumentType.getString(context, "expression"), 0.1D, 10, 0, null, 1.0D, null),
@@ -166,7 +165,7 @@ public class ParameterCommand {
           )
           .then(Commands.literal("rgbatickpolarparameter")
               .then(
-                  getStart(registryAccess,
+                  getStart(
                       getMid(
                           new String[]{"null", "\"s1,s2,dis=t*10,t*PI/20,1;cr,cg,cb=sin(t/7)/4+0.75,sin(t/5)/4+0.75,sin(t/3)/4+0.75\""},
                           context -> execute(context, true, true, true, ParticleArgument.getParticle(context, "name"), Vec3Argument.getVec3(context, "pos"), null, Speed3ArgumentType.getSpeed3(context, "speed"), DoubleArgumentType.getDouble(context, "begin"), DoubleArgumentType.getDouble(context, "end"), StringArgumentType.getString(context, "expression"), 0.1D, 10, 0, null, 1.0D, null),
@@ -186,8 +185,8 @@ public class ParameterCommand {
           );
    }
 
-   private static ArgumentBuilder<CommandSourceStack, ?> getStart(CommandBuildContext registryAccess,ArgumentBuilder<CommandSourceStack, ?> then) {
-      return Commands.argument("name", ParticleArgument.particle(registryAccess))
+   private static ArgumentBuilder<CommandSourceStack, ?> getStart(ArgumentBuilder<CommandSourceStack, ?> then) {
+      return Commands.argument("name", ParticleArgument.particle())
               .then(Commands.argument("pos", Vec3Argument.vec3())
                   .then(then)
               );
