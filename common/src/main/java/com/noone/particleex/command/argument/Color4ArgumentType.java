@@ -17,10 +17,11 @@ import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.joml.Vector4f;
 
 public class Color4ArgumentType implements ArgumentType<Vector4f> {
-   public static final SimpleCommandExceptionType INCOMPLETE_EXCEPTION = new SimpleCommandExceptionType(Component.translatable("argument.color4f.incomplete"));
+   public static final SimpleCommandExceptionType INCOMPLETE_EXCEPTION = new SimpleCommandExceptionType(new TranslatableComponent("argument.color4f.incomplete"));
    private static final FloatArgumentType PARSER = FloatArgumentType.floatArg(0.0F, 1.0F);
    private static final Collection<String> EXAMPLES = Arrays.asList("0 0 0 1", "1 1 1 1", "0.5 0.5 0.5 1", "1 0 0 1", "0 1 0 1", "0 0 1 1", "1 1 1 0.5");
 

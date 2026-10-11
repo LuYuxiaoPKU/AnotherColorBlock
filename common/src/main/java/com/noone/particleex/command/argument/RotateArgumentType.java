@@ -13,9 +13,10 @@ import java.util.concurrent.CompletableFuture;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 
 public class RotateArgumentType implements ArgumentType<Integer> {
-   public static final SimpleCommandExceptionType INVALID_EXCEPTION = new SimpleCommandExceptionType(Component.translatable("argument.rotate.invalid"));
+   public static final SimpleCommandExceptionType INVALID_EXCEPTION = new SimpleCommandExceptionType(new TranslatableComponent("argument.rotate.invalid"));
    private static final Collection<String> EXAMPLES = Arrays.asList("0", "90", "180", "270");
 
    public static RotateArgumentType rotate() {

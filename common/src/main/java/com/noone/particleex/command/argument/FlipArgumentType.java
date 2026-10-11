@@ -13,9 +13,10 @@ import java.util.concurrent.CompletableFuture;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 
 public class FlipArgumentType implements ArgumentType<Integer> {
-   public static final SimpleCommandExceptionType INVALID_EXCEPTION = new SimpleCommandExceptionType(Component.translatable("argument.flip.invalid"));
+   public static final SimpleCommandExceptionType INVALID_EXCEPTION = new SimpleCommandExceptionType(new TranslatableComponent("argument.flip.invalid"));
    private static final Collection<String> EXAMPLES = Arrays.asList("not", "horizontally", "vertical");
 
    public static FlipArgumentType flip() {
