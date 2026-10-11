@@ -12,13 +12,13 @@ public class ParticleExCommand {
         FunctionListCommand.register(rootCommand);
         ClearParticleCommand.register(rootCommand);
         ClearCacheCommand.register(rootCommand);
-        NormalCommand.register(rootCommand,,dispatcher);
-        ConditionalCommand.register(rootCommand,);
-        ParameterCommand.register(rootCommand,);
-        ImageCommand.register(rootCommand,);
-        ImageMatrixCommand.register(rootCommand,);
-        VideoCommand.register(rootCommand,);
-        VideoMatrixCommand.register(rootCommand,);
+        NormalCommand.register(rootCommand,dispatcher);
+        ConditionalCommand.register(rootCommand);
+        ParameterCommand.register(rootCommand);
+        ImageCommand.register(rootCommand);
+        ImageMatrixCommand.register(rootCommand);
+        VideoCommand.register(rootCommand);
+        VideoMatrixCommand.register(rootCommand);
         GroupCommand.register(rootCommand);
         dispatcher.register(rootCommand);
     }
