@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -oE \"origin/[0-9.]+$\")",
+      "Bash(git ls-tree *)",
+      "WebSearch"
+    ]
+  }
+}
