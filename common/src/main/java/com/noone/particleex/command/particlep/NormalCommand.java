@@ -16,7 +16,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.noone.particleex.network.payload.NormalPayload;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.arguments.ParticleArgument;
-import net.minecraft.commands.arguments.Vec3Argument;
+import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.CommandSourceStack;
@@ -26,7 +26,7 @@ import org.joml.Vector4f;
 public class NormalCommand {
    public static void register(LiteralArgumentBuilder<CommandSourceStack> rootCommand, CommandBuildContext registryAccess,CommandDispatcher<CommandSourceStack> dispatcher) {
       rootCommand.then(Commands.literal("normal")
-          .then(Commands.argument("name", ParticleArgument.particle(registryAccess))
+          .then(Commands.argument("name", ParticleArgument.particle())
               .then(Commands.argument("pos", Vec3Argument.vec3())
                   .then(Commands.argument("color", Color4ArgumentType.color4())
                       .then(Commands.argument("speed", Speed3ArgumentType.speed3())

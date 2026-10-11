@@ -16,7 +16,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.noone.particleex.network.payload.ParameterPayload;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.arguments.ParticleArgument;
-import net.minecraft.commands.arguments.Vec3Argument;
+import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.CommandSourceStack;
@@ -187,7 +187,7 @@ public class ParameterCommand {
    }
 
    private static ArgumentBuilder<CommandSourceStack, ?> getStart(CommandBuildContext registryAccess,ArgumentBuilder<CommandSourceStack, ?> then) {
-      return Commands.argument("name", ParticleArgument.particle(registryAccess))
+      return Commands.argument("name", ParticleArgument.particle())
               .then(Commands.argument("pos", Vec3Argument.vec3())
                   .then(then)
               );
