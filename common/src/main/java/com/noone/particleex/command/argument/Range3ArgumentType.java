@@ -17,10 +17,11 @@ import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.phys.Vec3;
 
 public class Range3ArgumentType implements ArgumentType<Vec3> {
-   public static final SimpleCommandExceptionType INCOMPLETE_EXCEPTION = new SimpleCommandExceptionType(Component.translatable("argument.range3d.incomplete"));
+   public static final SimpleCommandExceptionType INCOMPLETE_EXCEPTION = new SimpleCommandExceptionType(new TranslatableComponent("argument.range3d.incomplete"));
    private static final DoubleArgumentType PARSER = DoubleArgumentType.doubleArg(0.0D);
    private static final Collection<String> EXAMPLES = Arrays.asList("0 0 0", "1 1 1", "1 0 1");
 

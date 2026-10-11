@@ -17,10 +17,11 @@ import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.phys.Vec3;
 
 public class Speed3ArgumentType implements ArgumentType<Vec3> {
-   public static final SimpleCommandExceptionType INCOMPLETE_EXCEPTION = new SimpleCommandExceptionType(Component.translatable("argument.speed3d.incomplete"));
+   public static final SimpleCommandExceptionType INCOMPLETE_EXCEPTION = new SimpleCommandExceptionType(new TranslatableComponent("argument.speed3d.incomplete"));
    private static final DoubleArgumentType PARSER = DoubleArgumentType.doubleArg();
    private static final Collection<String> EXAMPLES = Arrays.asList("0 0 0", "0 0.1 0");
 

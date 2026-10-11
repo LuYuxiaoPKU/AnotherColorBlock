@@ -13,9 +13,10 @@ import java.util.concurrent.CompletableFuture;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 
 public class GroupChangeTypeArgumentType implements ArgumentType<Integer> {
-   public static final SimpleCommandExceptionType INVALID_EXCEPTION = new SimpleCommandExceptionType(Component.translatable("argument.group.change.type.invalid"));
+   public static final SimpleCommandExceptionType INVALID_EXCEPTION = new SimpleCommandExceptionType(new TranslatableComponent("argument.group.change.type.invalid"));
    private static final Collection<String> EXAMPLES = Arrays.asList("parameter", "speedexpression");
 
    public static GroupChangeTypeArgumentType type() {
