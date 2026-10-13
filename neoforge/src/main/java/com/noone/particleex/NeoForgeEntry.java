@@ -140,6 +140,16 @@ public class NeoForgeEntry {
         }
         probeLog.info("vanilla head byId(0)={}", registry.byId(0));
         probeLog.info("vanilla tail byId({})={}", registry.size() - 10, registry.byId(registry.size() - 10));
+        // 全量空洞扫描：byId(0..byIdLen-1) 逐位检查 null 洞
+        int holes = 0;
+        for (int i = 0; i < byId.size(); i++) {
+            Object v = registry.byId(i);
+            if (v == null) {
+                probeLog.info("HOLE at id={}", i);
+                holes++;
+            }
+        }
+        probeLog.info("holeScan done holes={}", holes);
     }
 
     private void registerCommands(RegisterCommandsEvent event) {
