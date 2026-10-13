@@ -130,6 +130,16 @@ public class NeoForgeEntry {
             byId.add((Holder.Reference<Object>) (Object) Holder.Reference.createIntrusive((HolderOwner<Object>) (Object) registry, info));
             toId.put(info, id);
         }
+
+        // 临时探针（修复后验证）：自有 9 个 + vanilla 首尾对照
+        org.slf4j.Logger probeLog = org.slf4j.LoggerFactory.getLogger("particleex-probe");
+        probeLog.info("registryClass={} size={} byIdLen={}", registry.getClass().getName(), registry.size(), byId.size());
+        for (ArgumentTypeInfo<?, ?> info : own) {
+            int id = registry.getId(info);
+            probeLog.info("own info={} id={} roundtrip={}", info.getClass().getSimpleName(), id, registry.byId(id) == info);
+        }
+        probeLog.info("vanilla head byId(0)={}", registry.byId(0));
+        probeLog.info("vanilla tail byId({})={}", registry.size() - 10, registry.byId(registry.size() - 10));
     }
 
     private void registerCommands(RegisterCommandsEvent event) {
