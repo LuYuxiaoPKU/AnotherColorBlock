@@ -115,6 +115,7 @@ public class NeoForgeEntry {
             byClass.get(SuggestIntegerArgumentType.class)
         );
         Registry<ArgumentTypeInfo<?, ?>> registry = BuiltInRegistries.COMMAND_ARGUMENT_TYPE;
+        registryRef = registry;
         if (!(registry instanceof MappedRegistry)) {
             throw new IllegalStateException("COMMAND_ARGUMENT_TYPE 不是 MappedRegistry，无法注册参数类型");
         }
@@ -152,8 +153,18 @@ public class NeoForgeEntry {
         probeLog.info("holeScan done holes={}", holes);
     }
 
+    private static Registry<ArgumentTypeInfo<?, ?>> registryRef;
+
     private void registerCommands(RegisterCommandsEvent event) {
         ParticleExCommand.register(event.getDispatcher(), event.getBuildContext());
+        // 临时探针（四轮）：写包前夕（命令注册完）检查 registry 实例同一性——构造期直塞的对象 vs 事件时 BuiltInRegistries 取到的
+        Registry<ArgumentTypeInfo<?, ?>> rNow = BuiltInRegistries.COMMAND_ARGUMENT_TYPE;
+        org.slf4j.Logger pl = org.slf4j.LoggerFactory.getLogger("particleex-probe");
+        ArgumentTypeInfo<?, ?> info = SuggestArgumentType.Serializer.INSTANCE;
+        int id = rNow.getId(info);
+        pl.info("cmdEvent registryClass={} sameAsConstruct={} size={} suggestId={} roundtrip={}",
+            rNow.getClass().getName(), rNow == registryRef, rNow.size(), id,
+            id >= 0 && rNow.byId(id) == info);
     }
 
     private void registerPayloads(RegisterPayloadHandlersEvent event) {
