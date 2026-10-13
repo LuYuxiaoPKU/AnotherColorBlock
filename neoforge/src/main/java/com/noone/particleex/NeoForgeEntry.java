@@ -36,6 +36,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderOwner;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -119,38 +120,21 @@ public class NeoForgeEntry {
         if (!(registry instanceof MappedRegistry)) {
             throw new IllegalStateException("COMMAND_ARGUMENT_TYPE 不是 MappedRegistry，无法注册参数类型");
         }
-        @SuppressWarnings({"rawtypes", "unchecked"})
-        MappedRegistryAccessor regAccessor = (MappedRegistryAccessor) (Object) registry;
-        ObjectList<Holder.Reference<Object>> byId = (ObjectList) regAccessor.particleex$getById();
-        Reference2IntMap<Object> toId = (Reference2IntMap) regAccessor.particleex$getToId();
-        for (ArgumentTypeInfo<?, ?> info : own) {
-            if (info == null) {
+        // 注册表注册（1.21.4 VarInt too big 修复）：改用标准 Registry.register——
+        // NeoForge 1.21.4 mod 构造期处于 GameData.unfreezeData() 窗口，官方姿势注册会同时维护
+        // byId/toId/byValue/byKey 全套内部结构；此前字段级直塞只动 byId/toId，
+        // **读侧（客户端读包线程）拿到的 registry 快照不认直塞条目（探针实证 stub=NULL）→
+        // 1.21.4 读侧 byId(id) 返回 null → serializer 数据未消费 → 字节流错位 VarInt too big**
+        String[] names = {"color4", "flip", "group_change_type", "range3", "rotate", "speed3",
+            "suggest", "suggest_double", "suggest_integer"};
+        ArgumentTypeInfo<?, ?>[] infos = own.toArray(new ArgumentTypeInfo<?, ?>[0]);
+        for (int i = 0; i < infos.length; i++) {
+            if (infos[i] == null) {
                 throw new IllegalStateException("自定义参数类型 info 为 null，BY_CLASS put 未生效");
             }
-            int id = byId.size();
-            byId.add((Holder.Reference<Object>) (Object) Holder.Reference.createIntrusive((HolderOwner<Object>) (Object) registry, info));
-            toId.put(info, id);
+            //noinspection unchecked,rawtypes
+            Registry.register((Registry) registry, ResourceLocation.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, names[i]), infos[i]);
         }
-
-        // 临时探针（修复后验证）：自有 9 个 + vanilla 首尾对照
-        org.slf4j.Logger probeLog = org.slf4j.LoggerFactory.getLogger("particleex-probe");
-        probeLog.info("registryClass={} size={} byIdLen={}", registry.getClass().getName(), registry.size(), byId.size());
-        for (ArgumentTypeInfo<?, ?> info : own) {
-            int id = registry.getId(info);
-            probeLog.info("own info={} id={} roundtrip={}", info.getClass().getSimpleName(), id, registry.byId(id) == info);
-        }
-        probeLog.info("vanilla head byId(0)={}", registry.byId(0));
-        probeLog.info("vanilla tail byId({})={}", registry.size() - 10, registry.byId(registry.size() - 10));
-        // 全量空洞扫描：byId(0..byIdLen-1) 逐位检查 null 洞
-        int holes = 0;
-        for (int i = 0; i < byId.size(); i++) {
-            Object v = registry.byId(i);
-            if (v == null) {
-                probeLog.info("HOLE at id={}", i);
-                holes++;
-            }
-        }
-        probeLog.info("holeScan done holes={}", holes);
     }
 
     private static Registry<ArgumentTypeInfo<?, ?>> registryRef;
