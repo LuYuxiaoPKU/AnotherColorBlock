@@ -34,7 +34,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.RegisterEvent;
@@ -124,7 +124,7 @@ public class NeoForgeEntry {
                     throw new IllegalStateException("自定义参数类型 info 为 null，BY_CLASS put 未生效: " + names[i]);
                 }
                 //noinspection unchecked,rawtypes
-                Registry.register((Registry) event.getRegistry(), ResourceLocation.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, names[i]), own.get(i));
+                Registry.register((Registry) event.getRegistry(), Identifier.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, names[i]), own.get(i));
             }
         });
     }
