@@ -11,7 +11,6 @@ import com.noone.particleex.command.argument.SuggestArgumentType;
 import com.noone.particleex.command.argument.SuggestDoubleArgumentType;
 import com.noone.particleex.command.argument.SuggestIntegerArgumentType;
 import com.noone.particleex.mixin.ArgumentTypeInfosAccessor;
-import com.noone.particleex.mixin.MappedRegistryAccessor;
 import com.noone.particleex.common.Bridge;
 import com.noone.particleex.network.ClientNetworkHandler;
 import com.noone.particleex.network.NetworkIdentifiers;
@@ -29,18 +28,14 @@ import com.noone.particleex.network.payload.VideoPayload;
 import com.noone.particleex.util.ClientMessageUtil;
 import com.noone.particleex.util.MessageBridge;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import it.unimi.dsi.fastutil.objects.ObjectList;
-import it.unimi.dsi.fastutil.objects.Reference2IntMap;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderOwner;
-import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -50,6 +45,7 @@ import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
@@ -71,15 +67,30 @@ public class NeoForgeEntry {
         }
 
         modBus.addListener(RegisterPayloadHandlerEvent.class, this::registerPayloads);
-        registerArgumentTypes();
+        registerArgumentTypes(modBus);
         NeoForge.EVENT_BUS.addListener(this::registerCommands);
     }
 
     /**
-     * 注册自定义命令参数类型（1.20.1~1.20.4 同步类名 ArgumentTypeInfos，同 26.2 修复：
-     * BY_CLASS + 注册表直塞；MappedRegistry.toId 类型按版本取 Object2IntMap/Reference2IntMap）。
+     * 注册自定义命令参数类型（与 Fabric 端 ParticleEx.onInitialize 的
+     * ArgumentTypeRegistry.registerArgumentType 对等）。
+     * 不注册的话，服务端下发命令树时 ArgumentTypeInfos.unpack/byClass 抛
+     * IllegalArgumentException（Unrecognized argument type）→ 进档失败。
+     *
+     * 1.21.4 进档崩溃（commands 包 VarInt too big）排查结论（七轮探针实证，2026-10-14）：
+     *  - 字段级直塞 byId/toId（MappedRegistryAccessor）在写侧（服务端）全部健康
+     *    （roundtrip=true、holeScan=0、registry 实例同一、SERIALIZE 字节正常），
+     *    但客户端读包线程 byId(typeId) 返回 null（stub=NULL 铁证）→
+     *    serializer 数据未消费 → 字节流错位 → VarInt too big 进档即断；
+     *  - mod 构造期 Registry.register 抛 IllegalStateException（Registry is already
+     *    frozen）——NeoForge 1.21.4 构造期不在 unfreeze 窗口；
+     *  - 正路 = RegisterEvent（NeoForge 官方注册窗口，mod bus 事件，解冻期内触发），
+     *    同步维护 byId/toId/byValue/byKey 全套内部结构与 NeoForge 快照管理。
+     * 26.x 无 RegisterEvent 可用窗口时维持字段直塞方案（其协议只查 BY_CLASS）。
+     * 1.20.6 同走 RegisterEvent（20.6 有该事件；直塞另有 HolderOwner ClassCastException
+     * 问题——20.6 的 MappedRegistry 不实现 HolderOwner，须走 holderOwner()）。
      */
-    private void registerArgumentTypes() {
+    private void registerArgumentTypes(IEventBus modBus) {
         Map<Class<?>, ArgumentTypeInfo<?, ?>> byClass = ArgumentTypeInfosAccessor.particleex$getByClass();
         byClass.put(Color4ArgumentType.class, SingletonArgumentInfo.contextFree(Color4ArgumentType::color4));
         byClass.put(FlipArgumentType.class, SingletonArgumentInfo.contextFree(FlipArgumentType::flip));
@@ -91,19 +102,33 @@ public class NeoForgeEntry {
         byClass.put(SuggestDoubleArgumentType.class, SuggestDoubleArgumentType.Serializer.INSTANCE);
         byClass.put(SuggestIntegerArgumentType.class, SuggestIntegerArgumentType.Serializer.INSTANCE);
 
-        Registry<ArgumentTypeInfo<?, ?>> registry = BuiltInRegistries.COMMAND_ARGUMENT_TYPE;
-        if (!(registry instanceof MappedRegistry)) {
-            throw new IllegalStateException("COMMAND_ARGUMENT_TYPE 不是 MappedRegistry，无法注册参数类型");
-        }
-        @SuppressWarnings({"rawtypes", "unchecked"})
-        MappedRegistryAccessor regAccessor = (MappedRegistryAccessor) (Object) registry;
-        ObjectList<Holder.Reference<Object>> byId = (ObjectList) regAccessor.particleex$getById();
-        Reference2IntMap<Object> toId = (Reference2IntMap) regAccessor.particleex$getToId();
-        for (ArgumentTypeInfo<?, ?> info : byClass.values()) {
-            int id = byId.size();
-            byId.add((Holder.Reference<Object>) (Object) Holder.Reference.createIntrusive((HolderOwner<Object>) (Object) registry, info));
-            toId.put(info, id);
-        }
+        // RegisterEvent（mod bus）注册：字段直塞只动 byId/toId 两套结构，RegistrySnapshot 从 keySet 派生会丢条目；
+        // 且 1.20.6 直塞 createIntrusive(registry,...) 直接 ClassCastException（20.6 的 MappedRegistry 不实现 HolderOwner）
+        String[] names = {"color4", "flip", "group_change_type", "range3", "rotate", "speed3",
+            "suggest", "suggest_double", "suggest_integer"};
+        modBus.addListener(RegisterEvent.class, event -> {
+            if (!BuiltInRegistries.COMMAND_ARGUMENT_TYPE.key().equals(event.getRegistryKey())) {
+                return;
+            }
+            List<ArgumentTypeInfo<?, ?>> own = List.of(
+                byClass.get(Color4ArgumentType.class),
+                byClass.get(FlipArgumentType.class),
+                byClass.get(GroupChangeTypeArgumentType.class),
+                byClass.get(Range3ArgumentType.class),
+                byClass.get(RotateArgumentType.class),
+                byClass.get(Speed3ArgumentType.class),
+                byClass.get(SuggestArgumentType.class),
+                byClass.get(SuggestDoubleArgumentType.class),
+                byClass.get(SuggestIntegerArgumentType.class)
+            );
+            for (int i = 0; i < names.length; i++) {
+                if (own.get(i) == null) {
+                    throw new IllegalStateException("自定义参数类型 info 为 null，BY_CLASS put 未生效: " + names[i]);
+                }
+                //noinspection unchecked,rawtypes
+                Registry.register((Registry) event.getRegistry(), new ResourceLocation(NetworkIdentifiers.MOD_ID, names[i]), own.get(i));
+            }
+        });
     }
 
     private void registerCommands(RegisterCommandsEvent event) {
