@@ -67,13 +67,10 @@ public class SuggestArgumentType implements ArgumentType<String>, ArgumentTypeIn
 
         @Override
         public void serializeToNetwork(SuggestArgumentType properties, FriendlyByteBuf buf) {
-            // 临时探针：写包路径验证（1.21.4 VarInt too big）
-            org.slf4j.LoggerFactory.getLogger("particleex-probe").info("SERIALIZE SuggestArgumentType suggests.length={} writerIndexBefore={}", properties.suggests.length, buf.writerIndex());
             buf.writeInt(properties.suggests.length);
             for (String suggest : properties.suggests) {
                 buf.writeUtf(suggest);
             }
-            org.slf4j.LoggerFactory.getLogger("particleex-probe").info("SERIALIZE done writerIndexAfter={}", buf.writerIndex());
         }
 
         @Override
