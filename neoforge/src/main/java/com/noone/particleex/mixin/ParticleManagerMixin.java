@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** 旧引擎（1.20.6/1.21.1）：粒子实体由 ParticleEngine 直管（Map<RenderType, Queue<Particle>>），无 ParticleGroup/ParticleLimit/容量注入点。 */
+/** 旧引擎（1.20.6/1.21.1）：粒子实体由 ParticleEngine 直管（Map<RenderType, Queue<Particle>>），无 ParticleGroup/ParticleLimit/容量注入点。NeoForge 1.21.7/1.21.8 运行时成员名为 mojmap 源名（非 srg/method_ 号），@Inject 目标按字面名解析（mixins.json 无 refmap 兜底）：tickParticles 为 yarn 名，mojmap 源名 tickParticleList（1.21.7/1.21.8 client-srg.jar 字节码实证）。 */
 @Mixin({ParticleEngine.class})
 public abstract class ParticleManagerMixin {
    @Shadow
@@ -31,7 +31,7 @@ public abstract class ParticleManagerMixin {
       ((IParticle)particle).customTick();
    }
 
-   @Inject(method = {"tickParticles"}, at = @At("HEAD"), cancellable = true)
+   @Inject(method = {"tickParticleList"}, at = @At("HEAD"), cancellable = true)
    private void particleex$tick(CallbackInfo ci) {
       if (this.particles.isEmpty()) {
          ci.cancel();
