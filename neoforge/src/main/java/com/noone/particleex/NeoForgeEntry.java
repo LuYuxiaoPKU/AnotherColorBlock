@@ -51,6 +51,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
@@ -100,6 +101,19 @@ public class NeoForgeEntry {
         byClass.put(SuggestIntegerArgumentType.class, SuggestIntegerArgumentType.Serializer.INSTANCE);
 
         // 注册表直塞（见上方注释）：发包协议 serializeCap 写 getId(info)、收包 byId(id) 查注册表
+        // 只塞自己的 9 个 info——BY_CLASS 是共享映射含 vanilla 已注册条目（探针实证 1.21.4 有 14 个），
+        // 全量遍历会覆盖 vanilla 类型的 id（float/double 被改号）→ 客户端解码字节流错位 VarInt too big 进档即断
+        List<ArgumentTypeInfo<?, ?>> own = List.of(
+            byClass.get(Color4ArgumentType.class),
+            byClass.get(FlipArgumentType.class),
+            byClass.get(GroupChangeTypeArgumentType.class),
+            byClass.get(Range3ArgumentType.class),
+            byClass.get(RotateArgumentType.class),
+            byClass.get(Speed3ArgumentType.class),
+            byClass.get(SuggestArgumentType.class),
+            byClass.get(SuggestDoubleArgumentType.class),
+            byClass.get(SuggestIntegerArgumentType.class)
+        );
         Registry<ArgumentTypeInfo<?, ?>> registry = BuiltInRegistries.COMMAND_ARGUMENT_TYPE;
         if (!(registry instanceof MappedRegistry)) {
             throw new IllegalStateException("COMMAND_ARGUMENT_TYPE 不是 MappedRegistry，无法注册参数类型");
@@ -108,17 +122,13 @@ public class NeoForgeEntry {
         MappedRegistryAccessor regAccessor = (MappedRegistryAccessor) (Object) registry;
         ObjectList<Holder.Reference<Object>> byId = (ObjectList) regAccessor.particleex$getById();
         Reference2IntMap<Object> toId = (Reference2IntMap) regAccessor.particleex$getToId();
-        for (ArgumentTypeInfo<?, ?> info : byClass.values()) {
+        for (ArgumentTypeInfo<?, ?> info : own) {
+            if (info == null) {
+                throw new IllegalStateException("自定义参数类型 info 为 null，BY_CLASS put 未生效");
+            }
             int id = byId.size();
             byId.add((Holder.Reference<Object>) (Object) Holder.Reference.createIntrusive((HolderOwner<Object>) (Object) registry, info));
             toId.put(info, id);
-        }
-
-        // 临时探针（1.21.4 VarInt too big 排查）：直塞后回读验证，确认写侧 getId 实际命中的 registry 实例与直塞的是否同一
-        org.slf4j.Logger probeLog = org.slf4j.LoggerFactory.getLogger("particleex-probe");
-        probeLog.info("registry class={} size={} byIdLen={}", registry.getClass().getName(), registry.size(), byId.size());
-        for (ArgumentTypeInfo<?, ?> info : byClass.values()) {
-            probeLog.info("info={} getId={} roundtrip={}", info.getClass().getSimpleName(), registry.getId(info), registry.byId(registry.getId(info)) == info);
         }
     }
 
