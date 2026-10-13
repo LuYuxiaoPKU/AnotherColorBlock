@@ -115,13 +115,10 @@ public class NeoForgeEntry {
         }
 
         // 临时探针（1.21.4 VarInt too big 排查）：直塞后回读验证，确认写侧 getId 实际命中的 registry 实例与直塞的是否同一
-        System.out.println("[particleex-probe] registry class=" + registry.getClass().getName()
-            + " size=" + registry.size()
-            + " byIdLen=" + byId.size());
+        org.slf4j.Logger probeLog = org.slf4j.LoggerFactory.getLogger("particleex-probe");
+        probeLog.info("registry class={} size={} byIdLen={}", registry.getClass().getName(), registry.size(), byId.size());
         for (ArgumentTypeInfo<?, ?> info : byClass.values()) {
-            System.out.println("[particleex-probe] info=" + info.getClass().getSimpleName()
-                + " getId=" + registry.getId(info)
-                + " roundtrip=" + (registry.byId(registry.getId(info)) == info));
+            probeLog.info("info={} getId={} roundtrip={}", info.getClass().getSimpleName(), registry.getId(info), registry.byId(registry.getId(info)) == info);
         }
     }
 
