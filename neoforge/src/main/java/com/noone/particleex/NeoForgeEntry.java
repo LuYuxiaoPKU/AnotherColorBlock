@@ -113,6 +113,16 @@ public class NeoForgeEntry {
             byId.add((Holder.Reference<Object>) (Object) Holder.Reference.createIntrusive((HolderOwner<Object>) (Object) registry, info));
             toId.put(info, id);
         }
+
+        // 临时探针（1.21.4 VarInt too big 排查）：直塞后回读验证，确认写侧 getId 实际命中的 registry 实例与直塞的是否同一
+        System.out.println("[particleex-probe] registry class=" + registry.getClass().getName()
+            + " size=" + registry.size()
+            + " byIdLen=" + byId.size());
+        for (ArgumentTypeInfo<?, ?> info : byClass.values()) {
+            System.out.println("[particleex-probe] info=" + info.getClass().getSimpleName()
+                + " getId=" + registry.getId(info)
+                + " roundtrip=" + (registry.byId(registry.getId(info)) == info));
+        }
     }
 
     private void registerCommands(RegisterCommandsEvent event) {
