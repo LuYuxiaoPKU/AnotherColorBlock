@@ -126,7 +126,7 @@ public class NeoForgeEntry {
                     throw new IllegalStateException("自定义参数类型 info 为 null，BY_CLASS put 未生效: " + names[i]);
                 }
                 //noinspection unchecked,rawtypes
-                Registry.register((Registry) event.getRegistry(), ResourceLocation.fromNamespaceAndPath(NetworkIdentifiers.MOD_ID, names[i]), own.get(i));
+                Registry.register((Registry) event.getRegistry(), new ResourceLocation(NetworkIdentifiers.MOD_ID, names[i]), own.get(i));
             }
         });
     }
