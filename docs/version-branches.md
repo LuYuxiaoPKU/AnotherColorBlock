@@ -37,3 +37,14 @@
 | constant 参数注册 | `SingletonArgumentInfo.contextFree` | 1.21 前为 `ConstantArgumentTypes` |
 | 权限 API | `PermissionLevel`（枚举） | 1.21.6 前为 `requires(2)` 整数等级 |
 | Minecraft 世界字段 | `level` | yarn 名 `world`（映射转换时） |
+## 1.19.x 线实证（2026-10-14，实机测试）
+
+| 项 | 结论 |
+|---|---|
+| jar 系分界 | **1.19.2 ≠ 1.19.3+**——1.19.3 引入 API 变更（ParticleArgument.particle() 加 CommandBuildContext 参数、Registry.PARTICLE_TYPE 迁移 BuiltInRegistries、joml 进 MC 自带），1.19.2 jar 在 1.19.4 实机 NoSuchMethodError；1.19/1.19.1 与 1.19.2 同系，1.19.3 与 1.19.4 同系 |
+| 分支覆盖 |  分支 range （实际 jar 兼容 1.19/1.19.1/1.19.2）+  分支 range （覆盖 1.19.3/1.19.4）；1.19.4 分支 = 1.19.2 分支 + 上述 API 迁移 |
+| sendSuccess 签名 |  直到 1.19.4；supplier 版  是 1.20 才引入（首版误改编译错误实证） |
+| mcfunction 命令前缀 | 1.19.x 的 mcfunction 行**不带**斜杠（brigadier 明报 Do not use a preceding forwards slash）——与 1.21.x+ 相同不带，但 1.19.x 若带斜杠直接报错而非宽容解析 |
+| 数据包 | pack_format 15（1.19.x 全线）+ 函数目录  复数（1.21.11 才改  单数）|
+| 共享 gameDir 陷阱 | 实例 json 未隔离时 fabric loader 扫全局 mods 目录——跨 loader（neoforge）/跨版本 jar 残留会污染解析（iris-neoforge-26.3 挡 1.19.2 加载实证）；同 mod id 冲突时优先全局 |
+
