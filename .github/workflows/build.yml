@@ -14,8 +14,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # 1.20.5 线 fabric-only（NeoForge 1.20.5 仅 beta，maven 无主 jar，moddev 不可构建）
-        module: [ fabric ]
+        # 1.20.5 恢复 neoforge：moddev 全系死结（20.5.21-beta 无主 jar/.module）已由 NG7 userdev 路线绕过（见 neoforge/build.gradle）
+        module: [ fabric, neoforge ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
