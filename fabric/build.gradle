@@ -22,10 +22,6 @@ dependencies {
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    // 1.20+ 才引入 joml 数学库（1.19.2 及更早 MC 无 org.joml）：implementation 供编译、
-    // include 打包进 mod jar（jar-in-jar）
-    implementation 'org.joml:joml:1.10.5'
-    include 'org.joml:joml:1.10.5'
 
     // common 源码直接并入本模块编译（loom 统一映射到 Yarn）
     commonJava(project(path: ':common', configuration: 'commonJava'))

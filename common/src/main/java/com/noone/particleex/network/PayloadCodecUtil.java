@@ -22,7 +22,7 @@ public final class PayloadCodecUtil {
 
     /** 读粒子：注册表 ID + Deserializer（1.20.x 无 ParticleOptions.fromNetwork 静态方法） */
     public static ParticleOptions readParticle(FriendlyByteBuf buf) {
-        ParticleType<?> type = buf.readById(net.minecraft.core.Registry.PARTICLE_TYPE);
+        ParticleType<?> type = buf.readById(net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE);
         return readParticleFromType(buf, type);
     }
 

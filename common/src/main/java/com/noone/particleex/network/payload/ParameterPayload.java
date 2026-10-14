@@ -47,7 +47,7 @@ public record ParameterPayload(boolean polar, boolean tick, boolean rgba, double
               if (!Strings.isNullOrEmpty(this.group) && !this.group.equals("null")) {
                   buf.writeUtf(this.group);
               }
-              buf.writeId(net.minecraft.core.Registry.PARTICLE_TYPE, this.effect.getType());
+              buf.writeId(net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE, this.effect.getType());
               this.effect.writeToNetwork(buf);
   }
 
