@@ -67,28 +67,31 @@ public class CodeGen {
    }
 
    private int codeGenExp(Expression exp, int targetType) {
-       return switch (exp) {
-           case Expression.IntegerExp integerExp ->
-                   this.codeGenTypeTransform(this.codeGenLoadInteger(integerExp.val), targetType);
-           case Expression.FloatExp floatExp ->
-                   this.codeGenTypeTransform(this.codeGenLoadFloat(floatExp.val), targetType);
-           case Expression.IntegerMatrixExp integerMatrixExp ->
-                   this.codeGenTypeTransform(this.codeGenLoadIntegerMatrix(integerMatrixExp.val), targetType);
-           case Expression.FloatMatrixExp floatMatrixExp ->
-                   this.codeGenTypeTransform(this.codeGenLoadFloatMatrix(floatMatrixExp.val), targetType);
-           case Expression.MatrixExp matrixExp ->
-                   this.codeGenTypeTransform(this.codeGenLoadMatrix(matrixExp.exps), targetType);
-           case Expression.NameMatrixExp nameMatrixExp ->
-                   this.codeGenTypeTransform(this.codeGenLoadMatrix(nameMatrixExp.names), targetType);
-           case Expression.UnOpExp unopExp ->
-                   this.codeGenTypeTransform(this.codeGenUnopExp(unopExp.op, unopExp.exp), targetType);
-           case Expression.BinOpExp binopExp -> this.codeGenTypeTransform(this.codeGenBinopExp(binopExp), targetType);
-           case Expression.NameExp nameExp -> this.codeGenTypeTransform(this.codeGenNameExp(nameExp.name), targetType);
-           case Expression.FunctionCallExp functionCallExp ->
-                   this.codeGenTypeTransform(this.codeGenFunctionCallExp(functionCallExp.name, functionCallExp.args), targetType);
-           case null, default ->
-                   exp instanceof Expression.AssignExp ? this.codeGenTypeTransform(this.codeGenAssignExp(((Expression.AssignExp) exp).varList, ((Expression.AssignExp) exp).expList, targetType != 0), targetType) : 0;
-       };
+       if (exp instanceof Expression.IntegerExp) {
+           return this.codeGenTypeTransform(this.codeGenLoadInteger(((Expression.IntegerExp) exp).val), targetType);
+       } else if (exp instanceof Expression.FloatExp) {
+           return this.codeGenTypeTransform(this.codeGenLoadFloat(((Expression.FloatExp) exp).val), targetType);
+       } else if (exp instanceof Expression.IntegerMatrixExp) {
+           return this.codeGenTypeTransform(this.codeGenLoadIntegerMatrix(((Expression.IntegerMatrixExp) exp).val), targetType);
+       } else if (exp instanceof Expression.FloatMatrixExp) {
+           return this.codeGenTypeTransform(this.codeGenLoadFloatMatrix(((Expression.FloatMatrixExp) exp).val), targetType);
+       } else if (exp instanceof Expression.MatrixExp) {
+           return this.codeGenTypeTransform(this.codeGenLoadMatrix(((Expression.MatrixExp) exp).exps), targetType);
+       } else if (exp instanceof Expression.NameMatrixExp) {
+           return this.codeGenTypeTransform(this.codeGenLoadMatrix(((Expression.NameMatrixExp) exp).names), targetType);
+       } else if (exp instanceof Expression.UnOpExp) {
+           Expression.UnOpExp unopExp = (Expression.UnOpExp) exp;
+           return this.codeGenTypeTransform(this.codeGenUnopExp(unopExp.op, unopExp.exp), targetType);
+       } else if (exp instanceof Expression.BinOpExp) {
+           return this.codeGenTypeTransform(this.codeGenBinopExp((Expression.BinOpExp) exp), targetType);
+       } else if (exp instanceof Expression.NameExp) {
+           return this.codeGenTypeTransform(this.codeGenNameExp(((Expression.NameExp) exp).name), targetType);
+       } else if (exp instanceof Expression.FunctionCallExp) {
+           Expression.FunctionCallExp functionCallExp = (Expression.FunctionCallExp) exp;
+           return this.codeGenTypeTransform(this.codeGenFunctionCallExp(functionCallExp.name, functionCallExp.args), targetType);
+       } else {
+           return exp instanceof Expression.AssignExp ? this.codeGenTypeTransform(this.codeGenAssignExp(((Expression.AssignExp) exp).varList, ((Expression.AssignExp) exp).expList, targetType != 0), targetType) : 0;
+       }
    }
 
    private void codeGenReturn(Expression exp) {
