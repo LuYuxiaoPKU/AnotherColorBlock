@@ -37,3 +37,18 @@
 | constant 参数注册 | `SingletonArgumentInfo.contextFree` | 1.21 前为 `ConstantArgumentTypes` |
 | 权限 API | `PermissionLevel`（枚举） | 1.21.6 前为 `requires(2)` 整数等级 |
 | Minecraft 世界字段 | `level` | yarn 名 `world`（映射转换时） |
+## 分支简并评估（2026-10-15，决策：不简并）
+
+**背景**：fabric 线 30 站实机全绿后，逐级 diff 评估了 23 分支的简并可能性。
+
+**fabric 侧实测覆盖矩阵（已证）**：1.17.1→(1.17,1.17.1)、1.18.2→(1.18,1.18.1,1.18.2)、1.19.2→(1.19,1.19.1,1.19.2)、1.19.4→(1.19.3,1.19.4)、1.21.1→(1.21,1.21.1)、26.1→(26.1,26.1.1,26.1.2)——字节码同 jar 系 + range/patched 实证。
+
+**fabric 侧相邻断代点**（1.18.2→1.19.2：ArgumentTypeRegistry 重构+CommandBuildContext；1.19.2→1.19.4：ParticleArgument/BuiltInRegistries；1.20.1→1.20.2：CustomPacketPayload.id()；1.20.4→1.20.5：StreamCodec；1.21.8→1.21.9：mixin 字段搬家 62xxx；1.21.10→1.21.11：Identifier 换名）。
+
+**决策：不简并（维持 23 分支）**。核心理由是 neoforge 侧无法同步简并：
+1. 1.19.4 及以下分支无 neoforge 模块（1.20.1 初建），1.19.x fabric 简并后 neoforge 缺位
+2. 1.21.1~1.21.3 neoforge 参数注册直塞 bug（FML FrozenRegistrySync 快照重建丢条目→进档崩），1.21.5+ 才侥幸——neoforge 产物跨这段必踩
+3. 26.1 的 mixinextras 0.5.3 jij 崩溃等 loader 层断代仅 neoforge 侧存在
+4. fabric 侧同 jar 系不代表 neoforge 同系（neo_form/neoforge_version 独立断代）
+
+已实测的跨版本兼容作为事实保留（用户拿 1.18.2 fabric jar 装 1.18 可跑），但分支粒度维持每断代点一分支，neoforge 差异风险不为省分支数买单。若未来 neoforge 模块全版本铺开且逐版实测，可重开此评估。
