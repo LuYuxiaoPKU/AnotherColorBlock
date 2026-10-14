@@ -16,7 +16,7 @@ config = "particleex.mixins.json"
 [[dependencies.particleex]]
 modId = "neoforge"
 type = "required"
-versionRange = "[20.6,)"
+versionRange = "[20.4,)"
 ordering = "NONE"
 side = "BOTH"
 
