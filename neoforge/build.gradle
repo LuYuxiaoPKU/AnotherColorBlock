@@ -1,47 +1,27 @@
 plugins {
     id 'java-library'
-    id 'net.neoforged.moddev' version '2.0.144'
+    id 'net.neoforged.gradle.userdev' version '7.0.192'
 }
 
 base {
     archivesName = "${mod_id}-neoforge-${minecraft_version}"
 }
 
-neoForge {
-    version = project.neoforge_version
-
-    runs {
-        configureEach {
-            systemProperty('neoforge.enabledGameTestNamespaces', project.mod_id)
-            ideName = "NeoForge ${it.name.capitalize()} (${project.path})"
-        }
-        client {
-            client()
-            gameDirectory = this.mkdir(this.file('runs/client'))
-        }
-        server {
-            server()
-            programArgument '--nogui'
-            gameDirectory = this.mkdir(this.file('runs/server'))
-        }
-        gameTestServer {
-            type = 'gameTestServer'
-            systemProperty('neoforge.enabledGameTestNamespaces', project.mod_id)
-            gameDirectory = this.mkdir(this.file('runs/gametest'))
-        }
-        data {
-            data()
-            programArguments.addAll '--mod', project.mod_id, '--all',
-                    '--output', file('src/generated/resources/').getAbsolutePath(),
-                    '--existing', file('src/main/resources/').getAbsolutePath()
-            gameDirectory = this.mkdir(this.file('runs/data'))
-        }
+// NG7（userdev 路径）：1.20.5 时代官方构建方式。moddev 全系（0.1.x~2.x）都要求
+// neoforge-moddev-bundle capability（variant 在主 jar 的 .module metadata 里声明），
+// 而 20.5.21-beta 时代产物只有 POM（无 .module、无主 jar），moddev 路线死结；
+// NG7 走 userdev.jar 自管 pipeline，不依赖 bundle variant。
+// runs 仅作声明（本仓库 CI/实机都不跑 NG 的 runServer，冒烟走 fabric 模块）。
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
     }
+    withSourcesJar()
+}
 
-    mods {
-        "${project.mod_id}" {
-            sourceSet sourceSets.main
-        }
+runs {
+    client {
+        modSource sourceSets.main
     }
 }
 
@@ -55,6 +35,7 @@ configurations {
 }
 
 dependencies {
+    implementation "net.neoforged:neoforge:${neoforge_version}"
     compileOnly "org.bytedeco:javacv:1.5.11"
 
     // common 源码直接并入本模块编译（两端同为官方映射，无需转换）
@@ -78,8 +59,4 @@ processResources {
     filesMatching('META-INF/neoforge.mods.toml') {
         expand 'version': project.version
     }
-}
-
-java {
-    withSourcesJar()
 }

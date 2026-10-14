@@ -10,7 +10,7 @@ import com.noone.particleex.command.argument.Speed3ArgumentType;
 import com.noone.particleex.command.argument.SuggestArgumentType;
 import com.noone.particleex.command.argument.SuggestDoubleArgumentType;
 import com.noone.particleex.command.argument.SuggestIntegerArgumentType;
-import com.noone.particleex.mixin.ArgumentTypesAccessor;
+import com.noone.particleex.mixin.ArgumentTypeInfosAccessor;
 import com.noone.particleex.common.Bridge;
 import com.noone.particleex.network.ClientNetworkHandler;
 import com.noone.particleex.network.NetworkIdentifiers;
@@ -91,7 +91,7 @@ public class NeoForgeEntry {
      * 问题——20.6 的 MappedRegistry 不实现 HolderOwner，须走 holderOwner()）。
      */
     private void registerArgumentTypes(IEventBus modBus) {
-        Map<Class<?>, ArgumentTypeInfo<?, ?>> byClass = ArgumentTypesAccessor.particleex$getByClass();
+        Map<Class<?>, ArgumentTypeInfo<?, ?>> byClass = ArgumentTypeInfosAccessor.particleex$getByClass();
         byClass.put(Color4ArgumentType.class, SingletonArgumentInfo.contextFree(Color4ArgumentType::color4));
         byClass.put(FlipArgumentType.class, SingletonArgumentInfo.contextFree(FlipArgumentType::flip));
         byClass.put(GroupChangeTypeArgumentType.class, SingletonArgumentInfo.contextFree(GroupChangeTypeArgumentType::type));

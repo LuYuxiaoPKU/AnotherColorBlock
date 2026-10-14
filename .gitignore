@@ -20,3 +20,6 @@ build/
 *.jar
 !gradle/wrapper/gradle-wrapper.jar
 .claude/usage.json
+
+# 子模块的 NG7/moddev 本地缓存
+**/.gradle/
