@@ -75,9 +75,7 @@ public class SuggestDoubleArgumentType implements ArgumentType<Double>{
          return false;
       } else {
          SuggestDoubleArgumentType that = (SuggestDoubleArgumentType) o;
-         return false;
-      } else {
-          return this.parser.equals(that.parser) && this.suggest == that.suggest;
+         return this.parser.equals(that.parser) && this.suggest == that.suggest;
       }
    }
 

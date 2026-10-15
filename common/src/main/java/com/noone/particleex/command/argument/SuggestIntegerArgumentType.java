@@ -75,9 +75,7 @@ public class SuggestIntegerArgumentType implements ArgumentType<Integer> {
          return false;
       } else {
          SuggestIntegerArgumentType that = (SuggestIntegerArgumentType) o;
-         return false;
-      } else {
-          return this.parser.equals(that.parser) && this.suggest == that.suggest;
+         return this.parser.equals(that.parser) && this.suggest == that.suggest;
       }
    }
 

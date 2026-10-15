@@ -409,15 +409,29 @@ public class CodeGen {
                returntype = 12;
             }
 
-            String functionName = switch (exp.op) {
-                case ADD -> "matAdd";
-                case SUB -> "matSub";
-                case MUL -> "matMul";
-                case DIV -> "matDiv";
-                case MOD -> "matMod";
-                case POW -> "matPow";
-                default -> throw new RuntimeException("bad operator: " + exp.op.token);
-            };
+            String functionName;
+            switch (exp.op) {
+                case ADD:
+                    functionName = "matAdd";
+                    break;
+                case SUB:
+                    functionName = "matSub";
+                    break;
+                case MUL:
+                    functionName = "matMul";
+                    break;
+                case DIV:
+                    functionName = "matDiv";
+                    break;
+                case MOD:
+                    functionName = "matMod";
+                    break;
+                case POW:
+                    functionName = "matPow";
+                    break;
+                default:
+                    throw new RuntimeException("bad operator: " + exp.op.token);
+            }
 
              if ((!functionName.equals("matDiv") && !functionName.equals("matMod") || !arg2Name.startsWith("[[")) && (!functionName.equals("matPow") || arg2Name.equals("I"))) {
                this.mv.visitMethodInsn(184, "com/noone/particleex/util/MatrixUtil", functionName, "(" + arg1Name + arg2Name + ")" + returnName, false);
