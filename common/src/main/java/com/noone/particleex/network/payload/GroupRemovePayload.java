@@ -53,4 +53,8 @@ public class GroupRemovePayload implements com.noone.particleex.network.Particle
   public net.minecraft.resources.ResourceLocation packetId() {
     return NetworkIdentifiers.GROUP_REMOVE_PACKET_ID;
   }
+
+  public String group() { return this.group; }
+  public String expression() { return this.expression; }
+  public Vec3 pos() { return this.pos; }
 }

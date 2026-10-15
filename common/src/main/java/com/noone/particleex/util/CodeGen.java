@@ -843,6 +843,13 @@ public class CodeGen {
 
    }
 
-   private record LocalVarInfo(int type, int index) {
+   private static class LocalVarInfo {
+      public final int type;
+      public final int index;
+
+      public LocalVarInfo(int type, int index) {
+         this.type = type;
+         this.index = index;
+      }
    }
 }

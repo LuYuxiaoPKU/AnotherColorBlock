@@ -105,4 +105,24 @@ public class NormalPayload implements com.noone.particleex.network.ParticlePaylo
   public net.minecraft.resources.ResourceLocation packetId() {
     return NetworkIdentifiers.NORMAL_PACKET_ID;
   }
+
+  public double x() { return this.x; }
+  public double y() { return this.y; }
+  public double z() { return this.z; }
+  public float red() { return this.red; }
+  public float green() { return this.green; }
+  public float blue() { return this.blue; }
+  public float alpha() { return this.alpha; }
+  public double vx() { return this.vx; }
+  public double vy() { return this.vy; }
+  public double vz() { return this.vz; }
+  public double dx() { return this.dx; }
+  public double dy() { return this.dy; }
+  public double dz() { return this.dz; }
+  public int count() { return this.count; }
+  public int age() { return this.age; }
+  public String speedExpression() { return this.speedExpression; }
+  public double speedStep() { return this.speedStep; }
+  public String group() { return this.group; }
+  public ParticleOptions effect() { return this.effect; }
 }

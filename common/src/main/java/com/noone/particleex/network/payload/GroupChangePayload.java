@@ -57,4 +57,10 @@ public class GroupChangePayload implements com.noone.particleex.network.Particle
   public net.minecraft.resources.ResourceLocation packetId() {
     return NetworkIdentifiers.GROUP_CHANGE_PACKET_ID;
   }
+
+  public int changeType() { return this.changeType; }
+  public String group() { return this.group; }
+  public String expression() { return this.expression; }
+  public String conditionalExpression() { return this.conditionalExpression; }
+  public Vec3 pos() { return this.pos; }
 }

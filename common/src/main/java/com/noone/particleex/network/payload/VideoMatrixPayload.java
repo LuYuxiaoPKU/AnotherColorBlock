@@ -108,4 +108,18 @@ public class VideoMatrixPayload implements com.noone.particleex.network.Particle
   public net.minecraft.resources.ResourceLocation packetId() {
     return NetworkIdentifiers.VIDEO_MATRIX_PACKET_ID;
   }
+
+  public double x() { return this.x; }
+  public double y() { return this.y; }
+  public double z() { return this.z; }
+  public String path() { return this.path; }
+  public double scaling() { return this.scaling; }
+  public double[][] matrix() { return this.matrix; }
+  public double dpb() { return this.dpb; }
+  public Vec3 speed() { return this.speed; }
+  public int age() { return this.age; }
+  public String speedExpression() { return this.speedExpression; }
+  public double speedStep() { return this.speedStep; }
+  public String group() { return this.group; }
+  public ParticleOptions effect() { return this.effect; }
 }

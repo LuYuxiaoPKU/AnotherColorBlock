@@ -110,4 +110,21 @@ public class ImagePayload implements com.noone.particleex.network.ParticlePayloa
   public net.minecraft.resources.ResourceLocation packetId() {
     return NetworkIdentifiers.IMAGE_PACKET_ID;
   }
+
+  public double x() { return this.x; }
+  public double y() { return this.y; }
+  public double z() { return this.z; }
+  public String path() { return this.path; }
+  public double scaling() { return this.scaling; }
+  public int xRotate() { return this.xRotate; }
+  public int yRotate() { return this.yRotate; }
+  public int zRotate() { return this.zRotate; }
+  public int flip() { return this.flip; }
+  public double dpb() { return this.dpb; }
+  public Vec3 speed() { return this.speed; }
+  public int age() { return this.age; }
+  public String speedExpression() { return this.speedExpression; }
+  public double speedStep() { return this.speedStep; }
+  public String group() { return this.group; }
+  public ParticleOptions effect() { return this.effect; }
 }

@@ -128,4 +128,25 @@ public class ParameterPayload implements com.noone.particleex.network.ParticlePa
   public net.minecraft.resources.ResourceLocation packetId() {
     return NetworkIdentifiers.PARAMETER_PACKET_ID;
   }
+
+  public boolean polar() { return this.polar; }
+  public boolean tick() { return this.tick; }
+  public boolean rgba() { return this.rgba; }
+  public double x() { return this.x; }
+  public double y() { return this.y; }
+  public double z() { return this.z; }
+  public Vector4f color() { return this.color; }
+  public double vx() { return this.vx; }
+  public double vy() { return this.vy; }
+  public double vz() { return this.vz; }
+  public double begin() { return this.begin; }
+  public double end() { return this.end; }
+  public String expression() { return this.expression; }
+  public double step() { return this.step; }
+  public int cpt() { return this.cpt; }
+  public int age() { return this.age; }
+  public String speedExpression() { return this.speedExpression; }
+  public double speedStep() { return this.speedStep; }
+  public String group() { return this.group; }
+  public ParticleOptions effect() { return this.effect; }
 }
