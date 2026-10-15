@@ -17,7 +17,6 @@ import com.noone.particleex.command.argument.SuggestArgumentType;
 import com.noone.particleex.command.argument.SuggestDoubleArgumentType;
 import com.noone.particleex.command.argument.SuggestIntegerArgumentType;
 import com.noone.particleex.mixin.ArgumentTypeInfosAccessor;
-import com.noone.particleex.mixin.MappedRegistryAccessor;
 import com.noone.particleex.common.Bridge;
 
 
@@ -66,13 +65,8 @@ import com.noone.particleex.util.ClientMessageUtil;
 import com.noone.particleex.util.MessageBridge;
 
 
-import it.unimi.dsi.fastutil.objects.ObjectList;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderOwner;
-import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -89,6 +83,7 @@ import net.neoforged.neoforge.common.NeoForge;
 
 
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 
 
 import net.neoforged.neoforge.network.NetworkEvent;
@@ -112,6 +107,7 @@ import net.neoforged.neoforge.network.simple.SimpleChannel;
 
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 
@@ -210,7 +206,7 @@ public class NeoForgeEntry {
 
     /**
      * 注册自定义命令参数类型（1.20.1~1.20.4 同步类名 ArgumentTypeInfos，同 26.2 修复：
-     * BY_CLASS + 注册表直塞；MappedRegistry.toId 类型按版本取 Object2IntMap/Reference2IntMap）。
+     * BY_CLASS put 仍在构造期；注册表写入改走 RegisterEvent（同 1.20.4/1.20.6/1.21.x））。
      */
     private void registerArgumentTypes() {
         Map<Class<?>, ArgumentTypeInfo<?, ?>> byClass = ArgumentTypeInfosAccessor.particleex$getByClass();
@@ -224,19 +220,33 @@ public class NeoForgeEntry {
         byClass.put(SuggestDoubleArgumentType.class, SuggestDoubleArgumentType.Serializer.INSTANCE);
         byClass.put(SuggestIntegerArgumentType.class, SuggestIntegerArgumentType.Serializer.INSTANCE);
 
-        Registry<ArgumentTypeInfo<?, ?>> registry = BuiltInRegistries.COMMAND_ARGUMENT_TYPE;
-        if (!(registry instanceof MappedRegistry)) {
-            throw new IllegalStateException("COMMAND_ARGUMENT_TYPE 不是 MappedRegistry，无法注册参数类型");
-        }
-        @SuppressWarnings({"rawtypes", "unchecked"})
-        MappedRegistryAccessor regAccessor = (MappedRegistryAccessor) (Object) registry;
-        ObjectList<Holder.Reference<Object>> byId = (ObjectList) regAccessor.particleex$getById();
-        Object2IntMap<Object> toId = (Object2IntMap) regAccessor.particleex$getToId();
-        for (ArgumentTypeInfo<?, ?> info : byClass.values()) {
-            int id = byId.size();
-            byId.add((Holder.Reference<Object>) (Object) Holder.Reference.createIntrusive((HolderOwner<Object>) (Object) registry, info));
-            toId.put(info, id);
-        }
+        // RegisterEvent（mod bus）注册：字段直塞只动 byId/toId 两套结构，RegistrySnapshot 从 keySet 派生会丢条目；
+        // 且 1.20.2 直塞 createIntrusive(registry,...) 实机 ClassCastException（MappedRegistry 非自身 HolderOwner，同 1.20.6）。
+        String[] names = {"color4", "flip", "group_change_type", "range3", "rotate", "speed3",
+            "suggest", "suggest_double", "suggest_integer"};
+        modBus.addListener(RegisterEvent.class, event -> {
+            if (!BuiltInRegistries.COMMAND_ARGUMENT_TYPE.key().equals(event.getRegistryKey())) {
+                return;
+            }
+            List<ArgumentTypeInfo<?, ?>> own = List.of(
+                byClass.get(Color4ArgumentType.class),
+                byClass.get(FlipArgumentType.class),
+                byClass.get(GroupChangeTypeArgumentType.class),
+                byClass.get(Range3ArgumentType.class),
+                byClass.get(RotateArgumentType.class),
+                byClass.get(Speed3ArgumentType.class),
+                byClass.get(SuggestArgumentType.class),
+                byClass.get(SuggestDoubleArgumentType.class),
+                byClass.get(SuggestIntegerArgumentType.class)
+            );
+            for (int i = 0; i < names.length; i++) {
+                if (own.get(i) == null) {
+                    throw new IllegalStateException("自定义参数类型 info 为 null，BY_CLASS put 未生效: " + names[i]);
+                }
+                //noinspection unchecked,rawtypes
+                Registry.register((Registry) event.getRegistry(), new ResourceLocation(NetworkIdentifiers.MOD_ID, names[i]), own.get(i));
+            }
+        });
     }
 
     private void registerCommands(RegisterCommandsEvent event) {
