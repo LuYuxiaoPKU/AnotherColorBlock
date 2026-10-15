@@ -16,13 +16,13 @@ config = "particleex.mixins.json"
 [[dependencies.particleex]]
 modId = "neoforge"
 type = "required"
-versionRange = "[20.4,)"
+versionRange = "[20.3,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.particleex]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.20.4,1.20.5)"
+versionRange = "[1.20.3,1.20.4)"
 ordering = "NONE"
 side = "BOTH"
