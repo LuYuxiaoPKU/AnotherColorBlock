@@ -12,9 +12,8 @@ subprojects {
         maven { url 'https://maven.fabricmc.net/' }
     }
 
-    java {
-        toolchain.languageVersion = JavaLanguageVersion.of(8)
-    }
+    // Java 8 目标：用 runner JDK 21 编译（toolchain 8 的老 javac OOM）+ source/target 1.8；--release 8 与 loom 冲突故不用
+    // 注意：源码已限定 Java 8 语法（1.16.5 降级提交），21 的 javac 以 1.8 compat 编译即可出 52.0 字节码
 
     tasks.withType(JavaCompile).configureEach {
         it.options.encoding = 'UTF-8'
