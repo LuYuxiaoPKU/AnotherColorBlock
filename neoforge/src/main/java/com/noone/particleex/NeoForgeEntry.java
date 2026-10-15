@@ -122,7 +122,7 @@ public class NeoForgeEntry {
                     throw new IllegalStateException("自定义参数类型 info 为 null，BY_CLASS put 未生效: " + names[i]);
                 }
                 //noinspection unchecked,rawtypes
-                event.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE.key(), new ResourceLocation(NetworkIdentifiers.MOD_ID, names[i]), own.get(i));
+                event.register((net.minecraft.resources.ResourceKey) BuiltInRegistries.COMMAND_ARGUMENT_TYPE.key(), new ResourceLocation(NetworkIdentifiers.MOD_ID, names[i]), own.get(i));
             }
         });
     }
