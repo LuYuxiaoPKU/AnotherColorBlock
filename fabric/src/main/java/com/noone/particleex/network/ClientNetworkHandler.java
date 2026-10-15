@@ -276,7 +276,8 @@ public class ClientNetworkHandler {
                    data.cx = ((IParticle)particle).getCenterX();
                    data.cy = ((IParticle)particle).getCenterY();
                    data.cz = ((IParticle)particle).getCenterZ();
-                   if (particle instanceof IBillboardParticleMixin billboardParticle) {
+                   if (particle instanceof IBillboardParticleMixin) {
+                      IBillboardParticleMixin billboardParticle = (IBillboardParticleMixin) particle;
                       data.cr = billboardParticle.getRCol();
                       data.cg = billboardParticle.getGCol();
                       data.cb = billboardParticle.getBCol();

@@ -295,17 +295,26 @@ public class Lexer {
    }
 
    private boolean isNewLine(char ch) {
-       return switch (ch) {
-           case '\n', '\r' -> true;
-           default -> false;
-       };
+      switch (ch) {
+         case '\n':
+         case '\r':
+            return true;
+         default:
+            return false;
+      }
    }
 
    private boolean isWhiteSpace(char ch) {
-       return switch (ch) {
-           case '\t', '\n', '\f', '\r', ' ' -> true;
-           default -> false;
-       };
+      switch (ch) {
+         case '\t':
+         case '\n':
+         case '\f':
+         case '\r':
+         case ' ':
+            return true;
+         default:
+            return false;
+      }
    }
 
    private boolean isDigit(char ch) {

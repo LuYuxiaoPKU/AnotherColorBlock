@@ -53,14 +53,11 @@ public class CodeGen {
 
       byte[] bytes = this.cw.toByteArray();
       try {
-         MethodHandles.Lookup lookup = MethodHandles.lookup();
-
-          return lookup.defineHiddenClass(
-                 bytes,
-                 true,
-                 MethodHandles.Lookup.ClassOption.NESTMATE
-         ).lookupClass();
-      } catch (IllegalAccessException e) {
+         // 1.16.5（Java 8）：defineHiddenClass 是 Java 15+ API——走 ClassLoader.defineClass 反射路径
+         Method m = ClassLoader.class.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class);
+         m.setAccessible(true);
+         return (Class) m.invoke(this.getClass().getClassLoader(), null, bytes, 0, bytes.length);
+      } catch (Exception e) {
          throw new RuntimeException("Class definition failed", e);
       }
 
@@ -197,25 +194,22 @@ public class CodeGen {
    private int codeGenUnopExp(EnumToken op, Expression exp) {
       switch(op) {
       case NEG:
-          return switch (this.codeGenExp(exp, -1)) {
-              case 7 -> {
+          switch (this.codeGenExp(exp, -1)) {
+              case 7:
                   this.mv.visitInsn(119);
-                  yield 7;
-              }
-              default -> throw new RuntimeException("bad type");
-              case 10 -> {
+                  return 7;
+              case 10:
                   this.mv.visitInsn(116);
-                  yield 10;
-              }
-              case 12 -> {
+                  return 10;
+              case 12:
                   this.mv.visitMethodInsn(184, "com/noone/particleex/util/MatrixUtil", "matNeg", "([[I)[[I", false);
-                  yield 12;
-              }
-              case 13 -> {
+                  return 12;
+              case 13:
                   this.mv.visitMethodInsn(184, "com/noone/particleex/util/MatrixUtil", "matNeg", "([[D)[[D", false);
-                  yield 13;
-              }
-          };
+                  return 13;
+              default:
+                  throw new RuntimeException("bad type");
+          }
       case NOT:
          switch(this.codeGenExp(exp, -1)) {
          case 7:
@@ -442,25 +436,22 @@ public class CodeGen {
          return 7;
       } else if (this.localVars.containsKey(name)) {
          CodeGen.LocalVarInfo info = this.localVars.get(name);
-          return switch (info.type) {
-              case 7 -> {
+          switch (info.type) {
+              case 7:
                   this.mv.visitVarInsn(24, info.index);
-                  yield 7;
-              }
-              default -> throw new RuntimeException("bad type: " + info.type);
-              case 10 -> {
+                  return 7;
+              case 10:
                   this.mv.visitVarInsn(21, info.index);
-                  yield 10;
-              }
-              case 12 -> {
+                  return 10;
+              case 12:
                   this.mv.visitVarInsn(25, info.index);
-                  yield 12;
-              }
-              case 13 -> {
+                  return 12;
+              case 13:
                   this.mv.visitVarInsn(25, info.index);
-                  yield 13;
-              }
-          };
+                  return 13;
+              default:
+                  throw new RuntimeException("bad type: " + info.type);
+          }
       } else {
          throw new RuntimeException("undefine var: " + name);
       }

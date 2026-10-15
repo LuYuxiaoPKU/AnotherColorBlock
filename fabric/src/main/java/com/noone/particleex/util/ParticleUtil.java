@@ -131,39 +131,59 @@ public class ParticleUtil {
    }
 
    private static int dsin(int n) {
-       return switch (n % 4) {
-           case 0, 2 -> 0;
-           case 1 -> 1;
-           case 3 -> -1;
-           default -> n;
-       };
+      switch (n % 4) {
+         case 0:
+         case 2:
+            return 0;
+         case 1:
+            return 1;
+         case 3:
+            return -1;
+         default:
+            return n;
+      }
    }
 
    private static int dcos(int n) {
-       return switch (n % 4) {
-           case 0 -> 1;
-           case 1, 3 -> 0;
-           case 2 -> -1;
-           default -> n;
-       };
+      switch (n % 4) {
+         case 0:
+            return 1;
+         case 1:
+         case 3:
+            return 0;
+         case 2:
+            return -1;
+         default:
+            return n;
+      }
    }
 
    private static int xmove(int rotate, int rows, int cols) {
-       return switch (rotate % 4) {
-           case 0, 3 -> 0;
-           case 1 -> rows - 1;
-           case 2 -> cols - 1;
-           default -> rotate;
-       };
+      switch (rotate % 4) {
+         case 0:
+         case 3:
+            return 0;
+         case 1:
+            return rows - 1;
+         case 2:
+            return cols - 1;
+         default:
+            return rotate;
+      }
    }
 
    private static int ymove(int rotate, int rows, int cols) {
-       return switch (rotate % 4) {
-           case 0, 1 -> 0;
-           case 2 -> rows - 1;
-           case 3 -> cols - 1;
-           default -> rotate;
-       };
+      switch (rotate % 4) {
+         case 0:
+         case 1:
+            return 0;
+         case 2:
+            return rows - 1;
+         case 3:
+            return cols - 1;
+         default:
+            return rotate;
+      }
    }
 
    private static void addTask(TimerTask task, boolean start) {

@@ -71,7 +71,10 @@ public class SuggestIntegerArgumentType implements ArgumentType<Integer> {
    public boolean equals(Object o) {
       if (this == o) {
          return true;
-      } else if (!(o instanceof SuggestIntegerArgumentType that)) {
+      } else if (!(o instanceof SuggestIntegerArgumentType)) {
+         return false;
+      } else {
+         SuggestIntegerArgumentType that = (SuggestIntegerArgumentType) o;
          return false;
       } else {
           return this.parser.equals(that.parser) && this.suggest == that.suggest;

@@ -64,15 +64,17 @@ public class FlipArgumentType implements ArgumentType<Integer> {
          }
       }
 
-       return switch (flipType) {
-           case 0 -> 0;
-           case 1 -> 1;
-           case 2 -> 2;
-           default -> {
+       switch (flipType) {
+           case 0:
+               return 0;
+           case 1:
+               return 1;
+           case 2:
+               return 2;
+           default:
                reader.setCursor(start);
                throw INVALID_EXCEPTION.createWithContext(reader);
-           }
-       };
+       }
    }
 
    public Collection<String> getExamples() {

@@ -59,14 +59,15 @@ public class GroupChangeTypeArgumentType implements ArgumentType<Integer> {
          }
       }
 
-       return switch (group) {
-           case 0 -> 0;
-           case 1 -> 1;
-           default -> {
+       switch (group) {
+           case 0:
+               return 0;
+           case 1:
+               return 1;
+           default:
                reader.setCursor(start);
                throw INVALID_EXCEPTION.createWithContext(reader);
-           }
-       };
+       }
    }
 
    public Collection<String> getExamples() {

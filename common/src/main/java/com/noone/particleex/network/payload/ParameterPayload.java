@@ -9,7 +9,49 @@ import org.joml.Vector4f;
 
 import static com.noone.particleex.network.PayloadCodecUtil.*;
 
-public record ParameterPayload(boolean polar, boolean tick, boolean rgba, double x, double y, double z, Vector4f color, double vx, double vy, double vz, double begin, double end, String expression, double step, int cpt, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements com.noone.particleex.network.ParticlePayload {
+public class ParameterPayload implements com.noone.particleex.network.ParticlePayload {
+  public final boolean polar;
+  public final boolean tick;
+  public final boolean rgba;
+  public final double x;
+  public final double y;
+  public final double z;
+  public final Vector4f color;
+  public final double vx;
+  public final double vy;
+  public final double vz;
+  public final double begin;
+  public final double end;
+  public final String expression;
+  public final double step;
+  public final int cpt;
+  public final int age;
+  public final String speedExpression;
+  public final double speedStep;
+  public final String group;
+  public final ParticleOptions effect;
+  public ParameterPayload(boolean polar, boolean tick, boolean rgba, double x, double y, double z, Vector4f color, double vx, double vy, double vz, double begin, double end, String expression, double step, int cpt, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) {
+    this.polar = polar;
+    this.tick = tick;
+    this.rgba = rgba;
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.color = color;
+    this.vx = vx;
+    this.vy = vy;
+    this.vz = vz;
+    this.begin = begin;
+    this.end = end;
+    this.expression = expression;
+    this.step = step;
+    this.cpt = cpt;
+    this.age = age;
+    this.speedExpression = speedExpression;
+    this.speedStep = speedStep;
+    this.group = group;
+    this.effect = effect;
+  }
   @Override
   public void write(FriendlyByteBuf buf) {
               buf.writeBoolean(this.polar);

@@ -66,11 +66,14 @@ public class Parser {
    }
 
    private static Expression parseVar(Lexer lexer) {
-       return switch (lexer.peekToken().enumToken) {
-           case LPAREN -> parseVarMatrix(lexer);
-           case IDENTIFIER -> parseIdentifier(lexer);
-           default -> throw new RuntimeException("not a var");
-       };
+      switch (lexer.peekToken().enumToken) {
+         case LPAREN:
+            return parseVarMatrix(lexer);
+         case IDENTIFIER:
+            return parseIdentifier(lexer);
+         default:
+            throw new RuntimeException("not a var");
+      }
    }
 
    private static Expression parseVarMatrix(Lexer lexer) {
@@ -313,11 +316,15 @@ public class Parser {
    }
 
    private static Expression parseExp0(Lexer lexer) {
-       return switch (lexer.peekToken().enumToken) {
-           case LPAREN, IDENTIFIER -> parseAssignOrFunctionCallExp(lexer);
-           case NUMBER -> parseNumberExp(lexer);
-           default -> throw new RuntimeException("need matrix, function call, assign expression, var, number");
-       };
+      switch (lexer.peekToken().enumToken) {
+         case LPAREN:
+         case IDENTIFIER:
+            return parseAssignOrFunctionCallExp(lexer);
+         case NUMBER:
+            return parseNumberExp(lexer);
+         default:
+            throw new RuntimeException("need matrix, function call, assign expression, var, number");
+      }
    }
 
    private static Expression parseNumberExp(Lexer lexer) {
@@ -337,30 +344,49 @@ public class Parser {
    }
 
    private static boolean isExp5(Token token) {
-       return switch (token.enumToken) {
-           case LT, LE, GT, GE, EQ, NEQ -> true;
-           default -> false;
-       };
+      switch (token.enumToken) {
+         case LT:
+         case LE:
+         case GT:
+         case GE:
+         case EQ:
+         case NEQ:
+            return true;
+         default:
+            return false;
+      }
    }
 
    private static boolean isExp4(Token token) {
-       return switch (token.enumToken) {
-           case ADD, MINUS, SUB -> true;
-           default -> false;
-       };
+      switch (token.enumToken) {
+         case ADD:
+         case MINUS:
+         case SUB:
+            return true;
+         default:
+            return false;
+      }
    }
 
    private static boolean isExp3(Token token) {
-       return switch (token.enumToken) {
-           case MUL, DIV, MOD -> true;
-           default -> false;
-       };
+      switch (token.enumToken) {
+         case MUL:
+         case DIV:
+         case MOD:
+            return true;
+         default:
+            return false;
+      }
    }
 
    private static boolean isExp2(Token token) {
-       return switch (token.enumToken) {
-           case MINUS, NEG, NOT -> true;
-           default -> false;
-       };
+      switch (token.enumToken) {
+         case MINUS:
+         case NEG:
+         case NOT:
+            return true;
+         default:
+            return false;
+      }
    }
 }

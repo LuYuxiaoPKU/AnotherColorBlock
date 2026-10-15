@@ -7,7 +7,47 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 
-public record NormalPayload(double x, double y, double z, float red, float green, float blue, float alpha, double vx, double vy, double vz, double dx, double dy, double dz, int count, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements com.noone.particleex.network.ParticlePayload {
+public class NormalPayload implements com.noone.particleex.network.ParticlePayload {
+  public final double x;
+  public final double y;
+  public final double z;
+  public final float red;
+  public final float green;
+  public final float blue;
+  public final float alpha;
+  public final double vx;
+  public final double vy;
+  public final double vz;
+  public final double dx;
+  public final double dy;
+  public final double dz;
+  public final int count;
+  public final int age;
+  public final String speedExpression;
+  public final double speedStep;
+  public final String group;
+  public final ParticleOptions effect;
+  public NormalPayload(double x, double y, double z, float red, float green, float blue, float alpha, double vx, double vy, double vz, double dx, double dy, double dz, int count, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.red = red;
+    this.green = green;
+    this.blue = blue;
+    this.alpha = alpha;
+    this.vx = vx;
+    this.vy = vy;
+    this.vz = vz;
+    this.dx = dx;
+    this.dy = dy;
+    this.dz = dz;
+    this.count = count;
+    this.age = age;
+    this.speedExpression = speedExpression;
+    this.speedStep = speedStep;
+    this.group = group;
+    this.effect = effect;
+  }
   @Override
   public void write(FriendlyByteBuf buf) {
               buf.writeDouble(this.x);

@@ -22,20 +22,25 @@ public class Optimize {
          int r;
          int l = ((Expression.IntegerExp)exp.lExp).val;
          r = ((Expression.IntegerExp)exp.rExp).val;
-          return switch (exp.op) {
-              case ADD -> new Expression.IntegerExp(exp.line, l + r);
-              case SUB -> new Expression.IntegerExp(exp.line, l - r);
-              case MUL -> new Expression.IntegerExp(exp.line, l * r);
-              case DIV -> new Expression.IntegerExp(exp.line, l / r);
-              case MOD -> new Expression.IntegerExp(exp.line, l % r);
-              case POW -> {
-                  if (r >= 0) {
-                      yield new Expression.IntegerExp(exp.line, pow(l, r));
-                  }
-                  yield new Expression.FloatExp(exp.line, Math.pow(l, r));
-              }
-              default -> exp;
-          };
+         switch (exp.op) {
+             case ADD:
+                 return new Expression.IntegerExp(exp.line, l + r);
+             case SUB:
+                 return new Expression.IntegerExp(exp.line, l - r);
+             case MUL:
+                 return new Expression.IntegerExp(exp.line, l * r);
+             case DIV:
+                 return new Expression.IntegerExp(exp.line, l / r);
+             case MOD:
+                 return new Expression.IntegerExp(exp.line, l % r);
+             case POW:
+                 if (r >= 0) {
+                     return new Expression.IntegerExp(exp.line, pow(l, r));
+                 }
+                 return new Expression.FloatExp(exp.line, Math.pow(l, r));
+             default:
+                 return exp;
+         }
       } else if ((!(exp.lExp instanceof Expression.FloatExp) || !(exp.rExp instanceof Expression.FloatExp)) && (!(exp.lExp instanceof Expression.IntegerExp) || !(exp.rExp instanceof Expression.FloatExp)) && (!(exp.lExp instanceof Expression.FloatExp) || !(exp.rExp instanceof Expression.IntegerExp))) {
          if (exp.lExp instanceof Expression.IntegerMatrixExp) {
             int[][] lMat = ((Expression.IntegerMatrixExp)exp.lExp).val;
@@ -139,15 +144,22 @@ public class Optimize {
       } else {
          double l = exp.lExp instanceof Expression.IntegerExp ? (double)((Expression.IntegerExp)exp.lExp).val : ((Expression.FloatExp)exp.lExp).val;
          double r = exp.rExp instanceof Expression.IntegerExp ? (double)((Expression.IntegerExp)exp.rExp).val : ((Expression.FloatExp)exp.rExp).val;
-          return switch (exp.op) {
-              case ADD -> new Expression.FloatExp(exp.line, l + r);
-              case SUB -> new Expression.FloatExp(exp.line, l - r);
-              case MUL -> new Expression.FloatExp(exp.line, l * r);
-              case DIV -> new Expression.FloatExp(exp.line, l / r);
-              case MOD -> new Expression.FloatExp(exp.line, l % r);
-              case POW -> new Expression.FloatExp(exp.line, Math.pow(l, r));
-              default -> exp;
-          };
+         switch (exp.op) {
+             case ADD:
+                 return new Expression.FloatExp(exp.line, l + r);
+             case SUB:
+                 return new Expression.FloatExp(exp.line, l - r);
+             case MUL:
+                 return new Expression.FloatExp(exp.line, l * r);
+             case DIV:
+                 return new Expression.FloatExp(exp.line, l / r);
+             case MOD:
+                 return new Expression.FloatExp(exp.line, l % r);
+             case POW:
+                 return new Expression.FloatExp(exp.line, Math.pow(l, r));
+             default:
+                 return exp;
+         }
       }
    }
 

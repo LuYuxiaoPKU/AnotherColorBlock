@@ -190,7 +190,8 @@ public abstract class ParticleMixin implements IParticleMixin, IParticle {
 
    @Unique
    private void syncRenderColor() {
-      if ((Object) this instanceof SingleQuadParticle quad) {
+      if ((Object) this instanceof SingleQuadParticle) {
+         SingleQuadParticle quad = (SingleQuadParticle) (Object) this;
          quad.setColor(this.red, this.green, this.blue);
          ((IBillboardParticleMixin) quad).setAlpha(this.alpha);
       }

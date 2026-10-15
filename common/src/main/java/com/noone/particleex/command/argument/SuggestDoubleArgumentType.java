@@ -71,7 +71,10 @@ public class SuggestDoubleArgumentType implements ArgumentType<Double>{
    public boolean equals(Object o) {
       if (this == o) {
          return true;
-      } else if (!(o instanceof SuggestDoubleArgumentType that)) {
+      } else if (!(o instanceof SuggestDoubleArgumentType)) {
+         return false;
+      } else {
+         SuggestDoubleArgumentType that = (SuggestDoubleArgumentType) o;
          return false;
       } else {
           return this.parser.equals(that.parser) && this.suggest == that.suggest;

@@ -10,7 +10,35 @@ import net.minecraft.world.phys.Vec3;
 import static com.noone.particleex.network.PayloadCodecUtil.readDouble;
 import static com.noone.particleex.network.PayloadCodecUtil.readString;
 
-public record VideoMatrixPayload(double x, double y, double z, String path, double scaling, double[][] matrix, double dpb, Vec3 speed, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) implements com.noone.particleex.network.ParticlePayload {
+public class VideoMatrixPayload implements com.noone.particleex.network.ParticlePayload {
+  public final double x;
+  public final double y;
+  public final double z;
+  public final String path;
+  public final double scaling;
+  public final double[][] matrix;
+  public final double dpb;
+  public final Vec3 speed;
+  public final int age;
+  public final String speedExpression;
+  public final double speedStep;
+  public final String group;
+  public final ParticleOptions effect;
+  public VideoMatrixPayload(double x, double y, double z, String path, double scaling, double[][] matrix, double dpb, Vec3 speed, int age, String speedExpression, double speedStep, String group, ParticleOptions effect) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.path = path;
+    this.scaling = scaling;
+    this.matrix = matrix;
+    this.dpb = dpb;
+    this.speed = speed;
+    this.age = age;
+    this.speedExpression = speedExpression;
+    this.speedStep = speedStep;
+    this.group = group;
+    this.effect = effect;
+  }
    @Override
   public void write(FriendlyByteBuf buf) {
               buf.writeDouble(this.x);

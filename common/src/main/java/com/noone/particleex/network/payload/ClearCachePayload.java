@@ -3,7 +3,9 @@ package com.noone.particleex.network.payload;
 import com.noone.particleex.network.NetworkIdentifiers;
 import net.minecraft.network.FriendlyByteBuf;
 
-public record ClearCachePayload() implements com.noone.particleex.network.ParticlePayload {
+public class ClearCachePayload implements com.noone.particleex.network.ParticlePayload {
+  public ClearCachePayload() {
+  }
     @Override
   public void write(FriendlyByteBuf buf) {
   }

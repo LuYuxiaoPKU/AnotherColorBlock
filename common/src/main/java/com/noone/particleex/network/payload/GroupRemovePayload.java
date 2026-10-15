@@ -11,7 +11,15 @@ import net.minecraft.world.phys.Vec3;
 import static com.noone.particleex.network.PayloadCodecUtil.readDouble;
 import static com.noone.particleex.network.PayloadCodecUtil.readString;
 
-public record GroupRemovePayload(String group, String expression, Vec3 pos) implements com.noone.particleex.network.ParticlePayload {
+public class GroupRemovePayload implements com.noone.particleex.network.ParticlePayload {
+  public final String group;
+  public final String expression;
+  public final Vec3 pos;
+  public GroupRemovePayload(String group, String expression, Vec3 pos) {
+    this.group = group;
+    this.expression = expression;
+    this.pos = pos;
+  }
   @Override
   public void write(FriendlyByteBuf buf) {
               buf.writeUtf(this.group);

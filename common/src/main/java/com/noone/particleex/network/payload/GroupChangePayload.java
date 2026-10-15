@@ -7,7 +7,19 @@ import net.minecraft.world.phys.Vec3;
 
 import static com.noone.particleex.network.PayloadCodecUtil.readString;
 
-public record GroupChangePayload(int changeType,String group, String expression,String conditionalExpression, Vec3 pos) implements com.noone.particleex.network.ParticlePayload {
+public class GroupChangePayload implements com.noone.particleex.network.ParticlePayload {
+  public final int changeType;
+  public final String group;
+  public final String expression;
+  public final String conditionalExpression;
+  public final Vec3 pos;
+  public GroupChangePayload(int changeType,String group, String expression,String conditionalExpression, Vec3 pos) {
+    this.changeType = changeType;
+    this.group = group;
+    this.expression = expression;
+    this.conditionalExpression = conditionalExpression;
+    this.pos = pos;
+  }
   @Override
   public void write(FriendlyByteBuf buf) {
               buf.writeInt(this.changeType);
