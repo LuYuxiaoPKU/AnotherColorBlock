@@ -22,6 +22,11 @@ subprojects {
         it.targetCompatibility = '1.8'
     }
 
+    tasks.withType(Test).configureEach {
+        // ClassLoader.defineClass 反射（1.16.5 引擎路径）在 JDK 16+ 模块系统下需开洞
+        it.jvmArgs('--add-opens', 'java.base/java.lang=ALL-UNNAMED')
+    }
+
     tasks.withType(ProcessResources).configureEach {
         it.setFilteringCharset('UTF-8')
     }
