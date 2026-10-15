@@ -4,7 +4,7 @@ license = "GPL-3.0"
 
 [[mods]]
 modId = "particleex"
-version = "1.0.0"
+version = "${version}"
 displayName = "AnotherColorBlock"
 displayURL = "https://github.com/LuYuxiaoPKU/AnotherColorBlock"
 authors = "noone89, YuEr159"
