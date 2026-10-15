@@ -56,6 +56,9 @@ tasks.named('compileJava', JavaCompile) {
 processResources {
     dependsOn(configurations.commonResources)
     from(configurations.commonResources)
+    filesMatching('META-INF/mods.toml') {
+        expand 'version': project.version
+    }
 }
 
 // Forge 47 体系（1.20.1）的 mixin 声明走 MANIFEST MixinConfigs 属性——
