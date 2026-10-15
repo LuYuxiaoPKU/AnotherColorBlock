@@ -101,7 +101,8 @@ public class NeoForgeEntry {
         // （Forge 47 MappedRegistry 非自身 HolderOwner）且 RegistrySnapshot 丢条目。
         String[] names = {"color4", "flip", "group_change_type", "range3", "rotate", "speed3",
             "suggest", "suggest_double", "suggest_integer"};
-        modBus.addListener(RegisterEvent.class, event -> {
+        // Forge 47 的 EventBus 无 addListener(Class, Consumer) 双参重载（1.21+ 才有），用泛型 Consumer 注册
+        modBus.addListener((Consumer<RegisterEvent>) event -> {
             if (!BuiltInRegistries.COMMAND_ARGUMENT_TYPE.key().equals(event.getRegistryKey())) {
                 return;
             }
