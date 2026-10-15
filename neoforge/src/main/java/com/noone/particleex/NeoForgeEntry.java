@@ -202,8 +202,8 @@ public class NeoForgeEntry {
                 .add();
     }
 
-    /** 20.3-beta 老 API：MessageConsumer<MSG>=(MSG, NetworkEvent.Context)；channel 层已限 PLAY_TO_CLIENT，enqueueWork 切主线程 */
-    private static <T> java.util.function.BiConsumer<T, NetworkEvent.Context> clientOnly(java.util.function.Consumer<T> handler) {
+    /** 20.3-beta 老 API：MessageFunctions.MessageConsumer<MSG> SAM=(MSG, NetworkEvent.Context)；channel 层已限 PLAY_TO_CLIENT，enqueueWork 切主线程 */
+    private static <T> net.neoforged.neoforge.network.simple.MessageFunctions.MessageConsumer<T> clientOnly(java.util.function.Consumer<T> handler) {
         return (payload, ctx) -> {
             ctx.enqueueWork(() -> handler.accept(payload));
             ctx.setPacketHandled(true);
