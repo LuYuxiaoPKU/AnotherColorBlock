@@ -41,13 +41,13 @@ public abstract class ParticleManagerMixin {
       if (this.particles.isEmpty()) {
          ci.cancel();
       } else if (ParticleExConfig.config.ParallelParticleUpdate) {
-         this.particles.values().forEach(queue -> queue.parallelStream().forEach(particle -> this.tickParticle(particle)));
+         this.particles.values().forEach(queue -> queue.parallelStream().forEach(particle -> this.m_107393_(particle)));
          this.particles.values().forEach(queue -> queue.removeIf(particle -> !particle.isAlive()));
          ci.cancel();
       }
    }
 
    @Shadow
-   private void tickParticle(Particle particle) {
+   private void m_107393_(Particle particle) {
    }
 }
