@@ -198,9 +198,9 @@ public class ClientNetworkHandler {
       Vec3 pos = payload.pos();
       double x,y,z;
       if(pos == null){
-         x = player.getX();
-         y = player.getY();
-         z = player.getZ();
+         x = player.getPos().x;
+         y = player.getPos().y;
+         z = player.getPos().z;
       }else{
          x = pos.x;
          y = pos.y;
@@ -218,9 +218,9 @@ public class ClientNetworkHandler {
       Vec3 pos = payload.pos();
       double x,y,z;
       if(pos == null){
-         x = player.getX();
-         y = player.getY();
-         z = player.getZ();
+         x = player.getPos().x;
+         y = player.getPos().y;
+         z = player.getPos().z;
       }else{
          x = pos.x;
          y = pos.y;
