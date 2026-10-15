@@ -19,7 +19,7 @@ build/
 # 构建产物
 *.jar
 !gradle/wrapper/gradle-wrapper.jar
-.claude/usage.json
+.claude/
 
 # 子模块的 NG7/moddev 本地缓存
 **/.gradle/
