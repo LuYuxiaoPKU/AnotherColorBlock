@@ -14,39 +14,39 @@
 
 ### 1. 选择对应版本的 jar
 
-按你的 Minecraft 版本，从 [Releases](../../releases) 或 [Actions 构建产物](../../actions) 获取对应分支的 jar：
+按你的 Minecraft 版本，从 [Releases](../../releases) 获取对应分支的 jar（表格中「使用分支」列已附各分支 jar 的直链）：
 
-| Minecraft 版本 | 使用分支 | Fabric | NeoForge |
+| Minecraft 版本 | 使用分支 | Fabric jar | NeoForge jar |
 |---|---|---|---|
-| 26.3 | `26.3` | ✅ | ✅ |
-| 26.2 | `26.2` | ✅ | ✅ |
-| 26.1 | `26.1` | ✅ | ✅ |
-| 1.21.11 | `1.21.11` | ✅ | ✅ |
-| 1.21.10 | `1.21.10` | ✅ | ✅ |
-| 1.21.9 | `1.21.9` | ✅ | ✅ |
-| 1.21.8 | `1.21.8` | ✅ | ✅ |
-| 1.21.7 | `1.21.7` | ✅ | ✅ |
-| 1.21.6 | `1.21.6` | ✅ | ✅ |
-| 1.21.5 | `1.21.5` | ✅ | ✅ |
-| 1.21.4 | `1.21.4` | ✅ | ✅ |
-| 1.21.3 | `1.21.3` | ✅ | ✅ |
-| 1.21.2 | `1.21.2` | ✅ | ✅ |
-| 1.21 | `1.21` | ✅ | ✅ |
-| 1.21.1 | `1.21` 或 `1.21.1` | ✅ | ✅ |
-| 1.20.6 | `1.20.6` | ✅ | ✅ |
-| 1.20.5 | `1.20.5` | ✅ | ✅ |
-| 1.20.4 | `1.20.4` | ✅ | ✅ |
-| 1.20.3 | `1.20.3` | ✅ | ✅ |
-| 1.20.2 | `1.20.2` | ✅ | ✅ |
-| 1.20.1 | `1.20.1` | ✅ | ✅ |
-| 1.20 | `1.20` | ✅ | ❌ |
-| 1.19.4 / 1.19.3 | `1.19.4` | ✅ | ❌ |
-| 1.19.2 / 1.19.1 / 1.19 | `1.19.2` | ✅ | ❌ |
-| 1.18.2 / 1.18.1 / 1.18 | `1.18.2` | ✅ | ❌ |
-| 1.17.1 / 1.17 | `1.17.1` | ✅ | ❌ |
-| 1.16.5 | `1.16.5` | ✅ | ❌ |
-| 1.15.2 | `1.15.2` | ✅ | ❌ |
-| 1.14.4 | `1.14.4` | ✅ | ❌ |
+| 26.3 | `26.3` | [26.3 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-26.3-1.1.0-fabric.jar) | [26.3 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-26.3-1.1.0-neoforge.jar) |
+| 26.2 | `26.2` | [26.2 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-26.2-1.1.0-fabric.jar) | [26.2 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-26.2-1.1.0-neoforge.jar) |
+| 26.1 | `26.1` | [26.1 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-26.1-1.1.0-fabric.jar) | [26.1 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-26.1-1.1.0-neoforge.jar) |
+| 1.21.11 | `1.21.11` | [1.21.11 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21.11-1.1.0-fabric.jar) | [1.21.11 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21.11-1.1.0-neoforge.jar) |
+| 1.21.10 | `1.21.10` | [1.21.10 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21.10-1.1.0-fabric.jar) | [1.21.10 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21.10-1.1.0-neoforge.jar) |
+| 1.21.9 | `1.21.9` | [1.21.9 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21.9-1.1.0-fabric.jar) | [1.21.9 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21.9-1.1.0-neoforge.jar) |
+| 1.21.8 | `1.21.8` | [1.21.8 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21.8-1.1.0-fabric.jar) | [1.21.8 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21.8-1.1.0-neoforge.jar) |
+| 1.21.7 | `1.21.7` | [1.21.7 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21.7-1.1.0-fabric.jar) | [1.21.7 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21.7-1.1.0-neoforge.jar) |
+| 1.21.6 | `1.21.6` | [1.21.6 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21.6-1.1.0-fabric.jar) | [1.21.6 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21.6-1.1.0-neoforge.jar) |
+| 1.21.5 | `1.21.5` | [1.21.5 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21.5-1.1.0-fabric.jar) | [1.21.5 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21.5-1.1.0-neoforge.jar) |
+| 1.21.4 | `1.21.4` | [1.21.4 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21.4-1.1.0-fabric.jar) | [1.21.4 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21.4-1.1.0-neoforge.jar) |
+| 1.21.3 | `1.21.3` | [1.21.3 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21.3-1.1.0-fabric.jar) | [1.21.3 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21.3-1.1.0-neoforge.jar) |
+| 1.21.2 | `1.21.2` | [1.21.2 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21.2-1.1.0-fabric.jar) | [1.21.2 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21.2-1.1.0-neoforge.jar) |
+| 1.21 | `1.21` | [1.21 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21-1.1.0-fabric.jar) | [1.21 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21-1.1.0-neoforge.jar) |
+| 1.21.1 | `1.21` 或 `1.21.1` | [1.21 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21-1.1.0-fabric.jar) / [1.21.1 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21.1-1.1.0-fabric.jar) | [1.21.1 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.21.1-1.1.0-neoforge.jar) |
+| 1.20.6 | `1.20.6` | [1.20.6 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.20.6-1.1.0-fabric.jar) | [1.20.6 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.20.6-1.1.0-neoforge.jar) |
+| 1.20.5 | `1.20.5` | [1.20.5 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.20.5-1.1.0-fabric.jar) | [1.20.5 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.20.5-1.1.0-neoforge.jar) |
+| 1.20.4 | `1.20.4` | [1.20.4 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.20.4-1.1.0-fabric.jar) | [1.20.4 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.20.4-1.1.0-neoforge.jar) |
+| 1.20.3 | `1.20.3` | [1.20.3 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.20.3-1.1.0-fabric.jar) | [1.20.3 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.20.3-1.1.0-neoforge.jar) |
+| 1.20.2 | `1.20.2` | [1.20.2 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.20.2-1.1.0-fabric.jar) | [1.20.2 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.20.2-1.1.0-neoforge.jar) |
+| 1.20.1 | `1.20.1` | [1.20.1 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.20.1-1.1.0-fabric.jar) | [1.20.1 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.20.1-1.1.0-neoforge.jar) |
+| 1.20 | `1.20` | [1.20 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.20-1.1.0-fabric.jar) | — |
+| 1.19.4 / 1.19.3 | `1.19.4` | [1.19.4 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.19.4-1.1.0-fabric.jar) | — |
+| 1.19.2 / 1.19.1 / 1.19 | `1.19.2` | [1.19.2 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.19.2-1.1.0-fabric.jar) | — |
+| 1.18.2 / 1.18.1 / 1.18 | `1.18.2` | [1.18.2 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.18.2-1.1.0-fabric.jar) | — |
+| 1.17.1 / 1.17 | `1.17.1` | [1.17.1 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.17.1-1.1.0-fabric.jar) | — |
+| 1.16.5 | `1.16.5` | [1.16.5 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.16.5-1.1.0-fabric.jar) | — |
+| 1.15.2 | `1.15.2` | [1.15.2 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.15.2-1.1.0-fabric.jar) | — |
+| 1.14.4 | `1.14.4` | [1.14.4 jar](https://github.com/YuEr159/AnotherColorBlock/releases/download/v1.1.0/particleex-1.14.4-1.1.0-fabric.jar) | — |
 
 上表为**逐版本实机测试通过的覆盖**（Fabric 37 站 + NeoForge 18 站，全部达标）。
 
