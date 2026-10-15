@@ -231,7 +231,7 @@ public class Lexer {
          }
       }
 
-      if (sb.isEmpty()) {
+      if (sb.length() == 0) {
          throw new RuntimeException("not a number");
       } else {
          this.skip(sb.length());
@@ -246,7 +246,7 @@ public class Lexer {
          sb.append(this.source[i]);
       }
 
-      if (sb.isEmpty()) {
+      if (sb.length() == 0) {
          throw new RuntimeException("not a identifier");
       } else {
          this.skip(sb.length());
