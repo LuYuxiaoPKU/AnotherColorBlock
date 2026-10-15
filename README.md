@@ -305,8 +305,7 @@ neoforge/  NeoForge 加载器适配（1.20.1 ~ 26.3）
 
 | 作者/团队 | 贡献 | 主页 |
 |---|---|---|
-| **noone89** | 社区维护版创始人（ParticleEx，26.x 移植） | [GitHub](https://github.com/noone89A) · [Bilibili](https://space.bilibili.com/496649264) |
-| **YuEr159** | 现维护者（全版本实机测试、NeoForge 移植、低版本扩展） | [GitHub](https://github.com/YuEr159) |
+| **noone89** | 社区维护版创始人（AnotherColorBlock，1.21~26.2 移植） | [GitHub](https://github.com/noone89A) · [Bilibili](https://space.bilibili.com/496649264) |
 
 ### ExParticle 线（表达式引擎语法同源的高版本延续项目）
 
