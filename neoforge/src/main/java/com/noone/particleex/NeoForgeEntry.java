@@ -122,7 +122,12 @@ public class NeoForgeEntry {
                     throw new IllegalStateException("自定义参数类型 info 为 null，BY_CLASS put 未生效: " + names[i]);
                 }
                 //noinspection unchecked,rawtypes
-                event.register((net.minecraft.resources.ResourceKey) BuiltInRegistries.COMMAND_ARGUMENT_TYPE.key(), new ResourceLocation(NetworkIdentifiers.MOD_ID, names[i]), own.get(i));
+                net.minecraftforge.registries.IForgeRegistry forgeReg = event.getForgeRegistry();
+                if (forgeReg != null) {
+                    forgeReg.register(new ResourceLocation(NetworkIdentifiers.MOD_ID, names[i]), own.get(i));
+                } else {
+                    throw new IllegalStateException("COMMAND_ARGUMENT_TYPE 无 ForgeRegistry 视图，无法注册参数类型");
+                }
             }
         });
     }
