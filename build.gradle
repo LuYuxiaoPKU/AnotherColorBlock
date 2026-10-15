@@ -13,12 +13,12 @@ subprojects {
     }
 
     java {
-        toolchain.languageVersion = JavaLanguageVersion.of(17)
+        toolchain.languageVersion = JavaLanguageVersion.of(8)
     }
 
     tasks.withType(JavaCompile).configureEach {
         it.options.encoding = 'UTF-8'
-        it.options.release.set(17)
+        it.options.release.set(8)
     }
 
     tasks.withType(ProcessResources).configureEach {
