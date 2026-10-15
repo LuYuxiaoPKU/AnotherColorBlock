@@ -1,28 +1,25 @@
 modLoader = "javafml"
-loaderVersion = "[4,)"
+loaderVersion = "[24,)"
 license = "GPL-3.0"
 
 [[mods]]
 modId = "particleex"
-version = "${version}"
+version = "1.0.0"
 displayName = "AnotherColorBlock"
 displayURL = "https://github.com/LuYuxiaoPKU/AnotherColorBlock"
 authors = "noone89, YuEr159"
 description = "社区维护版粒子工具模组：支持数学表达式、图片、视频生成粒子。源自 CC0 协议模组 AnotherColorBlock，与原作者及 Mojang 无关。"
 
-[[mixins]]
-config = "particleex.mixins.json"
-
 [[dependencies.particleex]]
 modId = "neoforge"
-type = "required"
-versionRange = "[4,)"
+mandatory = true
+versionRange = "[47.1,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.particleex]]
 modId = "minecraft"
-type = "required"
+mandatory = true
 versionRange = "[1.20.1,1.20.2)"
 ordering = "NONE"
 side = "BOTH"
