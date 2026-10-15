@@ -4,8 +4,7 @@
   "package": "com.noone.particleex.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "ArgumentTypeInfosAccessor",
-    "MappedRegistryAccessor"
+    "ArgumentTypeInfosAccessor"
   ],
   "client": [
     "IBillboardParticleMixin",

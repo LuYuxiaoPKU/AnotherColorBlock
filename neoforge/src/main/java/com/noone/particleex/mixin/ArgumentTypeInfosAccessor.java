@@ -16,7 +16,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
  */
 @Mixin(ArgumentTypeInfos.class)
 public interface ArgumentTypeInfosAccessor {
-   @Accessor("BY_CLASS")
+   // 1.20.1 运行时 SRG 直写（官方 mappings 双链：BY_CLASS→a→f_235379_）
+   @Accessor("f_235379_")
    static Map<Class<?>, ArgumentTypeInfo<?, ?>> particleex$getByClass() {
       throw new AssertionError();
    }
