@@ -194,7 +194,7 @@ public class NeoForgeEntry {
         registerMessages();
 
 
-        registerArgumentTypes();
+        registerArgumentTypes(modBus);
         NeoForge.EVENT_BUS.addListener(this::registerCommands);
 
 
@@ -208,7 +208,7 @@ public class NeoForgeEntry {
      * 注册自定义命令参数类型（1.20.1~1.20.4 同步类名 ArgumentTypeInfos，同 26.2 修复：
      * BY_CLASS put 仍在构造期；注册表写入改走 RegisterEvent（同 1.20.4/1.20.6/1.21.x））。
      */
-    private void registerArgumentTypes() {
+    private void registerArgumentTypes(IEventBus modBus) {
         Map<Class<?>, ArgumentTypeInfo<?, ?>> byClass = ArgumentTypeInfosAccessor.particleex$getByClass();
         byClass.put(Color4ArgumentType.class, SingletonArgumentInfo.contextFree(Color4ArgumentType::color4));
         byClass.put(FlipArgumentType.class, SingletonArgumentInfo.contextFree(FlipArgumentType::flip));
