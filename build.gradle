@@ -18,7 +18,9 @@ subprojects {
 
     tasks.withType(JavaCompile).configureEach {
         it.options.encoding = 'UTF-8'
-        it.options.release.set(8)
+        // Java 8 目标：--release 8 与 loom 的 JDK 21 运行时 javac 冲突（invalid flag），用 compat 双设
+        it.sourceCompatibility = '1.8'
+        it.targetCompatibility = '1.8'
     }
 
     tasks.withType(ProcessResources).configureEach {
