@@ -41,7 +41,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.network.NetworkRegistry;
 import net.neoforged.neoforge.network.NetworkEvent;
-import net.neoforged.neoforge.network.NetworkDirection;
+import net.neoforged.neoforge.network.PlayNetworkDirection;
 import net.neoforged.neoforge.network.simple.SimpleChannel;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -145,69 +145,67 @@ public class NeoForgeEntry {
     }
 
     private void registerMessages() {
-        CHANNEL.messageBuilder(ClearParticlePayload.class, 0)
+        CHANNEL.messageBuilder(ClearParticlePayload.class, 0, PlayNetworkDirection.PLAY_TO_CLIENT)
                 .decoder(ClearParticlePayload::read)
                 .encoder((p, buf) -> p.write(buf))
                 .consumer(this.<ClearParticlePayload>clientOnly((p) -> ClientNetworkHandler.clearParticle()))
                 .add();
-        CHANNEL.messageBuilder(ClearCachePayload.class, 1)
+        CHANNEL.messageBuilder(ClearCachePayload.class, 1, PlayNetworkDirection.PLAY_TO_CLIENT)
                 .decoder(ClearCachePayload::read)
                 .encoder((p, buf) -> p.write(buf))
                 .consumer(this.<ClearCachePayload>clientOnly((p) -> ClientNetworkHandler.clearCache()))
                 .add();
-        CHANNEL.messageBuilder(NormalPayload.class, 2)
+        CHANNEL.messageBuilder(NormalPayload.class, 2, PlayNetworkDirection.PLAY_TO_CLIENT)
                 .decoder(NormalPayload::read)
                 .encoder((p, buf) -> p.write(buf))
                 .consumer(this.<NormalPayload>clientOnly(ClientNetworkHandler::normal))
                 .add();
-        CHANNEL.messageBuilder(ConditionalPayload.class, 3)
+        CHANNEL.messageBuilder(ConditionalPayload.class, 3, PlayNetworkDirection.PLAY_TO_CLIENT)
                 .decoder(ConditionalPayload::read)
                 .encoder((p, buf) -> p.write(buf))
                 .consumer(this.<ConditionalPayload>clientOnly(ClientNetworkHandler::conditional))
                 .add();
-        CHANNEL.messageBuilder(ParameterPayload.class, 4)
+        CHANNEL.messageBuilder(ParameterPayload.class, 4, PlayNetworkDirection.PLAY_TO_CLIENT)
                 .decoder(ParameterPayload::read)
                 .encoder((p, buf) -> p.write(buf))
                 .consumer(this.<ParameterPayload>clientOnly(ClientNetworkHandler::parameter))
                 .add();
-        CHANNEL.messageBuilder(ImagePayload.class, 5)
+        CHANNEL.messageBuilder(ImagePayload.class, 5, PlayNetworkDirection.PLAY_TO_CLIENT)
                 .decoder(ImagePayload::read)
                 .encoder((p, buf) -> p.write(buf))
                 .consumer(this.<ImagePayload>clientOnly(ClientNetworkHandler::image))
                 .add();
-        CHANNEL.messageBuilder(ImageMatrixPayload.class, 6)
+        CHANNEL.messageBuilder(ImageMatrixPayload.class, 6, PlayNetworkDirection.PLAY_TO_CLIENT)
                 .decoder(ImageMatrixPayload::read)
                 .encoder((p, buf) -> p.write(buf))
                 .consumer(this.<ImageMatrixPayload>clientOnly(ClientNetworkHandler::imageMatrix))
                 .add();
-        CHANNEL.messageBuilder(VideoPayload.class, 7)
+        CHANNEL.messageBuilder(VideoPayload.class, 7, PlayNetworkDirection.PLAY_TO_CLIENT)
                 .decoder(VideoPayload::read)
                 .encoder((p, buf) -> p.write(buf))
                 .consumer(this.<VideoPayload>clientOnly(ClientNetworkHandler::video))
                 .add();
-        CHANNEL.messageBuilder(VideoMatrixPayload.class, 8)
+        CHANNEL.messageBuilder(VideoMatrixPayload.class, 8, PlayNetworkDirection.PLAY_TO_CLIENT)
                 .decoder(VideoMatrixPayload::read)
                 .encoder((p, buf) -> p.write(buf))
                 .consumer(this.<VideoMatrixPayload>clientOnly(ClientNetworkHandler::videoMatrix))
                 .add();
-        CHANNEL.messageBuilder(GroupRemovePayload.class, 9)
+        CHANNEL.messageBuilder(GroupRemovePayload.class, 9, PlayNetworkDirection.PLAY_TO_CLIENT)
                 .decoder(GroupRemovePayload::read)
                 .encoder((p, buf) -> p.write(buf))
                 .consumer(this.<GroupRemovePayload>clientOnly(ClientNetworkHandler::groupRemove))
                 .add();
-        CHANNEL.messageBuilder(GroupChangePayload.class, 10)
+        CHANNEL.messageBuilder(GroupChangePayload.class, 10, PlayNetworkDirection.PLAY_TO_CLIENT)
                 .decoder(GroupChangePayload::read)
                 .encoder((p, buf) -> p.write(buf))
                 .consumer(this.<GroupChangePayload>clientOnly(ClientNetworkHandler::groupChange))
                 .add();
     }
 
-    /** 20.3-beta 老 API：MessageConsumer<MSG>=(MSG, NetworkEvent.Context)；仅客户端处理 S2C，enqueueWork 切主线程 */
+    /** 20.3-beta 老 API：MessageConsumer<MSG>=(MSG, NetworkEvent.Context)；channel 层已限 PLAY_TO_CLIENT，enqueueWork 切主线程 */
     private static <T> java.util.function.BiConsumer<T, NetworkEvent.Context> clientOnly(java.util.function.Consumer<T> handler) {
         return (payload, ctx) -> {
-            if (ctx.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-                ctx.enqueueWork(() -> handler.accept(payload));
-            }
+            ctx.enqueueWork(() -> handler.accept(payload));
             ctx.setPacketHandled(true);
         };
     }
