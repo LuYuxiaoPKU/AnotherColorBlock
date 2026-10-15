@@ -287,6 +287,44 @@ neoforge/  NeoForge 加载器适配（1.20.1 ~ 26.3）
 
 ---
 
+## 鸣谢
+
+本项目站在以下作者与团队的肩膀上，谨致谢意：
+
+### ColorBlock 原模组线（本项目直接前身）
+
+| 作者/团队 | 贡献 | 主页 |
+|---|---|---|
+| **Is_GK** | ColorBlock 原模组作者，表达式粒子指令的开创者 | [GitHub](https://github.com/IslenautsGK) · [Bilibili](https://space.bilibili.com/12657339) · [MC百科](https://www.mcmod.cn/author/23085.html) |
+| **Junior_Mo** | ColorBlock 原模组作者（MCBBS 原帖发布者） | [Bilibili](https://space.bilibili.com/10836361) · [MC百科](https://www.mcmod.cn/author/25217.html) |
+| **Another Era**（团队） | ColorBlock 相关开发团队 | [MC百科](https://www.mcmod.cn/author/22704.html) |
+
+原模组代码仓库：[IslenautsGK/ColorBlock](https://github.com/IslenautsGK/ColorBlock)
+
+### 社区维护线
+
+| 作者/团队 | 贡献 | 主页 |
+|---|---|---|
+| **noone89** | 社区维护版创始人（ParticleEx，26.x 移植） | [GitHub](https://github.com/noone89A) · [Bilibili](https://space.bilibili.com/496649264) |
+| **YuEr159** | 现维护者（全版本实机测试、NeoForge 移植、低版本扩展） | [GitHub](https://github.com/YuEr159) |
+
+### ExParticle 线（表达式引擎语法同源的高版本延续项目）
+
+| 作者/团队 | 贡献 | 主页 |
+|---|---|---|
+| **hackermdch** | ExParticle 作者 | [GitHub](https://github.com/hackermdch) · [Bilibili](https://space.bilibili.com/243670887) · [MC百科](https://www.mcmod.cn/author/30552.html) |
+| **翊尘呀** | ExParticle 贡献者（透明度修复等） | [GitHub](https://github.com/YiWolf233) · [Bilibili](https://space.bilibili.com/615927675) |
+
+### 第三方组件
+
+- [JavaCV / JavaCPP / FFmpeg](https://github.com/bytedeco/javacv)：视频粒子功能的解码基座（不随本模组分发）
+
+### 案例参考
+
+粒子案例库中的部分案例整理自社区同类模组（EffectLib / ParticleAnimationLib / Particle Storm / MoreParticle 等）并改写为本模组语法，出处见 [docs/particle-cases.md](docs/particle-cases.md)。
+
+---
+
 ## 版权声明与免责条款（重要，请阅读）
 
 ### 1. 项目来源
@@ -295,7 +333,7 @@ neoforge/  NeoForge 加载器适配（1.20.1 ~ 26.3）
 
 - 原模组作者以 **CC0 1.0 Universal**（公共领域贡献）协议发布原作品。
 - 原模组已停止维护。本项目在原作品基础上进行重写、修复与适配，**名称沿用 AnotherColorBlock**（开发代号 ParticleEx，Mod ID 为 `particleex`）。
-- 原作品发布在 **MCBBS（Minecraft 中文论坛）**，该论坛现已关闭，原发布页已不可访问；如需查阅原模组历史信息，可尝试通过互联网档案馆（Wayback Machine）检索快照。
+- 原作品发布在 **MCBBS（Minecraft 中文论坛）**，该论坛现已关闭；原发布帖可查阅 MCBBS 存档站：<https://archives.mcbbs.co/read.php?tid=917845>（[1.16.5-1.12.2][ColorBlock——新的粒子特效拓展]）。
 - CC0 协议全文：<https://creativecommons.org/publicdomain/zero/1.0/legalcode>
 
 ### 2. 授权说明
@@ -313,6 +351,8 @@ neoforge/  NeoForge 加载器适配（1.20.1 ~ 26.3）
 ### 2.2 AI 辅助开发声明
 
 本项目在社区维护期间使用 AI 编程辅助工具进行开发（Claude Code 框架，接入 DeepSeek V4.1-Flash、DeepSeek V4-Flash、GLM-5.3-Flash、Qwen3.8-27B 四款模型，排名不分先后），参与版本移植、适配修复与测试自动化。全部代码经多版本实机测试（Fabric 37 站 + NeoForge 18 站，覆盖 1.14.4~26.3 每个正式版）。
+
+AI 使用量统计（token 消耗）公开可查：[docs/token-usage.md](docs/token-usage.md)。
 
 ### 3. 免责声明（免责条款）
 
